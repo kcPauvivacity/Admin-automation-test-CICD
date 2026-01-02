@@ -1,0 +1,54 @@
+ID,Work Item Type,Title,Test Step,Step Action,Step Expected
+,Test Case,Successful Login with Valid Credentials,1,Navigate to login page: https://viva-staging.uk.auth0.com/u/login/identifier,Login page is displayed with email input field
+,Test Case,Successful Login with Valid Credentials,2,Enter valid email in username field: kc@vivacityapp.com,Email is entered successfully
+,Test Case,Successful Login with Valid Credentials,3,Click Continue button,User proceeds to password page
+,Test Case,Successful Login with Valid Credentials,4,Wait for password field to appear and enter valid password: PAOpaopao@9696,Password is entered successfully
+,Test Case,Successful Login with Valid Credentials,5,Click Continue button to submit,"User is redirected to home page: https://app-staging.vivacityapp.com/demo-student. Login is successful and user dashboard is displayed"
+,Test Case,Login with Invalid Email Format,1,Navigate to login page: https://viva-staging.uk.auth0.com/u/login/identifier,Login page is displayed with email input field
+,Test Case,Login with Invalid Email Format,2,Enter invalid email format in username field: kcvivacity (without @ symbol),Invalid email is entered
+,Test Case,Login with Invalid Email Format,3,Click Continue button,"Error message 'Email is not valid.' is displayed. User remains on login page and cannot proceed"
+,Test Case,Login with Empty Email Field,1,Navigate to login page: https://viva-staging.uk.auth0.com/u/login/identifier,Login page is displayed with email input field
+,Test Case,Login with Empty Email Field,2,Leave email field empty (do not enter any text),Email field remains empty
+,Test Case,Login with Empty Email Field,3,Click Continue button,"Error message is displayed indicating email is required. User cannot proceed to password field"
+,Test Case,Login with Invalid Password,1,Navigate to login page: https://viva-staging.uk.auth0.com/u/login/identifier,Login page is displayed
+,Test Case,Login with Invalid Password,2,Enter valid email: kc@vivacityapp.com and click Continue,User proceeds to password page
+,Test Case,Login with Invalid Password,3,Enter incorrect password: WrongPassword123,Password is entered
+,Test Case,Login with Invalid Password,4,Click Continue button,"Error message 'Wrong email or password' is displayed. Login fails and user remains on login page"
+,Test Case,Login with Empty Password Field,1,Navigate to login page and enter valid email: kc@vivacityapp.com,User proceeds to password page
+,Test Case,Login with Empty Password Field,2,Leave password field empty,Password field remains empty
+,Test Case,Login with Empty Password Field,3,Click Continue button,"Error message is displayed indicating password is required. User cannot proceed"
+,Test Case,Login with SQL Injection in Email Field,1,Navigate to login page: https://viva-staging.uk.auth0.com/u/login/identifier,Login page is displayed
+,Test Case,Login with SQL Injection in Email Field,2,Enter SQL injection string in email field: admin' OR '1'='1,Malicious input is entered
+,Test Case,Login with SQL Injection in Email Field,3,Click Continue button,"System rejects or sanitizes the malicious input. No SQL injection vulnerability is exploited. Application remains secure"
+,Test Case,Login with Special Characters in Password,1,Navigate to login page and enter email: test@vivacityapp.com,User proceeds to password page
+,Test Case,Login with Special Characters in Password,2,Enter password with special characters: P@ssw0rd!#$,Password with special characters is entered
+,Test Case,Login with Special Characters in Password,3,Click Continue button,"If credentials are correct login is successful. User is redirected to dashboard. Special characters are handled properly"
+,Test Case,Login Session Timeout,1,Login successfully with valid credentials: kc@vivacityapp.com / PAOpaopao@9696,User is logged in and dashboard is displayed
+,Test Case,Login Session Timeout,2,Leave the application idle for session timeout period (e.g. 30 minutes),Application remains idle
+,Test Case,Login Session Timeout,3,Attempt to perform any action or click on any link,"Session expires. User is redirected to login page with session timeout message"
+,Test Case,Remember Me Functionality,1,Navigate to login page and enter credentials: kc@vivacityapp.com / PAOpaopao@9696,Credentials are entered
+,Test Case,Remember Me Functionality,2,Check 'Remember Me' checkbox (if available) and login,User logs in successfully with Remember Me enabled
+,Test Case,Remember Me Functionality,3,Close browser completely and reopen it,Browser is reopened
+,Test Case,Remember Me Functionality,4,Navigate to application URL,"User remains logged in. No re-authentication required. Session is maintained"
+,Test Case,Logout Functionality,1,Login successfully with valid credentials,User is logged in and dashboard is displayed
+,Test Case,Logout Functionality,2,Navigate to user menu or profile icon and click Logout,Logout option is visible
+,Test Case,Logout Functionality,3,Confirm logout if confirmation dialog appears,Logout is confirmed
+,Test Case,Logout Functionality,4,Press browser back button after logout,"User is logged out and redirected to login page. Session is cleared. Back button does not allow access to logged-in pages"
+,Test Case,Login with Unregistered Email,1,Navigate to login page: https://viva-staging.uk.auth0.com/u/login/identifier,Login page is displayed
+,Test Case,Login with Unregistered Email,2,Enter unregistered email: nonexistent@example.com and proceed,User proceeds to password page
+,Test Case,Login with Unregistered Email,3,Enter any password: AnyPassword123 and click Continue,"Error message 'Wrong email or password' is displayed. Login fails. No hint given about email existence for security"
+,Test Case,Password Visibility Toggle,1,Navigate to login page and proceed to password field,Password field is displayed
+,Test Case,Password Visibility Toggle,2,Enter password: PAOpaopao@9696,Password is shown as dots/asterisks (masked)
+,Test Case,Password Visibility Toggle,3,Click on show/hide password icon (eye icon),Password is revealed in plain text
+,Test Case,Password Visibility Toggle,4,Click icon again to hide password,Password is masked again with dots/asterisks
+,Test Case,Multiple Failed Login Attempts - Account Lockout,1,Navigate to login page and enter valid email: kc@vivacityapp.com,Email is entered
+,Test Case,Multiple Failed Login Attempts - Account Lockout,2,Enter wrong password: WrongPassword123 and click Continue,Login fails with error message
+,Test Case,Multiple Failed Login Attempts - Account Lockout,3,Repeat step 2 for 5 consecutive times (total 5 failed attempts),Multiple failed attempts recorded
+,Test Case,Multiple Failed Login Attempts - Account Lockout,4,Attempt to login with correct password,"Account is locked. Error message indicates lockout. User cannot login even with correct password until lockout expires"
+,Test Case,Case Sensitivity in Email Field,1,Navigate to login page: https://viva-staging.uk.auth0.com/u/login/identifier,Login page is displayed
+,Test Case,Case Sensitivity in Email Field,2,Enter email with uppercase letters: KC@VIVACITYAPP.COM,Email with uppercase is entered
+,Test Case,Case Sensitivity in Email Field,3,Enter correct password: PAOpaopao@9696 and click Continue,"System treats email as case-insensitive. Login is successful. User is redirected to dashboard"
+,Test Case,Forgot Password Link Functionality,1,Navigate to login page,Login page is displayed
+,Test Case,Forgot Password Link Functionality,2,Locate and click on 'Forgot Password' or 'Reset Password' link,User is redirected to password reset page
+,Test Case,Forgot Password Link Functionality,3,Enter registered email address: kc@vivacityapp.com and submit,Email is submitted for password reset
+,Test Case,Forgot Password Link Functionality,4,Check email inbox for reset link,"Password reset email is sent. Confirmation message is displayed. Reset link in email is valid and works"

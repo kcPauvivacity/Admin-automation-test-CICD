@@ -1,0 +1,104 @@
+Test Case ID,Test Case Name,Test Description,Preconditions,Test Steps,Test Data,Expected Result,Priority,Status,Category
+TC_LOGIN_001,Successful Login with Valid Credentials,Verify that user can successfully login with valid email and password,User has valid credentials registered in the system,"1. Navigate to login page
+2. Enter valid email in username field
+3. Click Continue button
+4. Enter valid password in password field
+5. Click Continue button","Email: kc@vivacityapp.com
+Password: PAOpaopao@9696","1. User is redirected to home page (https://app-staging.vivacityapp.com/demo-student)
+2. Login is successful
+3. User dashboard is displayed",High,Pass,Authentication
+TC_LOGIN_002,Login with Invalid Email Format,Verify that system shows error message when user enters invalid email format,User is on the login page,"1. Navigate to login page
+2. Enter invalid email format in username field (e.g., 'kcvivacity' without @)
+3. Click Continue button",Email: kcvivacity,"1. Error message 'Email is not valid.' is displayed
+2. User remains on the login page
+3. Continue button is disabled or validation prevents submission",High,Pass,Validation
+TC_LOGIN_003,Login with Empty Email Field,Verify that system validates empty email field,User is on the login page,"1. Navigate to login page
+2. Leave email field empty
+3. Click Continue button",Email: (empty),"1. Error message is displayed indicating email is required
+2. User cannot proceed to password field
+3. User remains on email input page",High,Not Executed,Validation
+TC_LOGIN_004,Login with Invalid Password,Verify that system shows error for incorrect password,User has valid email but enters wrong password,"1. Navigate to login page
+2. Enter valid email
+3. Click Continue
+4. Enter incorrect password
+5. Click Continue","Email: kc@vivacityapp.com
+Password: WrongPassword123","1. Error message is displayed (e.g., 'Wrong email or password')
+2. User remains on login page
+3. Login fails",High,Not Executed,Authentication
+TC_LOGIN_005,Login with Empty Password Field,Verify that system validates empty password field,User has entered valid email,"1. Navigate to login page
+2. Enter valid email and proceed
+3. Leave password field empty
+4. Click Continue","Email: kc@vivacityapp.com
+Password: (empty)","1. Error message is displayed indicating password is required
+2. User cannot proceed
+3. User remains on password input page",Medium,Not Executed,Validation
+TC_LOGIN_006,Login with SQL Injection in Email,Verify that system is protected against SQL injection attacks,User attempts SQL injection,"1. Navigate to login page
+2. Enter SQL injection string in email field
+3. Click Continue",Email: admin' OR '1'='1,"1. System rejects the input or sanitizes it
+2. No SQL injection vulnerability
+3. Appropriate error message or validation",High,Not Executed,Security
+TC_LOGIN_007,Login with Special Characters in Password,Verify that user can login with password containing special characters,User has password with special characters,"1. Navigate to login page
+2. Enter valid email
+3. Click Continue
+4. Enter password with special characters
+5. Click Continue","Email: test@vivacityapp.com
+Password: P@ssw0rd!#$","1. Login is successful if credentials are correct
+2. Special characters are accepted
+3. User is redirected to dashboard",Medium,Not Executed,Authentication
+TC_LOGIN_008,Login Session Timeout,Verify that login session expires after period of inactivity,User is logged in,"1. Login successfully
+2. Leave the application idle for session timeout period (e.g., 30 minutes)
+3. Attempt to perform any action",N/A,"1. Session expires
+2. User is redirected to login page
+3. Message indicates session timeout",Medium,Not Executed,Session Management
+TC_LOGIN_009,Remember Me Functionality,Verify that 'Remember Me' checkbox works correctly,Login page has 'Remember Me' option,"1. Navigate to login page
+2. Enter valid credentials
+3. Check 'Remember Me' checkbox
+4. Login successfully
+5. Close browser
+6. Reopen browser and navigate to application","Email: kc@vivacityapp.com
+Password: PAOpaopao@9696","1. User remains logged in after reopening browser
+2. User is not required to enter credentials again
+3. Session is maintained",Low,Not Executed,Session Management
+TC_LOGIN_010,Logout Functionality,Verify that user can successfully logout,User is logged in,"1. Login successfully
+2. Navigate to user menu
+3. Click Logout button
+4. Confirm logout if required",N/A,"1. User is logged out
+2. User is redirected to login page
+3. Session is cleared
+4. Back button should not allow access to logged-in pages",High,Not Executed,Authentication
+TC_LOGIN_011,Login with Unregistered Email,Verify error message when using unregistered email,User enters email that doesn't exist in system,"1. Navigate to login page
+2. Enter unregistered email
+3. Click Continue
+4. Enter any password
+5. Click Continue","Email: nonexistent@example.com
+Password: AnyPassword123","1. Error message is displayed (e.g., 'Wrong email or password')
+2. Login fails
+3. User remains on login page",Medium,Not Executed,Authentication
+TC_LOGIN_012,Password Visibility Toggle,Verify that password visibility toggle works correctly,User is on password input field,"1. Navigate to login page
+2. Proceed to password field
+3. Enter password
+4. Click on show/hide password icon
+5. Verify password visibility",Password: PAOpaopao@9696,"1. Password is shown as dots/asterisks by default
+2. Clicking eye icon shows password in plain text
+3. Clicking again hides the password",Low,Not Executed,UI/UX
+TC_LOGIN_013,Multiple Failed Login Attempts,Verify account lockout after multiple failed login attempts,User attempts to login multiple times with wrong password,"1. Navigate to login page
+2. Enter valid email
+3. Enter wrong password
+4. Repeat steps 2-3 for 5 times","Email: kc@vivacityapp.com
+Password: WrongPassword (5 attempts)","1. After X failed attempts account is locked
+2. Error message indicates account lockout
+3. User cannot login even with correct password until lockout expires or is reset",High,Not Executed,Security
+TC_LOGIN_014,Case Sensitivity in Email,Verify that email field is case-insensitive,User enters email with different case variations,"1. Navigate to login page
+2. Enter email with uppercase letters (e.g., KC@VIVACITYAPP.COM)
+3. Proceed to password
+4. Enter correct password
+5. Click Continue","Email: KC@VIVACITYAPP.COM
+Password: PAOpaopao@9696","1. System treats email as case-insensitive
+2. Login is successful
+3. User is redirected to dashboard",Low,Not Executed,Validation
+TC_LOGIN_015,Forgot Password Link,Verify that forgot password link works correctly,User clicks on forgot password link,"1. Navigate to login page
+2. Click on 'Forgot Password' link
+3. Enter registered email
+4. Submit request",Email: kc@vivacityapp.com,"1. User is redirected to password reset page
+2. Password reset email is sent
+3. Confirmation message is displayed",Medium,Not Executed,Password Management

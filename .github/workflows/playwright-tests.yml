@@ -1,0 +1,78 @@
+name: Playwright Tests
+
+on:
+  schedule:
+    # Run every day at 9 AM UTC (adjust timezone as needed)
+    - cron: '0 9 * * *'
+  # Also allow manual trigger
+  workflow_dispatch:
+  # Run on push to main branch
+  push:
+    branches: [ main, master ]
+  # Run on pull requests
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+      
+    - name: Run Playwright tests
+      run: npx playwright test --reporter=html,json
+      continue-on-error: true
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+        
+    - name: Upload JSON report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-json
+        path: test-results.json
+        retention-days: 30
+        
+    - name: Generate Test Summary
+      if: always()
+      run: |
+        echo "# Test Results Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        if [ -f test-results.json ]; then
+          node scripts/generate-summary.js >> $GITHUB_STEP_SUMMARY
+        else
+          echo "Test results file not found" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+    # Send email notification with Nodemailer
+    - name: Send email report
+      if: always()
+      env:
+        EMAIL_USER: ${{secrets.EMAIL_USER}}
+        EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}}
+        EMAIL_RECIPIENTS: ${{secrets.EMAIL_RECIPIENTS}}
+      run: |
+        if [ -f scripts/send-email-report.js ]; then
+          npm install nodemailer
+          node scripts/send-email-report.js
+        else
+          echo "Email script not found, skipping email notification"
+        fi
