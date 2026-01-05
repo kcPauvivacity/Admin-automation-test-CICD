@@ -94,7 +94,8 @@ jobs:
       run: |
         if [ -f scripts/send-email-report.js ]; then
           npm install nodemailer
-          node scripts/send-email-report.js
+          node scripts/send-email-report.js || echo "⚠️ Email sending failed, but continuing..."
         else
           echo "Email script not found, skipping email notification"
         fi
+      continue-on-error: true
