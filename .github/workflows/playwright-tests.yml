@@ -112,15 +112,39 @@ jobs:
         echo "📧 EMAIL REPORT PROCESS"
         echo "======================================"
         echo ""
-        echo "=== Step 1: Check Secrets ==="
-        echo "EMAIL_USER set: ${{ secrets.EMAIL_USER != '' }}"
-        echo "EMAIL_PASSWORD set: ${{ secrets.EMAIL_PASSWORD != '' }}"
-        echo "EMAIL_RECIPIENTS set: ${{ secrets.EMAIL_RECIPIENTS != '' }}"
+        echo "=== Step 1: Check Environment Variables ==="
+        if [ -z "$EMAIL_USER" ]; then
+          echo "❌ EMAIL_USER is not set"
+        else
+          echo "✅ EMAIL_USER is set: ${EMAIL_USER:0:3}***@***"
+        fi
+        
+        if [ -z "$EMAIL_PASSWORD" ]; then
+          echo "❌ EMAIL_PASSWORD is not set"
+        else
+          echo "✅ EMAIL_PASSWORD is set (${#EMAIL_PASSWORD} characters)"
+        fi
+        
+        if [ -z "$EMAIL_RECIPIENTS" ]; then
+          echo "❌ EMAIL_RECIPIENTS is not set"
+        else
+          echo "✅ EMAIL_RECIPIENTS is set: $EMAIL_RECIPIENTS"
+        fi
+        
         if [ -z "$EMAIL_USER" ] || [ -z "$EMAIL_PASSWORD" ] || [ -z "$EMAIL_RECIPIENTS" ]; then
-          echo "❌ One or more email secrets are not set!"
+          echo ""
+          echo "❌ ERROR: One or more email secrets are missing!"
+          echo "Please add these secrets in GitHub repository settings:"
+          echo "  - EMAIL_USER (your Gmail address)"
+          echo "  - EMAIL_PASSWORD (Gmail App Password)"
+          echo "  - EMAIL_RECIPIENTS (recipient email addresses)"
+          echo ""
+          echo "Skipping email notification..."
           exit 0
         fi
-        echo "✅ All email secrets are set"
+        
+        echo ""
+        echo "✅ All email environment variables are set!"
         echo ""
         echo "=== Step 2: Install nodemailer ==="
         npm install nodemailer
