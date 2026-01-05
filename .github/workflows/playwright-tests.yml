@@ -47,8 +47,8 @@ jobs:
         BASE_URL: ${{ secrets.BASE_URL }}
         CI: true
       run: |
-        echo "=== Running tests with multiple reporters ==="
-        npx playwright test --reporter=list,html,json || true
+        echo "=== Running tests with configured reporters ==="
+        npx playwright test || true
         echo ""
         echo "=== Test run completed ==="
       continue-on-error: true
