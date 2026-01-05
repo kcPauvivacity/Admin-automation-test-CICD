@@ -1,0 +1,90 @@
+name: Debug Playwright Tests
+
+on:
+  workflow_dispatch:  # Manual trigger only for debugging
+
+jobs:
+  debug:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    
+    - name: Check files
+      run: |
+        echo "=== Checking project structure ==="
+        ls -la
+        echo ""
+        echo "=== Checking tests directory ==="
+        ls -la tests/
+        echo ""
+        echo "=== Checking package.json ==="
+        cat package.json
+    
+    - name: Install dependencies
+      run: |
+        echo "=== Installing dependencies ==="
+        npm ci
+        echo ""
+        echo "=== Checking installed packages ==="
+        npm list --depth=0
+    
+    - name: Install Playwright
+      run: |
+        echo "=== Installing Playwright browsers ==="
+        npx playwright install --with-deps chromium
+        echo ""
+        echo "=== Playwright version ==="
+        npx playwright --version
+    
+    - name: Check environment
+      run: |
+        echo "=== Environment Variables (masked) ==="
+        echo "TEST_USERNAME is set: ${{ secrets.TEST_USERNAME != '' }}"
+        echo "TEST_PASSWORD is set: ${{ secrets.TEST_PASSWORD != '' }}"
+        echo "BASE_URL is set: ${{ secrets.BASE_URL != '' }}"
+        echo "EMAIL_USER is set: ${{ secrets.EMAIL_USER != '' }}"
+        echo "EMAIL_PASSWORD is set: ${{ secrets.EMAIL_PASSWORD != '' }}"
+        echo "EMAIL_RECIPIENTS is set: ${{ secrets.EMAIL_RECIPIENTS != '' }}"
+    
+    - name: Run ONE test (login)
+      env:
+        TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        BASE_URL: ${{ secrets.BASE_URL }}
+      run: |
+        echo "=== Running single login test ==="
+        npx playwright test tests/login.test.ts --reporter=list --max-failures=1
+      continue-on-error: true
+    
+    - name: Check test results
+      if: always()
+      run: |
+        echo "=== Checking for test output ==="
+        ls -la playwright-report/ || echo "No playwright-report directory"
+        ls -la test-results/ || echo "No test-results directory"
+    
+    - name: Upload failure screenshots
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-screenshots
+        path: test-results/
+        retention-days: 7
+        if-no-files-found: ignore
+    
+    - name: Upload HTML report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-html-report
+        path: playwright-report/
+        retention-days: 7
+        if-no-files-found: ignore
