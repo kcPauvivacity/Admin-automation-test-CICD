@@ -39,6 +39,15 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
       
+    - name: Debug - Check Environment Variables
+      run: |
+        echo "🔍 Checking environment variables..."
+        echo "BASE_URL is set: ${{ secrets.BASE_URL != '' }}"
+        echo "TEST_USERNAME is set: ${{ secrets.TEST_USERNAME != '' }}"
+        echo "TEST_PASSWORD is set: ${{ secrets.TEST_PASSWORD != '' }}"
+        echo ""
+        echo "Note: Actual values are hidden for security"
+      
     - name: Run Playwright tests
       env:
         # Add your test credentials here as GitHub Secrets
