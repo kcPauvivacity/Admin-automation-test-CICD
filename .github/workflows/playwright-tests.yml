@@ -100,7 +100,7 @@ jobs:
           echo "Test results file not found" >> $GITHUB_STEP_SUMMARY
         fi
         
-    # Send email notification with Nodemailer
+    # Send email notification with Nodemailer (optional - will not fail workflow)
     - name: Send email report
       if: always()
       env:
@@ -108,56 +108,26 @@ jobs:
         EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}}
         EMAIL_RECIPIENTS: ${{secrets.EMAIL_RECIPIENTS}}
       run: |
+        # Skip email if secrets are not configured
+        if [ -z "$EMAIL_USER" ] || [ -z "$EMAIL_PASSWORD" ] || [ -z "$EMAIL_RECIPIENTS" ]; then
+          echo "⏭️ Email secrets not configured - skipping email notification"
+          echo "📥 Download test report from Artifacts section below"
+          exit 0
+        fi
+        
         echo "======================================"
         echo "📧 EMAIL REPORT PROCESS"
         echo "======================================"
         echo ""
-        echo "=== Step 1: Check Environment Variables ==="
-        if [ -z "$EMAIL_USER" ]; then
-          echo "❌ EMAIL_USER is not set"
-        else
-          echo "✅ EMAIL_USER is set: ${EMAIL_USER:0:3}***@***"
-        fi
-        
-        if [ -z "$EMAIL_PASSWORD" ]; then
-          echo "❌ EMAIL_PASSWORD is not set"
-        else
-          echo "✅ EMAIL_PASSWORD is set (${#EMAIL_PASSWORD} characters)"
-        fi
-        
-        if [ -z "$EMAIL_RECIPIENTS" ]; then
-          echo "❌ EMAIL_RECIPIENTS is not set"
-        else
-          echo "✅ EMAIL_RECIPIENTS is set: $EMAIL_RECIPIENTS"
-        fi
-        
-        if [ -z "$EMAIL_USER" ] || [ -z "$EMAIL_PASSWORD" ] || [ -z "$EMAIL_RECIPIENTS" ]; then
-          echo ""
-          echo "❌ ERROR: One or more email secrets are missing!"
-          echo "Please add these secrets in GitHub repository settings:"
-          echo "  - EMAIL_USER (your Gmail address)"
-          echo "  - EMAIL_PASSWORD (Gmail App Password)"
-          echo "  - EMAIL_RECIPIENTS (recipient email addresses)"
-          echo ""
-          echo "Skipping email notification..."
-          exit 0
-        fi
-        
-        echo ""
-        echo "✅ All email environment variables are set!"
-        echo ""
-        echo "=== Step 2: Install nodemailer ==="
+        echo "=== Installing nodemailer ==="
         npm install nodemailer
         echo ""
-        echo "=== Step 3: Check files ==="
-        ls -la scripts/send-email-report.js
-        ls -la test-results.json 2>/dev/null || echo "⚠️ test-results.json not found (will use defaults)"
-        ls -la playwright-report/index.html 2>/dev/null || echo "⚠️ HTML report not found"
+        echo "=== Sending email ==="
+        node scripts/send-email-report.js || {
+          echo "⚠️ Email sending failed"
+          echo "📥 Download test report from Artifacts section instead"
+          exit 0
+        }
         echo ""
-        echo "=== Step 4: Send email ==="
-        node scripts/send-email-report.js
-        echo ""
-        echo "======================================"
-        echo "✅ Email process completed"
-        echo "======================================"
+        echo "✅ Email sent successfully!"
       continue-on-error: true
