@@ -17,27 +17,40 @@ const RECIPIENTS = process.env.EMAIL_RECIPIENTS
 
 async function sendEmailReport() {
     try {
+        console.log('🚀 Starting email report process...');
+        console.log('📧 EMAIL_USER:', process.env.EMAIL_USER ? 'Set ✓' : 'Not set ✗');
+        console.log('🔑 EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Set ✓' : 'Not set ✗');
+        console.log('📬 EMAIL_RECIPIENTS:', process.env.EMAIL_RECIPIENTS || 'Not set ✗');
+        
         // Read the latest report
         const reportDir = getLatestReportDir();
         if (!reportDir) {
             console.error('❌ No test reports found');
+            console.log('ℹ️ Checked directories: test-reports/, playwright-report/');
             return;
         }
 
         console.log(`📂 Using report from: ${reportDir}`);
 
-        // Read summary
+        // Read summary (not required)
         const summaryPath = path.join(reportDir, 'summary.md');
         const summary = fs.existsSync(summaryPath) 
             ? fs.readFileSync(summaryPath, 'utf8') 
-            : 'Summary not available';
+            : 'Test execution completed. See attached report for details.';
 
         // Read JSON report for statistics
-        const jsonPath = path.join(reportDir, 'test-results.json');
+        const jsonPath = path.join(__dirname, '../test-results.json');
+        console.log(`📊 Looking for JSON at: ${jsonPath}`);
         const stats = getTestStats(jsonPath);
 
         // Create transporter
+        console.log('📤 Creating email transporter...');
         const transporter = nodemailer.createTransport(EMAIL_CONFIG);
+        
+        // Verify transporter
+        console.log('🔍 Verifying email configuration...');
+        await transporter.verify();
+        console.log('✅ Email configuration verified!');
 
         // Email subject
         const subject = `Playwright Test Report - ${stats.passed}/${stats.total} Passed (${stats.passRate}%)`;
@@ -56,6 +69,11 @@ async function sendEmailReport() {
         }
 
         // Send email
+        console.log('📧 Sending email...');
+        console.log('   From:', EMAIL_CONFIG.auth.user);
+        console.log('   To:', RECIPIENTS.join(', '));
+        console.log('   Subject:', subject);
+        
         const info = await transporter.sendMail({
             from: EMAIL_CONFIG.auth.user,
             to: RECIPIENTS.join(', '),
@@ -68,9 +86,11 @@ async function sendEmailReport() {
         console.log('✅ Email sent successfully!');
         console.log('📧 Message ID:', info.messageId);
         console.log('📬 Recipients:', RECIPIENTS.join(', '));
+        console.log('✨ Check your inbox (and spam folder)!');
     } catch (error) {
         console.error('❌ Failed to send email:', error.message);
-        process.exit(1);
+        console.error('📋 Full error:', error);
+        throw error; // Re-throw to see in CI logs
     }
 }
 

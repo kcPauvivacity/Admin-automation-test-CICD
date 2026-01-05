@@ -92,10 +92,21 @@ jobs:
         EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}}
         EMAIL_RECIPIENTS: ${{secrets.EMAIL_RECIPIENTS}}
       run: |
-        if [ -f scripts/send-email-report.js ]; then
-          npm install nodemailer
-          node scripts/send-email-report.js || echo "⚠️ Email sending failed, but continuing..."
-        else
-          echo "Email script not found, skipping email notification"
-        fi
+        echo "=== Email Configuration Check ==="
+        echo "EMAIL_USER set: ${{ secrets.EMAIL_USER != '' }}"
+        echo "EMAIL_PASSWORD set: ${{ secrets.EMAIL_PASSWORD != '' }}"
+        echo "EMAIL_RECIPIENTS set: ${{ secrets.EMAIL_RECIPIENTS != '' }}"
+        echo ""
+        echo "=== Installing nodemailer ==="
+        npm install nodemailer
+        echo ""
+        echo "=== Checking for email script ==="
+        ls -la scripts/send-email-report.js
+        echo ""
+        echo "=== Checking for test results ==="
+        ls -la test-results.json || echo "test-results.json not found"
+        ls -la playwright-report/ || echo "playwright-report not found"
+        echo ""
+        echo "=== Sending email report ==="
+        node scripts/send-email-report.js || echo "⚠️ Email sending failed, but continuing..."
       continue-on-error: true
