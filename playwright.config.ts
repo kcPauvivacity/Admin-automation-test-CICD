@@ -9,7 +9,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0, // Retry once on CI
-  workers: process.env.CI ? 2 : undefined, // 2 parallel workers on CI
+  workers: process.env.CI ? 4 : undefined, // Increased to 4 parallel workers on CI for faster execution
   reporter: process.env.CI ? [
     ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results.json' }], 
