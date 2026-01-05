@@ -32,6 +32,11 @@ jobs:
       run: npx playwright install --with-deps
       
     - name: Run Playwright tests
+      env:
+        # Add your test credentials here as GitHub Secrets
+        TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        BASE_URL: ${{ secrets.BASE_URL }}
       run: npx playwright test --reporter=html,json
       continue-on-error: true
       
