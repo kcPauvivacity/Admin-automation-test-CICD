@@ -102,12 +102,47 @@ if (failedTests.length > 0) {
         const shortFile = test.file.replace('tests/', '');
         console.log(`### ${index + 1}. ${shortFile}`);
         console.log(`**Test:** ${test.title}\n`);
+        
+        // Determine error type
+        let errorType = '⚠️ Error';
+        if (test.error.includes('Timeout')) errorType = '⏱️ Timeout Error';
+        else if (test.error.includes('expect(')) errorType = '❌ Assertion Failed';
+        else if (test.error.includes('locator')) errorType = '🔍 Element Not Found';
+        else if (test.error.includes('network')) errorType = '🌐 Network Error';
+        
+        console.log(`**Error Type:** ${errorType}\n`);
+        console.log('**Error Message:**');
         console.log('```');
-        console.log(test.error.substring(0, 200));
-        if (test.error.length > 200) {
+        console.log(test.error.substring(0, 500));
+        if (test.error.length > 500) {
             console.log('...');
         }
         console.log('```\n');
+        
+        // Add troubleshooting tips
+        console.log('**💡 Possible Causes:**');
+        if (test.error.includes('Timeout')) {
+            console.log('- Element took too long to appear (>180s timeout)');
+            console.log('- Network/page loading issues');
+            console.log('- Incorrect selector or element does not exist');
+        } else if (test.error.includes('expect(')) {
+            console.log('- Expected value does not match actual value');
+            console.log('- Data changed or test assumptions incorrect');
+            console.log('- Check the assertion in the test code');
+        } else if (test.error.includes('locator')) {
+            console.log('- Element not found on the page');
+            console.log('- Page structure may have changed');
+            console.log('- Verify the selector in the test');
+        } else if (test.error.includes('network')) {
+            console.log('- Network connectivity problem');
+            console.log('- Server/API might be down');
+            console.log('- Check application logs');
+        }
+        console.log('');
+        
+        // Add screenshot info
+        console.log('**📸 Evidence:** Check HTML report for screenshots and videos\n');
+        console.log('---\n');
     });
 }
 
