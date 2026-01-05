@@ -1,0 +1,18 @@
+<testsuites id="" name="" tests="5" failures="0" skipped="0" errors="0" time="13.489732">
+<testsuite name="login.test.ts" timestamp="2026-01-05T07:20:44.184Z" hostname="chromium" tests="5" failures="0" skipped="0" time="24.622" errors="0">
+<testcase name="successful login with valid credentials" classname="login.test.ts" time="7.968">
+<system-out>
+<![CDATA[✅ Successfully logged in with valid credentials
+]]>
+</system-out>
+</testcase>
+<testcase name="login attempt with invalid email format" classname="login.test.ts" time="3.822">
+</testcase>
+<testcase name="login attempt with non-existent email" classname="login.test.ts" time="4.454">
+</testcase>
+<testcase name="login attempt with incorrect password" classname="login.test.ts" time="4.564">
+</testcase>
+<testcase name="login attempt with empty credentials" classname="login.test.ts" time="3.814">
+</testcase>
+</testsuite>
+</testsuites>

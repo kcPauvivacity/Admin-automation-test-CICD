@@ -124,7 +124,8 @@ function getTestStats(jsonPath) {
         total: 0,
         passed: 0,
         failed: 0,
-        passRate: '0'
+        passRate: '0',
+        failedTests: []
     };
 
     console.log(`📊 Checking for JSON at: ${jsonPath}`);
@@ -146,10 +147,10 @@ function getTestStats(jsonPath) {
     try {
         console.log('✅ JSON file found, parsing...');
         const report = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-        const stats = { total: 0, passed: 0, failed: 0 };
+        const stats = { total: 0, passed: 0, failed: 0, failedTests: [] };
 
         if (report.suites) {
-            report.suites.forEach(suite => countTests(suite, stats));
+            report.suites.forEach(suite => countTests(suite, stats, suite.file || 'unknown'));
         }
 
         stats.passRate = stats.total > 0 
@@ -157,6 +158,7 @@ function getTestStats(jsonPath) {
             : '0';
 
         console.log(`📊 Stats: ${stats.passed}/${stats.total} passed (${stats.passRate}%)`);
+        console.log(`❌ Failed tests collected: ${stats.failedTests.length}`);
         return stats;
     } catch (error) {
         console.error('❌ Error reading test stats:', error.message);
@@ -164,16 +166,33 @@ function getTestStats(jsonPath) {
     }
 }
 
-function countTests(suite, stats) {
+function countTests(suite, stats, file) {
+    const currentFile = suite.file || file;
+    
     if (suite.specs) {
         suite.specs.forEach(spec => {
             stats.total++;
-            if (spec.ok) stats.passed++;
-            else stats.failed++;
+            if (spec.ok) {
+                stats.passed++;
+            } else {
+                stats.failed++;
+                // Collect failed test details
+                const failedTest = {
+                    file: currentFile,
+                    title: spec.title,
+                    error: spec.tests && spec.tests[0] && spec.tests[0].results && spec.tests[0].results[0] 
+                        ? spec.tests[0].results[0].error?.message || 'No error message'
+                        : 'No error details available',
+                    duration: spec.tests && spec.tests[0] && spec.tests[0].results && spec.tests[0].results[0]
+                        ? spec.tests[0].results[0].duration
+                        : 0
+                };
+                stats.failedTests.push(failedTest);
+            }
         });
     }
     if (suite.suites) {
-        suite.suites.forEach(child => countTests(child, stats));
+        suite.suites.forEach(child => countTests(child, stats, currentFile));
     }
 }
 
@@ -314,6 +333,8 @@ function generateEmailHTML(summary, stats, reportDir) {
             <pre>${summary}</pre>
         </div>
 
+        ${stats.failedTests && stats.failedTests.length > 0 ? generateFailureDetailsHTML(stats.failedTests) : ''}
+
         <div style="text-align: center; margin: 30px 0;">
             <p style="color: #7f8c8d;">📎 Full HTML report is attached to this email</p>
             <p style="color: #7f8c8d; font-size: 14px;">Report Location: ${path.basename(reportDir)}</p>
@@ -327,6 +348,98 @@ function generateEmailHTML(summary, stats, reportDir) {
 </body>
 </html>
     `;
+}
+
+function generateFailureDetailsHTML(failedTests) {
+    if (!failedTests || failedTests.length === 0) return '';
+
+    let html = `
+        <div style="background-color: #fff5f5; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #e74c3c;">
+            <h3 style="margin-top: 0; color: #e74c3c;">❌ Failed Tests Details</h3>
+    `;
+
+    failedTests.forEach((test, index) => {
+        const shortFile = test.file.replace('tests/', '');
+        const errorMsg = test.error || 'No error message available';
+        
+        // Determine error type
+        let errorType = '⚠️ Error';
+        let errorIcon = '⚠️';
+        let troubleshootingTips = '';
+        
+        if (errorMsg.includes('Timeout') || errorMsg.includes('timeout')) {
+            errorType = 'Timeout Error';
+            errorIcon = '⏱️';
+            troubleshootingTips = `
+                <li>Element took too long to appear (>180s timeout)</li>
+                <li>Network/page loading issues</li>
+                <li>Incorrect selector or element does not exist</li>
+            `;
+        } else if (errorMsg.includes('expect(') || errorMsg.includes('Expected')) {
+            errorType = 'Assertion Failed';
+            errorIcon = '❌';
+            troubleshootingTips = `
+                <li>Expected value does not match actual value</li>
+                <li>Data changed or test assumptions incorrect</li>
+                <li>Check the assertion in the test code</li>
+            `;
+        } else if (errorMsg.includes('locator') || errorMsg.includes('Locator')) {
+            errorType = 'Element Not Found';
+            errorIcon = '🔍';
+            troubleshootingTips = `
+                <li>Element not found on the page</li>
+                <li>Page structure may have changed</li>
+                <li>Verify the selector in the test</li>
+            `;
+        } else if (errorMsg.includes('network') || errorMsg.includes('Network')) {
+            errorType = 'Network Error';
+            errorIcon = '🌐';
+            troubleshootingTips = `
+                <li>Network connectivity problem</li>
+                <li>Server/API might be down</li>
+                <li>Check application logs</li>
+            `;
+        }
+
+        const errorPreview = errorMsg.length > 500 ? errorMsg.substring(0, 500) + '...' : errorMsg;
+        const duration = test.duration ? `${(test.duration / 1000).toFixed(2)}s` : 'N/A';
+
+        html += `
+            <div style="background-color: white; padding: 15px; border-radius: 6px; margin: 15px 0; border: 1px solid #fee;">
+                <h4 style="margin: 0 0 10px 0; color: #2c3e50;">
+                    ${index + 1}. ${shortFile}
+                </h4>
+                <p style="margin: 5px 0; color: #555;">
+                    <strong>Test:</strong> ${test.title}
+                </p>
+                <p style="margin: 5px 0; color: #555;">
+                    <strong>Error Type:</strong> ${errorIcon} ${errorType} 
+                    <span style="color: #999; margin-left: 10px;">⏱️ Duration: ${duration}</span>
+                </p>
+                <div style="background-color: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                    <strong style="color: #e74c3c;">Error Message:</strong>
+                    <pre style="margin: 5px 0 0 0; white-space: pre-wrap; word-wrap: break-word; font-size: 12px; color: #d63031;">${errorPreview}</pre>
+                </div>
+                ${troubleshootingTips ? `
+                <div style="background-color: #e3f2fd; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                    <strong style="color: #1976d2;">💡 Possible Causes:</strong>
+                    <ul style="margin: 5px 0; padding-left: 20px;">
+                        ${troubleshootingTips}
+                    </ul>
+                </div>
+                ` : ''}
+                <p style="margin: 10px 0 0 0; color: #7f8c8d; font-size: 13px;">
+                    📸 <strong>Evidence:</strong> Check attached HTML report for screenshots and videos
+                </p>
+            </div>
+        `;
+    });
+
+    html += `
+        </div>
+    `;
+
+    return html;
 }
 
 // Run the script
