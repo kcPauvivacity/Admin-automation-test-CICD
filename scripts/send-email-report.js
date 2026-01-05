@@ -122,11 +122,24 @@ function getTestStats(jsonPath) {
         passRate: '0'
     };
 
+    console.log(`📊 Checking for JSON at: ${jsonPath}`);
+    
     if (!fs.existsSync(jsonPath)) {
+        console.log('⚠️ JSON file not found, using default stats');
+        // Try to get stats from HTML report index
+        const htmlIndexPath = path.join(__dirname, '../playwright-report/index.html');
+        if (fs.existsSync(htmlIndexPath)) {
+            console.log('📄 Found HTML report, extracting basic info');
+            defaultStats.total = 'N/A';
+            defaultStats.passed = 'N/A';
+            defaultStats.failed = 'N/A';
+            defaultStats.passRate = 'See attached report';
+        }
         return defaultStats;
     }
 
     try {
+        console.log('✅ JSON file found, parsing...');
         const report = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
         const stats = { total: 0, passed: 0, failed: 0 };
 
@@ -138,9 +151,10 @@ function getTestStats(jsonPath) {
             ? ((stats.passed / stats.total) * 100).toFixed(1) 
             : '0';
 
+        console.log(`📊 Stats: ${stats.passed}/${stats.total} passed (${stats.passRate}%)`);
         return stats;
     } catch (error) {
-        console.error('Error reading test stats:', error.message);
+        console.error('❌ Error reading test stats:', error.message);
         return defaultStats;
     }
 }
