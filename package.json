@@ -10,7 +10,8 @@
     "test": "playwright test",
     "test:surveys": "playwright test surveys.test.ts",
     "test:surveys:headed": "playwright test surveys.test.ts --headed",
-    "test:surveys:debug": "playwright test surveys.test.ts --debug"
+    "test:surveys:debug": "playwright test surveys.test.ts --debug",
+    "generate-tests": "npx ts-node scripts/auto-generate-tests.ts"
   },
   "keywords": [],
   "author": "",
