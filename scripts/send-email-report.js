@@ -47,6 +47,16 @@ async function sendEmailReport() {
         const jsonPath = path.join(__dirname, '../test-results.json');
         console.log(`📊 Looking for JSON at: ${jsonPath}`);
         const stats = getTestStats(jsonPath);
+        
+        // Load full JSON report for failed test detection
+        let testResults = null;
+        if (fs.existsSync(jsonPath)) {
+            try {
+                testResults = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+            } catch (error) {
+                console.warn('⚠️ Could not parse test results JSON:', error.message);
+            }
+        }
 
         // Create transporter
         console.log('📤 Creating email transporter...');
@@ -71,6 +81,120 @@ async function sendEmailReport() {
                 filename: 'test-report.html',
                 path: htmlReportPath
             });
+        }
+
+        // Add screenshots and videos from test-results directory
+        const testResultsDir = path.join(__dirname, '../test-results');
+        console.log(`🔍 Looking for screenshots and videos in: ${testResultsDir}`);
+        
+        if (fs.existsSync(testResultsDir)) {
+            // Get list of non-passing tests (failed, timeout, skipped, flaky, etc.)
+            const nonPassingTests = new Set();
+            if (testResults && testResults.suites) {
+                const extractNonPassingTests = (suite) => {
+                    if (suite.specs) {
+                        suite.specs.forEach(spec => {
+                            // Check if the spec is NOT ok (includes all non-passing states)
+                            // This covers: failed, timeout, skipped, flaky, interrupted, etc.
+                            if (!spec.ok) {
+                                const testName = spec.title;
+                                nonPassingTests.add(testName);
+                                console.log(`  ❌ Non-passing test found: "${testName}"`);
+                            } else if (spec.tests) {
+                                // Also check individual test results
+                                spec.tests.forEach(test => {
+                                    if (test.status !== 'expected' && test.status !== 'skipped') {
+                                        const testName = spec.title;
+                                        nonPassingTests.add(testName);
+                                        console.log(`  ❌ Non-passing test (${test.status}): "${testName}"`);
+                                    }
+                                    // Check test results for failures
+                                    if (test.results) {
+                                        test.results.forEach(result => {
+                                            if (result.status !== 'passed') {
+                                                const testName = spec.title;
+                                                nonPassingTests.add(testName);
+                                                console.log(`  ❌ Non-passing result (${result.status}): "${testName}"`);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    if (suite.suites) {
+                        suite.suites.forEach(extractNonPassingTests);
+                    }
+                };
+                testResults.suites.forEach(extractNonPassingTests);
+            }
+            
+            console.log(`🔍 Found ${nonPassingTests.size} non-passing test(s)`);
+            
+            const addMediaFiles = (dir, depth = 0) => {
+                if (depth > 3) return; // Prevent infinite recursion
+                
+                try {
+                    const files = fs.readdirSync(dir);
+                    files.forEach(file => {
+                        const fullPath = path.join(dir, file);
+                        const stat = fs.statSync(fullPath);
+                        
+                        if (stat.isDirectory()) {
+                            addMediaFiles(fullPath, depth + 1);
+                        } else {
+                            const ext = path.extname(file).toLowerCase();
+                            const dirName = path.basename(path.dirname(fullPath));
+                            
+                            // Check if this media file is from a non-passing test
+                            // Match by checking if the directory name contains parts of the test name
+                            const isFromNonPassingTest = Array.from(nonPassingTests).some(testName => {
+                                // Extract key words from test name (remove common words)
+                                const testWords = testName.toLowerCase()
+                                    .replace(/\bshould\b|\btest\b|\bfor\b|\bto\b|\bthe\b|\ba\b|\ban\b|\band\b|\bor\b|\bwith\b|\bin\b|\bon\b|\bat\b/gi, ' ')
+                                    .split(/\s+/)
+                                    .filter(word => word.length > 3); // Increase minimum length to 4
+                                
+                                // Check if directory contains any significant test words
+                                const dirNameLower = dirName.toLowerCase();
+                                return testWords.some(word => dirNameLower.includes(word));
+                            });
+                            
+                            // Only attach media if there are non-passing tests and this file is from one
+                            if (nonPassingTests.size > 0 && isFromNonPassingTest) {
+                                // Add screenshots and videos
+                                if (ext === '.png' || ext === '.jpg' || ext === '.jpeg') {
+                                    console.log(`📸 Adding screenshot from non-passing test: ${file}`);
+                                    attachments.push({
+                                        filename: `screenshot-${dirName}-${file}`,
+                                        path: fullPath,
+                                        contentType: 'image/png'
+                                    });
+                                } else if (ext === '.webm' || ext === '.mp4') {
+                                    console.log(`🎥 Adding video from non-passing test: ${file}`);
+                                    attachments.push({
+                                        filename: `video-${dirName}-${file}`,
+                                        path: fullPath,
+                                        contentType: ext === '.webm' ? 'video/webm' : 'video/mp4'
+                                    });
+                                }
+                            }
+                        }
+                    });
+                } catch (err) {
+                    console.warn(`⚠️ Error reading directory ${dir}:`, err.message);
+                }
+            };
+            
+            addMediaFiles(testResultsDir);
+            const mediaCount = attachments.length - 1;
+            if (nonPassingTests.size > 0) {
+                console.log(`📎 Total attachments: ${attachments.length} (1 HTML report + ${mediaCount} media file${mediaCount !== 1 ? 's' : ''} from non-passing tests)`);
+            } else {
+                console.log(`📎 Total attachments: ${attachments.length} (1 HTML report only - all tests passed! ✅)`);
+            }
+        } else {
+            console.log('⚠️ test-results directory not found, no screenshots/videos to attach');
         }
 
         // Send email
@@ -336,7 +460,12 @@ function generateEmailHTML(summary, stats, reportDir) {
         ${stats.failedTests && stats.failedTests.length > 0 ? generateFailureDetailsHTML(stats.failedTests) : ''}
 
         <div style="text-align: center; margin: 30px 0;">
-            <p style="color: #7f8c8d;">📎 Full HTML report is attached to this email</p>
+            <p style="color: #7f8c8d;">📎 Attachments included:</p>
+            <ul style="list-style: none; padding: 0; color: #555;">
+                <li>✅ Full HTML test report</li>
+                <li>📸 Screenshots (on test failures)</li>
+                <li>🎥 Video recordings (on test failures)</li>
+            </ul>
             <p style="color: #7f8c8d; font-size: 14px;">Report Location: ${path.basename(reportDir)}</p>
         </div>
 
@@ -429,7 +558,7 @@ function generateFailureDetailsHTML(failedTests) {
                 </div>
                 ` : ''}
                 <p style="margin: 10px 0 0 0; color: #7f8c8d; font-size: 13px;">
-                    📸 <strong>Evidence:</strong> Check attached HTML report for screenshots and videos
+                    📸 <strong>Evidence:</strong> Screenshots and videos are attached to this email
                 </p>
             </div>
         `;

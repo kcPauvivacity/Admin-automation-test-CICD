@@ -15,7 +15,10 @@ export default defineConfig({
     ['json', { outputFile: 'test-results.json' }], 
     ['list'],
     ['junit', { outputFile: 'test-results.xml' }]
-  ] : 'html',
+  ] : [
+    ['html'],
+    ['json', { outputFile: 'test-results.json' }]
+  ],
   use: {
     baseURL: 'https://viva-staging.uk.auth0.com',
     
