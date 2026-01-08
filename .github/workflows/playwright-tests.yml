@@ -39,6 +39,24 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
       
+    - name: Auto-generate tests for new modules (Optional)
+      env:
+        TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        BASE_URL: ${{ secrets.BASE_URL }}
+      run: |
+        echo "🤖 Running auto-generation to detect new modules..."
+        npm run generate-tests || {
+          echo "⚠️ Auto-generation failed or skipped"
+          echo "Continuing with existing tests..."
+          exit 0
+        }
+        echo "✅ Auto-generation completed"
+        echo ""
+        echo "📊 Checking for newly generated tests..."
+        ls -la tests/auto-generated/ || echo "No auto-generated tests directory"
+      continue-on-error: true
+      
     - name: Debug - Check Environment Variables
       run: |
         echo "🔍 Checking environment variables..."

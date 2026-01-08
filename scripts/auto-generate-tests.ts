@@ -1,4 +1,5 @@
-import { chromium, Browser, Page } from '@playwright/test';
+import { chromium } from '@playwright/test';
+import type { Browser, Page } from 'playwright';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -41,7 +42,7 @@ class AutoTestGenerator {
 
     async login() {
         console.log('🔐 Logging in...');
-        await this.page.goto(this.baseUrl, { waitUntil: 'networkidle' });
+        await this.page.goto(this.baseUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
         
         // Login flow
         await this.page.waitForSelector('input[name="username"]', { timeout: 10000 });
@@ -52,15 +53,23 @@ class AutoTestGenerator {
         await this.page.fill('input[name="password"]', this.password);
         await this.page.click('button[type="submit"]');
         
-        await this.page.waitForLoadState('networkidle', { timeout: 30000 });
-        await this.page.waitForTimeout(3000);
+        // Wait for navigation after login
+        await this.page.waitForTimeout(5000);
         
-        // Handle passkey enrollment
+        // Handle passkey enrollment with longer timeout
         const continueButton = this.page.locator('button:has-text("Continue"), a:has-text("Continue")').first();
-        if (await continueButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-            await continueButton.click();
-            await this.page.waitForLoadState('networkidle');
+        try {
+            if (await continueButton.isVisible({ timeout: 5000 })) {
+                await continueButton.click();
+                await this.page.waitForTimeout(3000);
+            }
+        } catch (error) {
+            console.log('  ℹ️ No passkey enrollment prompt');
         }
+        
+        // Wait for dashboard to load
+        await this.page.waitForLoadState('domcontentloaded', { timeout: 60000 });
+        await this.page.waitForTimeout(2000);
         
         console.log('✅ Login successful');
     }
@@ -68,8 +77,13 @@ class AutoTestGenerator {
     async scanForModules() {
         console.log('🔍 Scanning for modules...');
         
-        // Find all navigation links
-        const navLinks = await this.page.locator('nav a, aside a, [role="navigation"] a').all();
+        // Wait for page to be stable
+        await this.page.waitForTimeout(3000);
+        
+        // Find all navigation links - improved selectors for your app
+        const navLinks = await this.page.locator('a[href*="/demo-student/"], nav a, aside a, [class*="sidebar"] a, [class*="menu"] a').all();
+        
+        console.log(`Found ${navLinks.length} potential navigation links`);
         
         for (const link of navLinks) {
             try {
@@ -77,14 +91,14 @@ class AutoTestGenerator {
                 const href = await link.getAttribute('href');
                 
                 if (!text || !text.trim() || text.trim().length < 2) continue;
+                if (!href || href === '#' || href === 'javascript:void(0)') continue;
                 
                 const moduleName = text.trim();
                 console.log(`  📂 Found module: ${moduleName}`);
                 
                 // Click and analyze the module
-                await link.click();
-                await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
-                await this.page.waitForTimeout(2000);
+                await link.click({ timeout: 5000 });
+                await this.page.waitForTimeout(3000);
                 
                 const moduleInfo = await this.analyzeCurrentPage(moduleName);
                 this.detectedModules.push(moduleInfo);
@@ -136,8 +150,8 @@ class AutoTestGenerator {
     generateTestFile(module: ModuleInfo): string {
         const fileName = module.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         const testContent = `import { test, expect } from '@playwright/test';
-import { loginToApp } from './helpers/auth.helper';
-import { createAutoHealing } from './helpers/auto-healing.helper';
+import { loginToApp } from '../helpers/auth.helper';
+import { createAutoHealing } from '../helpers/auto-healing.helper';
 
 test.describe('${module.name} Tests', () => {
     test.beforeEach(async ({ page }) => {
