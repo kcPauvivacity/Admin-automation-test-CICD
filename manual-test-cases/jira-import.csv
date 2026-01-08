@@ -1,0 +1,530 @@
+Summary,Description,Priority,Issue Type,Labels
+[AI-CHATNEW-001] should access AI ChatNew page,"*Description:*
+Verify that access AI ChatNew page in the AI ChatNew module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to AI ChatNew module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=AI ChatNew',
+            'a:has-text(""AI ChatNew"")',
+            '[href*=""ai-chatnew""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. AI ChatNew page loaded successfully",High,Test,"AI ChatNew,Functional,Automated"
+[AI-CHATNEW-002] should display AI ChatNew list/table,"*Description:*
+Verify that display AI ChatNew list/table in the AI ChatNew module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to AI ChatNew module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=AI ChatNew'
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Count should be greater than 0",Medium,Test,"AI ChatNew,UI,Automated"
+[AI-CHATNEW-003] should navigate through AI ChatNew sections,"*Description:*
+Verify that navigate through AI ChatNew sections in the AI ChatNew module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to AI ChatNew module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=AI ChatNew'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. AI ChatNew navigation tested",Medium,Test,"AI ChatNew,Functional,Automated"
+[ARTICLES-001] should access Articles page,"*Description:*
+Verify that access Articles page in the Articles module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Articles module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=Articles',
+            'a:has-text(""Articles"")',
+            '[href*=""articles""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Articles page loaded successfully",High,Test,"Articles,Functional,Automated"
+[ARTICLES-002] should display Articles list/table,"*Description:*
+Verify that display Articles list/table in the Articles module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Articles module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Articles'
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Count should be greater than 0",Medium,Test,"Articles,UI,Automated"
+[ARTICLES-003] should navigate through Articles sections,"*Description:*
+Verify that navigate through Articles sections in the Articles module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Articles module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Articles'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. Articles navigation tested",Medium,Test,"Articles,Functional,Automated"
+[CONTACTSNEW-001] should access ContactsNew page,"*Description:*
+Verify that access ContactsNew page in the ContactsNew module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to ContactsNew module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=ContactsNew',
+            'a:has-text(""ContactsNew"")',
+            '[href*=""contactsnew""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. ContactsNew page loaded successfully",High,Test,"ContactsNew,Functional,Automated"
+[CONTACTSNEW-002] should display ContactsNew list/table,"*Description:*
+Verify that display ContactsNew list/table in the ContactsNew module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to ContactsNew module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=ContactsNew'
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Count should be greater than 0",Medium,Test,"ContactsNew,UI,Automated"
+[CONTACTSNEW-003] should navigate through ContactsNew sections,"*Description:*
+Verify that navigate through ContactsNew sections in the ContactsNew module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to ContactsNew module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=ContactsNew'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. ContactsNew navigation tested",Medium,Test,"ContactsNew,Functional,Automated"
+[DASHBOARDNEW-001] should access DashboardNew page,"*Description:*
+Verify that access DashboardNew page in the DashboardNew module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to DashboardNew module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=DashboardNew',
+            'a:has-text(""DashboardNew"")',
+            '[href*=""dashboardnew""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. DashboardNew page loaded successfully",High,Test,"DashboardNew,Functional,Automated"
+[DASHBOARDNEW-002] should display DashboardNew list/table,"*Description:*
+Verify that display DashboardNew list/table in the DashboardNew module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to DashboardNew module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=DashboardNew'
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Count should be greater than 0",Medium,Test,"DashboardNew,UI,Automated"
+[DASHBOARDNEW-003] should navigate through DashboardNew sections,"*Description:*
+Verify that navigate through DashboardNew sections in the DashboardNew module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to DashboardNew module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=DashboardNew'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. DashboardNew navigation tested",Medium,Test,"DashboardNew,Functional,Automated"
+[ENQUIRIES-001] should access Enquiries page,"*Description:*
+Verify that access Enquiries page in the Enquiries module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Enquiries module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=Enquiries',
+            'a:has-text(""Enquiries"")',
+            '[href*=""enquiries""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Enquiries page loaded successfully",High,Test,"Enquiries,Functional,Automated"
+[ENQUIRIES-002] should display Enquiries list/table,"*Description:*
+Verify that display Enquiries list/table in the Enquiries module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Enquiries module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Enquiries'
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Count should be greater than 0",Medium,Test,"Enquiries,UI,Automated"
+[ENQUIRIES-003] should navigate through Enquiries sections,"*Description:*
+Verify that navigate through Enquiries sections in the Enquiries module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Enquiries module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Enquiries'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. Enquiries navigation tested",Medium,Test,"Enquiries,Functional,Automated"
+[PROJECTS-001] should access Projects page,"*Description:*
+Verify that access Projects page in the Projects module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Projects module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=Projects',
+            'a:has-text(""Projects"")',
+            '[href*=""projects""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Projects page loaded successfully",High,Test,"Projects,Functional,Automated"
+[PROJECTS-002] should navigate through Projects sections,"*Description:*
+Verify that navigate through Projects sections in the Projects module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Projects module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Projects'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. Projects navigation tested",Medium,Test,"Projects,Functional,Automated"
+[PROMOTIONS-001] should access Promotions page,"*Description:*
+Verify that access Promotions page in the Promotions module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Promotions module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=Promotions',
+            'a:has-text(""Promotions"")',
+            '[href*=""promotions""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Promotions page loaded successfully",High,Test,"Promotions,Functional,Automated"
+[PROMOTIONS-002] should display Promotions list/table,"*Description:*
+Verify that display Promotions list/table in the Promotions module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Promotions module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Promotions'
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Count should be greater than 0",Medium,Test,"Promotions,UI,Automated"
+[PROMOTIONS-003] should navigate through Promotions sections,"*Description:*
+Verify that navigate through Promotions sections in the Promotions module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Promotions module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Promotions'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. Promotions navigation tested",Medium,Test,"Promotions,Functional,Automated"
+[PROPERTIES-001] should access Properties page,"*Description:*
+Verify that access Properties page in the Properties module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Properties module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=Properties',
+            'a:has-text(""Properties"")',
+            '[href*=""properties""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Properties page loaded successfully",High,Test,"Properties,Functional,Automated"
+[PROPERTIES-002] should display Properties list/table,"*Description:*
+Verify that display Properties list/table in the Properties module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Properties module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Properties'
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Count should be greater than 0",Medium,Test,"Properties,UI,Automated"
+[PROPERTIES-003] should navigate through Properties sections,"*Description:*
+Verify that navigate through Properties sections in the Properties module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Properties module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Properties'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. Properties navigation tested",Medium,Test,"Properties,Functional,Automated"
+[REPORTS-001] should access Reports page,"*Description:*
+Verify that access Reports page in the Reports module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Reports module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=Reports',
+            'a:has-text(""Reports"")',
+            '[href*=""reports""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Reports page loaded successfully",High,Test,"Reports,Functional,Automated"
+[REPORTS-002] should navigate through Reports sections,"*Description:*
+Verify that navigate through Reports sections in the Reports module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Reports module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Reports'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. Reports navigation tested",Medium,Test,"Reports,Functional,Automated"
+[SURVEYS-001] should access Surveys page,"*Description:*
+Verify that access Surveys page in the Surveys module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Surveys module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=Surveys',
+            'a:has-text(""Surveys"")',
+            '[href*=""surveys""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Surveys page loaded successfully",High,Test,"Surveys,Functional,Automated"
+[SURVEYS-002] should display Surveys list/table,"*Description:*
+Verify that display Surveys list/table in the Surveys module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Surveys module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Surveys'
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Count should be greater than 0",Medium,Test,"Surveys,UI,Automated"
+[SURVEYS-003] should navigate through Surveys sections,"*Description:*
+Verify that navigate through Surveys sections in the Surveys module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Surveys module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Surveys'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. Surveys navigation tested",Medium,Test,"Surveys,Functional,Automated"
+[TRACKING-001] should access Tracking page,"*Description:*
+Verify that access Tracking page in the Tracking module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Tracking module
+
+*Test Steps:*
+1. Click on element using selectors: 
+            'text=Tracking',
+            'a:has-text(""Tracking"")',
+            '[href*=""tracking""
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Tracking page loaded successfully",High,Test,"Tracking,Functional,Automated"
+[TRACKING-002] should display Tracking list/table,"*Description:*
+Verify that display Tracking list/table in the Tracking module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Tracking module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Tracking'
+2. Wait for page to load completely
+3. Wait for page to finish loading
+
+*Expected Results:*
+1. Element should be visible on the page
+2. Count should be greater than 0",Medium,Test,"Tracking,UI,Automated"
+[TRACKING-003] should navigate through Tracking sections,"*Description:*
+Verify that navigate through Tracking sections in the Tracking module works correctly.
+
+*Preconditions:*
+1. User must be logged in to the application
+2. User must have appropriate permissions
+3. Navigate to Tracking module
+
+*Test Steps:*
+1. Click on element using selectors: 'text=Tracking'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading
+
+*Expected Results:*
+1. Tracking navigation tested",Medium,Test,"Tracking,Functional,Automated"

@@ -11,7 +11,9 @@
     "test:surveys": "playwright test surveys.test.ts",
     "test:surveys:headed": "playwright test surveys.test.ts --headed",
     "test:surveys:debug": "playwright test surveys.test.ts --debug",
-    "generate-tests": "npx ts-node scripts/auto-generate-tests.ts"
+    "generate-tests": "npx ts-node scripts/auto-generate-tests.ts",
+    "generate-manual-tests": "npx ts-node scripts/generate-manual-test-cases.ts",
+    "generate-all": "npm run generate-tests && npm run generate-manual-tests"
   },
   "keywords": [],
   "author": "",

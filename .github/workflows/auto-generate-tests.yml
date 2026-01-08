@@ -35,19 +35,30 @@ jobs:
         npm run generate-tests
         echo ""
         echo "✅ Auto-generation completed"
+        echo ""
+        echo "📋 Generating manual test cases..."
+        npm run generate-manual-tests
+        echo ""
+        echo "✅ Manual test case generation completed"
         
     - name: Check generated files
       run: |
-        echo "📊 Generated test files:"
+        echo "📊 Generated automated test files:"
         ls -la tests/auto-generated/ || echo "No files generated"
         echo ""
-        echo "📄 Generation report:"
+        echo "� Generated manual test cases:"
+        ls -la manual-test-cases/ || echo "No manual test cases generated"
+        echo ""
+        echo "�📄 Generation report:"
         cat tests/auto-generated/GENERATION_REPORT.md || echo "No report found"
+        echo ""
+        echo "📄 Manual test summary:"
+        cat manual-test-cases/SUMMARY.md || echo "No summary found"
         
     - name: Check for new tests
       id: check-changes
       run: |
-        if git diff --quiet tests/auto-generated/; then
+        if git diff --quiet tests/auto-generated/ manual-test-cases/; then
           echo "No new tests generated"
           echo "has_changes=false" >> $GITHUB_OUTPUT
         else
@@ -60,21 +71,31 @@ jobs:
       uses: peter-evans/create-pull-request@v5
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: 'Auto-generate tests for new modules'
-        title: '🤖 Auto-generated tests for new modules'
+        commit-message: 'Auto-generate tests for new modules with manual test cases'
+        title: '🤖 Auto-generated tests and manual test cases for new modules'
         body: |
-          ## Auto-Generated Tests
+          ## Auto-Generated Tests & Manual Test Cases
           
           This PR was automatically created by the test generation workflow.
           
           ### What's included:
-          - New test files for detected modules
-          - Updated generation report
+          - ✅ New automated test files for detected modules
+          - ✅ Updated generation report
+          - 📋 Manual test cases in multiple formats:
+            - Markdown (manual-test-cases.md)
+            - Excel/CSV (manual-test-cases.csv)
+            - Jira import (jira-import.csv)
+            - TestRail import (testrail-import.csv)
+          
+          ### Manual Test Cases Summary:
+          See `manual-test-cases/SUMMARY.md` for detailed breakdown
           
           ### Next steps:
-          1. Review the generated tests
-          2. Customize test scenarios if needed
-          3. Merge to add these tests to the daily CI/CD run
+          1. Review the generated automated tests
+          2. Review the manual test cases
+          3. Customize test scenarios if needed
+          4. Import manual tests to your test management tool
+          5. Merge to add these tests to the daily CI/CD run
           
           Generated on: ${{ github.run_id }}
         branch: auto-generated-tests-${{ github.run_number }}
@@ -86,6 +107,14 @@ jobs:
       with:
         name: generation-report
         path: tests/auto-generated/GENERATION_REPORT.md
+        retention-days: 30
+        
+    - name: Upload manual test cases
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: manual-test-cases
+        path: manual-test-cases/
         retention-days: 30
         
     - name: Generate Summary

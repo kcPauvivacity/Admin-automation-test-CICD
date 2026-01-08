@@ -1,0 +1,220 @@
+Section,Test Case ID,Title,Type,Priority,Estimate,References,Automation Type,Preconditions,Steps,Expected Result
+AI ChatNew,AI-CHATNEW-001,should access AI ChatNew page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to AI ChatNew module","1. Click on element using selectors: 
+            'text=AI ChatNew',
+            'a:has-text(""AI ChatNew"")',
+            '[href*=""ai-chatnew""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. AI ChatNew page loaded successfully"
+AI ChatNew,AI-CHATNEW-002,should display AI ChatNew list/table,UI,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to AI ChatNew module","1. Click on element using selectors: 'text=AI ChatNew'
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Count should be greater than 0"
+AI ChatNew,AI-CHATNEW-003,should navigate through AI ChatNew sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to AI ChatNew module","1. Click on element using selectors: 'text=AI ChatNew'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. AI ChatNew navigation tested
+Articles,ARTICLES-001,should access Articles page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Articles module","1. Click on element using selectors: 
+            'text=Articles',
+            'a:has-text(""Articles"")',
+            '[href*=""articles""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Articles page loaded successfully"
+Articles,ARTICLES-002,should display Articles list/table,UI,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Articles module","1. Click on element using selectors: 'text=Articles'
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Count should be greater than 0"
+Articles,ARTICLES-003,should navigate through Articles sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Articles module","1. Click on element using selectors: 'text=Articles'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. Articles navigation tested
+ContactsNew,CONTACTSNEW-001,should access ContactsNew page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to ContactsNew module","1. Click on element using selectors: 
+            'text=ContactsNew',
+            'a:has-text(""ContactsNew"")',
+            '[href*=""contactsnew""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. ContactsNew page loaded successfully"
+ContactsNew,CONTACTSNEW-002,should display ContactsNew list/table,UI,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to ContactsNew module","1. Click on element using selectors: 'text=ContactsNew'
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Count should be greater than 0"
+ContactsNew,CONTACTSNEW-003,should navigate through ContactsNew sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to ContactsNew module","1. Click on element using selectors: 'text=ContactsNew'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. ContactsNew navigation tested
+DashboardNew,DASHBOARDNEW-001,should access DashboardNew page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to DashboardNew module","1. Click on element using selectors: 
+            'text=DashboardNew',
+            'a:has-text(""DashboardNew"")',
+            '[href*=""dashboardnew""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. DashboardNew page loaded successfully"
+DashboardNew,DASHBOARDNEW-002,should display DashboardNew list/table,UI,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to DashboardNew module","1. Click on element using selectors: 'text=DashboardNew'
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Count should be greater than 0"
+DashboardNew,DASHBOARDNEW-003,should navigate through DashboardNew sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to DashboardNew module","1. Click on element using selectors: 'text=DashboardNew'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. DashboardNew navigation tested
+Enquiries,ENQUIRIES-001,should access Enquiries page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Enquiries module","1. Click on element using selectors: 
+            'text=Enquiries',
+            'a:has-text(""Enquiries"")',
+            '[href*=""enquiries""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Enquiries page loaded successfully"
+Enquiries,ENQUIRIES-002,should display Enquiries list/table,UI,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Enquiries module","1. Click on element using selectors: 'text=Enquiries'
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Count should be greater than 0"
+Enquiries,ENQUIRIES-003,should navigate through Enquiries sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Enquiries module","1. Click on element using selectors: 'text=Enquiries'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. Enquiries navigation tested
+Projects,PROJECTS-001,should access Projects page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Projects module","1. Click on element using selectors: 
+            'text=Projects',
+            'a:has-text(""Projects"")',
+            '[href*=""projects""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Projects page loaded successfully"
+Projects,PROJECTS-002,should navigate through Projects sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Projects module","1. Click on element using selectors: 'text=Projects'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. Projects navigation tested
+Promotions,PROMOTIONS-001,should access Promotions page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Promotions module","1. Click on element using selectors: 
+            'text=Promotions',
+            'a:has-text(""Promotions"")',
+            '[href*=""promotions""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Promotions page loaded successfully"
+Promotions,PROMOTIONS-002,should display Promotions list/table,UI,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Promotions module","1. Click on element using selectors: 'text=Promotions'
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Count should be greater than 0"
+Promotions,PROMOTIONS-003,should navigate through Promotions sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Promotions module","1. Click on element using selectors: 'text=Promotions'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. Promotions navigation tested
+Properties,PROPERTIES-001,should access Properties page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Properties module","1. Click on element using selectors: 
+            'text=Properties',
+            'a:has-text(""Properties"")',
+            '[href*=""properties""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Properties page loaded successfully"
+Properties,PROPERTIES-002,should display Properties list/table,UI,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Properties module","1. Click on element using selectors: 'text=Properties'
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Count should be greater than 0"
+Properties,PROPERTIES-003,should navigate through Properties sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Properties module","1. Click on element using selectors: 'text=Properties'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. Properties navigation tested
+Reports,REPORTS-001,should access Reports page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Reports module","1. Click on element using selectors: 
+            'text=Reports',
+            'a:has-text(""Reports"")',
+            '[href*=""reports""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Reports page loaded successfully"
+Reports,REPORTS-002,should navigate through Reports sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Reports module","1. Click on element using selectors: 'text=Reports'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. Reports navigation tested
+Surveys,SURVEYS-001,should access Surveys page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Surveys module","1. Click on element using selectors: 
+            'text=Surveys',
+            'a:has-text(""Surveys"")',
+            '[href*=""surveys""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Surveys page loaded successfully"
+Surveys,SURVEYS-002,should display Surveys list/table,UI,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Surveys module","1. Click on element using selectors: 'text=Surveys'
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Count should be greater than 0"
+Surveys,SURVEYS-003,should navigate through Surveys sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Surveys module","1. Click on element using selectors: 'text=Surveys'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. Surveys navigation tested
+Tracking,TRACKING-001,should access Tracking page,Functional,High,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Tracking module","1. Click on element using selectors: 
+            'text=Tracking',
+            'a:has-text(""Tracking"")',
+            '[href*=""tracking""
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Tracking page loaded successfully"
+Tracking,TRACKING-002,should display Tracking list/table,UI,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Tracking module","1. Click on element using selectors: 'text=Tracking'
+2. Wait for page to load completely
+3. Wait for page to finish loading","1. Element should be visible on the page
+2. Count should be greater than 0"
+Tracking,TRACKING-003,should navigate through Tracking sections,Functional,Medium,5m,,Automated (Playwright),"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Tracking module","1. Click on element using selectors: 'text=Tracking'
+2. Click the element
+3. Wait for page to load completely
+4. Wait for page to finish loading",1. Tracking navigation tested

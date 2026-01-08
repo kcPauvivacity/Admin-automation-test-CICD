@@ -1,0 +1,220 @@
+Test ID,Module,Test Title,Priority,Type,Description,Preconditions,Test Steps,Expected Results
+AI-CHATNEW-001,AI ChatNew,should access AI ChatNew page,High,Functional,Verify that access AI ChatNew page in the AI ChatNew module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to AI ChatNew module","Click on element using selectors: 
+            'text=AI ChatNew',
+            'a:has-text(""AI ChatNew"")',
+            '[href*=""ai-chatnew""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+AI ChatNew page loaded successfully"
+AI-CHATNEW-002,AI ChatNew,should display AI ChatNew list/table,Medium,UI,Verify that display AI ChatNew list/table in the AI ChatNew module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to AI ChatNew module","Click on element using selectors: 'text=AI ChatNew'
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Count should be greater than 0"
+AI-CHATNEW-003,AI ChatNew,should navigate through AI ChatNew sections,Medium,Functional,Verify that navigate through AI ChatNew sections in the AI ChatNew module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to AI ChatNew module","Click on element using selectors: 'text=AI ChatNew'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",AI ChatNew navigation tested
+ARTICLES-001,Articles,should access Articles page,High,Functional,Verify that access Articles page in the Articles module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Articles module","Click on element using selectors: 
+            'text=Articles',
+            'a:has-text(""Articles"")',
+            '[href*=""articles""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Articles page loaded successfully"
+ARTICLES-002,Articles,should display Articles list/table,Medium,UI,Verify that display Articles list/table in the Articles module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Articles module","Click on element using selectors: 'text=Articles'
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Count should be greater than 0"
+ARTICLES-003,Articles,should navigate through Articles sections,Medium,Functional,Verify that navigate through Articles sections in the Articles module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Articles module","Click on element using selectors: 'text=Articles'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",Articles navigation tested
+CONTACTSNEW-001,ContactsNew,should access ContactsNew page,High,Functional,Verify that access ContactsNew page in the ContactsNew module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to ContactsNew module","Click on element using selectors: 
+            'text=ContactsNew',
+            'a:has-text(""ContactsNew"")',
+            '[href*=""contactsnew""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+ContactsNew page loaded successfully"
+CONTACTSNEW-002,ContactsNew,should display ContactsNew list/table,Medium,UI,Verify that display ContactsNew list/table in the ContactsNew module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to ContactsNew module","Click on element using selectors: 'text=ContactsNew'
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Count should be greater than 0"
+CONTACTSNEW-003,ContactsNew,should navigate through ContactsNew sections,Medium,Functional,Verify that navigate through ContactsNew sections in the ContactsNew module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to ContactsNew module","Click on element using selectors: 'text=ContactsNew'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",ContactsNew navigation tested
+DASHBOARDNEW-001,DashboardNew,should access DashboardNew page,High,Functional,Verify that access DashboardNew page in the DashboardNew module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to DashboardNew module","Click on element using selectors: 
+            'text=DashboardNew',
+            'a:has-text(""DashboardNew"")',
+            '[href*=""dashboardnew""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+DashboardNew page loaded successfully"
+DASHBOARDNEW-002,DashboardNew,should display DashboardNew list/table,Medium,UI,Verify that display DashboardNew list/table in the DashboardNew module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to DashboardNew module","Click on element using selectors: 'text=DashboardNew'
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Count should be greater than 0"
+DASHBOARDNEW-003,DashboardNew,should navigate through DashboardNew sections,Medium,Functional,Verify that navigate through DashboardNew sections in the DashboardNew module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to DashboardNew module","Click on element using selectors: 'text=DashboardNew'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",DashboardNew navigation tested
+ENQUIRIES-001,Enquiries,should access Enquiries page,High,Functional,Verify that access Enquiries page in the Enquiries module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Enquiries module","Click on element using selectors: 
+            'text=Enquiries',
+            'a:has-text(""Enquiries"")',
+            '[href*=""enquiries""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Enquiries page loaded successfully"
+ENQUIRIES-002,Enquiries,should display Enquiries list/table,Medium,UI,Verify that display Enquiries list/table in the Enquiries module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Enquiries module","Click on element using selectors: 'text=Enquiries'
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Count should be greater than 0"
+ENQUIRIES-003,Enquiries,should navigate through Enquiries sections,Medium,Functional,Verify that navigate through Enquiries sections in the Enquiries module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Enquiries module","Click on element using selectors: 'text=Enquiries'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",Enquiries navigation tested
+PROJECTS-001,Projects,should access Projects page,High,Functional,Verify that access Projects page in the Projects module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Projects module","Click on element using selectors: 
+            'text=Projects',
+            'a:has-text(""Projects"")',
+            '[href*=""projects""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Projects page loaded successfully"
+PROJECTS-002,Projects,should navigate through Projects sections,Medium,Functional,Verify that navigate through Projects sections in the Projects module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Projects module","Click on element using selectors: 'text=Projects'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",Projects navigation tested
+PROMOTIONS-001,Promotions,should access Promotions page,High,Functional,Verify that access Promotions page in the Promotions module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Promotions module","Click on element using selectors: 
+            'text=Promotions',
+            'a:has-text(""Promotions"")',
+            '[href*=""promotions""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Promotions page loaded successfully"
+PROMOTIONS-002,Promotions,should display Promotions list/table,Medium,UI,Verify that display Promotions list/table in the Promotions module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Promotions module","Click on element using selectors: 'text=Promotions'
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Count should be greater than 0"
+PROMOTIONS-003,Promotions,should navigate through Promotions sections,Medium,Functional,Verify that navigate through Promotions sections in the Promotions module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Promotions module","Click on element using selectors: 'text=Promotions'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",Promotions navigation tested
+PROPERTIES-001,Properties,should access Properties page,High,Functional,Verify that access Properties page in the Properties module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Properties module","Click on element using selectors: 
+            'text=Properties',
+            'a:has-text(""Properties"")',
+            '[href*=""properties""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Properties page loaded successfully"
+PROPERTIES-002,Properties,should display Properties list/table,Medium,UI,Verify that display Properties list/table in the Properties module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Properties module","Click on element using selectors: 'text=Properties'
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Count should be greater than 0"
+PROPERTIES-003,Properties,should navigate through Properties sections,Medium,Functional,Verify that navigate through Properties sections in the Properties module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Properties module","Click on element using selectors: 'text=Properties'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",Properties navigation tested
+REPORTS-001,Reports,should access Reports page,High,Functional,Verify that access Reports page in the Reports module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Reports module","Click on element using selectors: 
+            'text=Reports',
+            'a:has-text(""Reports"")',
+            '[href*=""reports""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Reports page loaded successfully"
+REPORTS-002,Reports,should navigate through Reports sections,Medium,Functional,Verify that navigate through Reports sections in the Reports module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Reports module","Click on element using selectors: 'text=Reports'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",Reports navigation tested
+SURVEYS-001,Surveys,should access Surveys page,High,Functional,Verify that access Surveys page in the Surveys module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Surveys module","Click on element using selectors: 
+            'text=Surveys',
+            'a:has-text(""Surveys"")',
+            '[href*=""surveys""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Surveys page loaded successfully"
+SURVEYS-002,Surveys,should display Surveys list/table,Medium,UI,Verify that display Surveys list/table in the Surveys module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Surveys module","Click on element using selectors: 'text=Surveys'
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Count should be greater than 0"
+SURVEYS-003,Surveys,should navigate through Surveys sections,Medium,Functional,Verify that navigate through Surveys sections in the Surveys module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Surveys module","Click on element using selectors: 'text=Surveys'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",Surveys navigation tested
+TRACKING-001,Tracking,should access Tracking page,High,Functional,Verify that access Tracking page in the Tracking module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Tracking module","Click on element using selectors: 
+            'text=Tracking',
+            'a:has-text(""Tracking"")',
+            '[href*=""tracking""
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Tracking page loaded successfully"
+TRACKING-002,Tracking,should display Tracking list/table,Medium,UI,Verify that display Tracking list/table in the Tracking module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Tracking module","Click on element using selectors: 'text=Tracking'
+Wait for page to load completely
+Wait for page to finish loading","Element should be visible on the page
+Count should be greater than 0"
+TRACKING-003,Tracking,should navigate through Tracking sections,Medium,Functional,Verify that navigate through Tracking sections in the Tracking module works correctly.,"User must be logged in to the application
+User must have appropriate permissions
+Navigate to Tracking module","Click on element using selectors: 'text=Tracking'
+Click the element
+Wait for page to load completely
+Wait for page to finish loading",Tracking navigation tested
