@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "directories": {
     "test": "tests"
   },
@@ -11,15 +12,18 @@
     "test:surveys": "playwright test surveys.test.ts",
     "test:surveys:headed": "playwright test surveys.test.ts --headed",
     "test:surveys:debug": "playwright test surveys.test.ts --debug",
-    "generate-tests": "npx ts-node scripts/auto-generate-tests.ts",
-    "generate-manual-tests": "npx ts-node scripts/generate-manual-test-cases.ts",
+    "generate-tests": "tsx scripts/auto-generate-tests.ts",
+    "generate-manual-tests": "tsx scripts/generate-manual-test-cases.ts",
     "generate-all": "npm run generate-tests && npm run generate-manual-tests"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.56.1"
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "nodemailer": "^7.0.12"
