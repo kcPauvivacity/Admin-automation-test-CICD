@@ -58,12 +58,17 @@ jobs:
     - name: Check for new tests
       id: check-changes
       run: |
-        if git diff --quiet tests/auto-generated/ manual-test-cases/; then
-          echo "No new tests generated"
+        # Check if there are any changes in the working directory
+        git add tests/auto-generated/ manual-test-cases/ || true
+        if git diff --cached --quiet; then
+          echo "✅ No new tests generated - all modules already have tests"
           echo "has_changes=false" >> $GITHUB_OUTPUT
         else
-          echo "New tests detected!"
+          echo "🎉 New tests detected!"
           echo "has_changes=true" >> $GITHUB_OUTPUT
+          # Show what changed
+          echo "Changed files:"
+          git diff --cached --name-only
         fi
         
     - name: Create Pull Request with new tests
@@ -121,6 +126,8 @@ jobs:
       if: always()
       run: |
         echo "# Auto-Generation Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Status:** ${{ steps.check-changes.outputs.has_changes == 'true' && '🎉 New tests generated!' || '✅ All modules covered' }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         if [ -f tests/auto-generated/GENERATION_REPORT.md ]; then
           cat tests/auto-generated/GENERATION_REPORT.md >> $GITHUB_STEP_SUMMARY
