@@ -1,6 +1,11 @@
-const nodemailer = require('nodemailer');
-const fs = require('fs');
-const path = require('path');
+import nodemailer from 'nodemailer';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration - Update these with your email settings
 const EMAIL_CONFIG = {

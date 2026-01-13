@@ -1,5 +1,5 @@
 // Simple test script to verify Gmail credentials work
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 // Replace these with your actual values
 const EMAIL_USER = 'kc@vivacityapp.com';
