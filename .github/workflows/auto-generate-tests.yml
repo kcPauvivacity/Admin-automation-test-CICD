@@ -58,23 +58,23 @@ jobs:
     - name: Check for new tests
       id: check-changes
       run: |
-        # Check for NEW test files only (ignore GENERATION_REPORT.md changes)
-        git add tests/auto-generated/ manual-test-cases/ || true
+        # Check for NEW test files only (ignore report/summary files)
+        echo "Checking for changes..."
         
-        # Count changed files excluding the report
-        CHANGED_FILES=$(git diff --cached --name-only | grep -v "GENERATION_REPORT.md" | grep -v "SUMMARY.md" | wc -l)
+        # Get list of changed files, excluding reports
+        CHANGED_FILES=$(git status --porcelain tests/auto-generated/ manual-test-cases/ | grep -v "GENERATION_REPORT.md" | grep -v "SUMMARY.md" | wc -l | tr -d ' ')
+        
+        echo "Changed files count (excluding reports): $CHANGED_FILES"
         
         if [ "$CHANGED_FILES" -eq 0 ]; then
           echo "✅ No new tests generated - all modules already have tests"
           echo "has_changes=false" >> $GITHUB_OUTPUT
-          # Reset the staging area since we're not creating a PR
-          git reset HEAD
         else
-          echo "🎉 New tests detected! ($CHANGED_FILES files changed)"
+          echo "🎉 New tests detected! ($CHANGED_FILES files)"
           echo "has_changes=true" >> $GITHUB_OUTPUT
           echo ""
           echo "Changed files:"
-          git diff --cached --name-only | grep -v "GENERATION_REPORT.md" | grep -v "SUMMARY.md"
+          git status --porcelain tests/auto-generated/ manual-test-cases/ | grep -v "GENERATION_REPORT.md" | grep -v "SUMMARY.md"
         fi
         
     - name: Create Pull Request with new tests
@@ -85,8 +85,11 @@ jobs:
         commit-message: 'Auto-generate tests for new modules with manual test cases'
         title: '🤖 Auto-generated tests and manual test cases for new modules'
         add-paths: |
-          tests/auto-generated/
-          manual-test-cases/
+          tests/auto-generated/*.test.ts
+          manual-test-cases/*.md
+          manual-test-cases/*.csv
+        branch: auto-generated-tests-${{ github.run_number }}
+        delete-branch: true
         body: |
           ## Auto-Generated Tests & Manual Test Cases
           
@@ -112,8 +115,6 @@ jobs:
           5. Merge to add these tests to the daily CI/CD run
           
           Generated on: ${{ github.run_id }}
-        branch: auto-generated-tests-${{ github.run_number }}
-        delete-branch: true
         
     - name: Upload generation report
       uses: actions/upload-artifact@v4
