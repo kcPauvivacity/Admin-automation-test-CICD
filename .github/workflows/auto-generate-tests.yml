@@ -58,17 +58,23 @@ jobs:
     - name: Check for new tests
       id: check-changes
       run: |
-        # Check if there are any changes in the working directory
+        # Check for NEW test files only (ignore GENERATION_REPORT.md changes)
         git add tests/auto-generated/ manual-test-cases/ || true
-        if git diff --cached --quiet; then
+        
+        # Count changed files excluding the report
+        CHANGED_FILES=$(git diff --cached --name-only | grep -v "GENERATION_REPORT.md" | grep -v "SUMMARY.md" | wc -l)
+        
+        if [ "$CHANGED_FILES" -eq 0 ]; then
           echo "✅ No new tests generated - all modules already have tests"
           echo "has_changes=false" >> $GITHUB_OUTPUT
+          # Reset the staging area since we're not creating a PR
+          git reset HEAD
         else
-          echo "🎉 New tests detected!"
+          echo "🎉 New tests detected! ($CHANGED_FILES files changed)"
           echo "has_changes=true" >> $GITHUB_OUTPUT
-          # Show what changed
+          echo ""
           echo "Changed files:"
-          git diff --cached --name-only
+          git diff --cached --name-only | grep -v "GENERATION_REPORT.md" | grep -v "SUMMARY.md"
         fi
         
     - name: Create Pull Request with new tests
@@ -78,6 +84,9 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: 'Auto-generate tests for new modules with manual test cases'
         title: '🤖 Auto-generated tests and manual test cases for new modules'
+        add-paths: |
+          tests/auto-generated/
+          manual-test-cases/
         body: |
           ## Auto-Generated Tests & Manual Test Cases
           
