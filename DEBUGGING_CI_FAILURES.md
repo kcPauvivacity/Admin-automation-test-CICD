@@ -9,20 +9,20 @@
 **Your Setup:**
 - Local: Uses default values from `auth.helper.ts`
   - LOGIN_URL: `https://app-staging.vivacityapp.com`
-  - TEST_USERNAME: `kc@vivacityapp.com`
-  - TEST_PASSWORD: `PAOpaopao@9696`
+  - USERNAME: `kc@vivacityapp.com`
+  - PASSWORD: `PAOpaopao@9696`
   
 - CI/CD: Uses GitHub Secrets
-  - `BASE_URL` secret
-  - `TEST_USERNAME` secret
-  - `TEST_PASSWORD` secret
+  - `URL` secret
+  - `USERNAME` secret
+  - `PASSWORD` secret
 
 **How to Check:**
 1. Go to: https://github.com/kcPauvivacity/Admin-automation-test-CICD/settings/secrets/actions
 2. Verify these secrets exist and have correct values:
-   - `BASE_URL` = `https://app-staging.vivacityapp.com`
-   - `TEST_USERNAME` = `kc@vivacityapp.com`
-   - `TEST_PASSWORD` = `PAOpaopao@9696`
+   - `URL` = `https://app-staging.vivacityapp.com`
+   - `USERNAME` = `kc@vivacityapp.com`
+   - `PASSWORD` = `PAOpaopao@9696`
 
 **⚠️ CRITICAL:** If any secret is wrong, tests will fail to login!
 
@@ -136,9 +136,9 @@ Add this to `.github/workflows/playwright-tests.yml`:
 - name: Run Playwright tests
   env:
     DEBUG: pw:api  # Enable Playwright debug logs
-    TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-    TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-    BASE_URL: ${{ secrets.BASE_URL }}
+    USERNAME: ${{ secrets.USERNAME }}
+    PASSWORD: ${{ secrets.PASSWORD }}
+    URL: ${{ secrets.URL }}
 ```
 
 ---
@@ -150,9 +150,9 @@ Add this to `.github/workflows/playwright-tests.yml`:
 # Test if secrets are set correctly by adding this to workflow:
 - name: Debug secrets
   run: |
-    echo "BASE_URL is set: ${{ secrets.BASE_URL != '' }}"
-    echo "TEST_USERNAME is set: ${{ secrets.TEST_USERNAME != '' }}"
-    echo "TEST_PASSWORD is set: ${{ secrets.TEST_PASSWORD != '' }}"
+    echo "URL is set: ${{ secrets.URL != '' }}"
+    echo "USERNAME is set: ${{ secrets.USERNAME != '' }}"
+    echo "PASSWORD is set: ${{ secrets.PASSWORD != '' }}"
 ```
 
 ### Fix 2: Increase Timeouts
@@ -199,9 +199,9 @@ Based on your setup, the **#1 most likely issue** is:
 
 **How to test locally with same environment as CI:**
 ```bash
-export BASE_URL="https://app-staging.vivacityapp.com"
-export TEST_USERNAME="kc@vivacityapp.com"
-export TEST_PASSWORD="PAOpaopao@9696"
+export URL="https://app-staging.vivacityapp.com"
+export USERNAME="kc@vivacityapp.com"
+export PASSWORD="PAOpaopao@9696"
 export CI=true
 
 npx playwright test

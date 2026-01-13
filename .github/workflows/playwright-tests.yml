@@ -41,9 +41,9 @@ jobs:
       
     - name: Auto-generate tests for new modules (Optional)
       env:
-        TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-        BASE_URL: ${{ secrets.BASE_URL }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        URL: ${{ secrets.URL }}
       run: |
         echo "🤖 Running auto-generation to detect new modules..."
         npm run generate-tests || {
@@ -60,18 +60,18 @@ jobs:
     - name: Debug - Check Environment Variables
       run: |
         echo "🔍 Checking environment variables..."
-        echo "BASE_URL is set: ${{ secrets.BASE_URL != '' }}"
-        echo "TEST_USERNAME is set: ${{ secrets.TEST_USERNAME != '' }}"
-        echo "TEST_PASSWORD is set: ${{ secrets.TEST_PASSWORD != '' }}"
+        echo "URL is set: ${{ secrets.URL != '' }}"
+        echo "USERNAME is set: ${{ secrets.USERNAME != '' }}"
+        echo "PASSWORD is set: ${{ secrets.PASSWORD != '' }}"
         echo ""
         echo "Note: Actual values are hidden for security"
       
     - name: Run Playwright tests
       env:
         # Add your test credentials here as GitHub Secrets
-        TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-        BASE_URL: ${{ secrets.BASE_URL }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        URL: ${{ secrets.URL }}
         CI: true
       run: |
         echo "=== Running tests with configured reporters ==="

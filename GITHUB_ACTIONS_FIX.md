@@ -25,9 +25,9 @@ The **Auto-Generate Tests** workflow failed on Monday, January 12, 2026 at 4:37 
 
 ### 3. ⚠️ Missing GitHub Secrets (ACTION REQUIRED)
 The workflow still needs these environment variables:
-- `TEST_USERNAME` - Your login username
-- `TEST_PASSWORD` - Your login password  
-- `BASE_URL` - The application URL to test
+- `USERNAME` - Your login username
+- `PASSWORD` - Your login password  
+- `URL` - The application URL to test
 
 ## How to Fix
 
@@ -42,9 +42,9 @@ The code issues have been fixed and pushed to GitHub!
 
 | Secret Name | Value |
 |------------|-------|
-| `TEST_USERNAME` | `kiechee@ms.vivacityapp.com` |
-| `TEST_PASSWORD` | Your login password |
-| `BASE_URL` | `https://admin.ms.vivacityapp.com` (or your app URL) |
+| `USERNAME` | `kiechee@ms.vivacityapp.com` |
+| `PASSWORD` | Your login password |
+| `URL` | `https://admin.ms.vivacityapp.com` (or your app URL) |
 
 ### Step 2: Fix Headless Browser Issue
 Update `scripts/auto-generate-tests.ts` line 41 to detect CI environment:
@@ -79,7 +79,7 @@ After applying:
 3. Monitor the run to verify it succeeds
 
 ## Quick Verification Checklist
-- [ ] GitHub Secrets added (TEST_USERNAME, TEST_PASSWORD, BASE_URL)
+- [ ] GitHub Secrets added (USERNAME, PASSWORD, URL)
 - [ ] Script updated to use `headless: isCI`  
 - [ ] Changes committed and pushed
 - [ ] Manual workflow test successful ✅

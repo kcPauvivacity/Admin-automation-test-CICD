@@ -35,9 +35,9 @@ You need to add GitHub Secrets for the workflow to login:
 
 | Name | Value |
 |------|-------|
-| `TEST_USERNAME` | `kiechee@ms.vivacityapp.com` |
-| `TEST_PASSWORD` | Your login password |
-| `BASE_URL` | `https://admin.ms.vivacityapp.com` |
+| `USERNAME` | `kiechee@ms.vivacityapp.com` |
+| `PASSWORD` | Your login password |
+| `URL` | `https://admin.ms.vivacityapp.com` |
 
 ## Test the Fixed Workflow
 

@@ -47,18 +47,18 @@ jobs:
     - name: Check environment
       run: |
         echo "=== Environment Variables (masked) ==="
-        echo "TEST_USERNAME is set: ${{ secrets.TEST_USERNAME != '' }}"
-        echo "TEST_PASSWORD is set: ${{ secrets.TEST_PASSWORD != '' }}"
-        echo "BASE_URL is set: ${{ secrets.BASE_URL != '' }}"
+        echo "USERNAME is set: ${{ secrets.USERNAME != '' }}"
+        echo "PASSWORD is set: ${{ secrets.PASSWORD != '' }}"
+        echo "URL is set: ${{ secrets.URL != '' }}"
         echo "EMAIL_USER is set: ${{ secrets.EMAIL_USER != '' }}"
         echo "EMAIL_PASSWORD is set: ${{ secrets.EMAIL_PASSWORD != '' }}"
         echo "EMAIL_RECIPIENTS is set: ${{ secrets.EMAIL_RECIPIENTS != '' }}"
     
     - name: Run ONE test (login)
       env:
-        TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-        BASE_URL: ${{ secrets.BASE_URL }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        URL: ${{ secrets.URL }}
       run: |
         echo "=== Running single login test ==="
         npx playwright test tests/login.test.ts --reporter=list --max-failures=1

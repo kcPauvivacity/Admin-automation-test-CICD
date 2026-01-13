@@ -62,7 +62,7 @@ Your GitHub Actions workflow should now work completely!
 ### Next Step (Still Required):
 Add the 3 GitHub Secrets:
 1. Go to: https://github.com/kcPauvivacity/Admin-automation-test-CICD/settings/secrets/actions
-2. Add: `TEST_USERNAME`, `TEST_PASSWORD`, `BASE_URL`
+2. Add: `USERNAME`, `PASSWORD`, `URL`
 
 ### Test the Workflow:
 1. Go to: https://github.com/kcPauvivacity/Admin-automation-test-CICD/actions

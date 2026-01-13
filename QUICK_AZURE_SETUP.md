@@ -19,9 +19,9 @@ cd /Users/paukiechee/Applications
 
 ### What you need to provide:
 - Your Azure DevOps login (browser popup)
-- TEST_USERNAME: `kiechee@ms.vivacityapp.com`
-- TEST_PASSWORD: `[your password]`
-- BASE_URL: `https://app-staging.vivacityapp.com`
+- USERNAME: `kiechee@ms.vivacityapp.com`
+- PASSWORD: `[your password]`
+- URL: `https://app-staging.vivacityapp.com`
 - Email settings (optional)
 
 ---
@@ -33,9 +33,9 @@ cd /Users/paukiechee/Applications
 2. Click **+ Variable group**
 3. Name: `playwright-secrets`
 4. Add variables:
-   - `TEST_USERNAME` (secret) ✓
-   - `TEST_PASSWORD` (secret) ✓
-   - `BASE_URL`
+   - `USERNAME` (secret) ✓
+   - `PASSWORD` (secret) ✓
+   - `URL`
    - `EMAIL_USER` (secret, optional) ✓
    - `EMAIL_PASSWORD` (secret, optional) ✓
    - `EMAIL_RECIPIENTS` (optional)

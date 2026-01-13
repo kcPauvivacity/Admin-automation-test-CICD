@@ -169,9 +169,9 @@ Edit `.github/workflows/playwright-tests.yml`:
 ```yaml
 - name: Auto-generate tests for new modules (Optional)
   env:
-    TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-    TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-    BASE_URL: ${{ secrets.BASE_URL }}
+    USERNAME: ${{ secrets.USERNAME }}
+    PASSWORD: ${{ secrets.PASSWORD }}
+    URL: ${{ secrets.URL }}
   run: |
     npm run generate-tests
   continue-on-error: true
@@ -242,9 +242,9 @@ Configure recipients in GitHub Secrets:
 - ⚠️ Optional: Enable in daily workflow for immediate test updates
 
 ### Required GitHub Secrets:
-- ✅ `TEST_USERNAME` - Your test account username
-- ✅ `TEST_PASSWORD` - Your test account password
-- ✅ `BASE_URL` - Application URL
+- ✅ `USERNAME` - Your test account username
+- ✅ `PASSWORD` - Your test account password
+- ✅ `URL` - Application URL
 - ⚠️ `EMAIL_USER` - Gmail for sending reports (optional)
 - ⚠️ `EMAIL_PASSWORD` - Gmail app password (optional)
 - ⚠️ `EMAIL_RECIPIENTS` - Email addresses (optional)

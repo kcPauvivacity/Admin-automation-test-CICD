@@ -50,9 +50,9 @@ stages:
         npx playwright test || true
       displayName: 'Run Tests'
       env:
-        TEST_USERNAME: $(TEST_USERNAME)
-        TEST_PASSWORD: $(TEST_PASSWORD)
-        BASE_URL: $(BASE_URL)
+        USERNAME: $(USERNAME)
+        PASSWORD: $(PASSWORD)
+        URL: $(URL)
         CI: true
       continueOnError: true
     

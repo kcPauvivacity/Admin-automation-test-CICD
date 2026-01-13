@@ -57,9 +57,9 @@ stages:
         echo "✅ Manual test case generation completed"
       displayName: 'Generate Tests'
       env:
-        TEST_USERNAME: $(TEST_USERNAME)
-        TEST_PASSWORD: $(TEST_PASSWORD)
-        BASE_URL: $(BASE_URL)
+        USERNAME: $(USERNAME)
+        PASSWORD: $(PASSWORD)
+        URL: $(URL)
       continueOnError: true
     
     - script: |

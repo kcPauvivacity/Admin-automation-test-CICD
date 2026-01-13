@@ -1,6 +1,6 @@
 # Auto-Generated Test Summary
 
-Generated on: 2026-01-08T04:36:36.395Z
+Generated on: 2026-01-13T04:56:44.248Z
 Total modules detected: 11
 
 ## Detected Modules:
@@ -26,7 +26,7 @@ Total modules detected: 11
 - Has Table: ✅
 - Has Form: ❌
 - Has Search: ❌
-- Buttons: Edit YourMini Program, Create A PBSA Property on Viva City Admin PortalSupport Documentation is closed, Stages, Status, Apartment 
+- Buttons: Edit YourMini Program, Create A PBSA Property on Viva City Admin PortalSupport Documentation is closed, Stages, Status, Type
 - Inputs: text, checkbox
 
 ### Articles
@@ -34,7 +34,7 @@ Total modules detected: 11
 - Has Table: ✅
 - Has Form: ❌
 - Has Search: ❌
-- Buttons: Edit YourMini Program,  Edit Columns , Manual Sort Manual sort is only available when the number of items is 10 or less , Preview List Page, Export
+- Buttons: Edit YourMini Program, Stages, Category,  Edit Columns , Manual Sort Manual sort is only available when the number of items is 10 or less 
 - Inputs: text, checkbox
 
 ### AI ChatNew

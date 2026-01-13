@@ -27,9 +27,9 @@ npx ts-node scripts/auto-generate-tests.ts
 ### 2. Set Environment Variables (Optional)
 
 ```bash
-export BASE_URL="https://your-app.com"
-export TEST_USERNAME="your-email@example.com"
-export TEST_PASSWORD="your-password"
+export URL="https://your-app.com"
+export USERNAME="your-email@example.com"
+export PASSWORD="your-password"
 
 npm run generate-tests
 ```

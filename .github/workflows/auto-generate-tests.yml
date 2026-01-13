@@ -27,9 +27,9 @@ jobs:
       
     - name: Run auto-generation
       env:
-        TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-        BASE_URL: ${{ secrets.BASE_URL }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        URL: ${{ secrets.URL }}
       run: |
         echo "🤖 Starting auto-generation to scan for new modules..."
         npm run generate-tests

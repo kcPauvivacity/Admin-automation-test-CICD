@@ -4,10 +4,10 @@
 
 Your tests are failing with this error:
 ```
-Error: page.goto: net::ERR_ABORTED at name: BASE_URLSecret: https://app-staging.vivacityapp.com
+Error: page.goto: net::ERR_ABORTED at name: URLSecret: https://app-staging.vivacityapp.com
 ```
 
-**Root Cause:** The `BASE_URL` GitHub Secret is **NOT SET** or is empty.
+**Root Cause:** The `URL` GitHub Secret is **NOT SET** or is empty.
 
 ---
 
@@ -29,21 +29,21 @@ Or manually navigate:
 
 You need to create/update **3 secrets**:
 
-#### Secret 1: BASE_URL
+#### Secret 1: URL
 - Click **"New repository secret"** (or edit if exists)
-- Name: `BASE_URL`
+- Name: `URL`
 - Value: `https://app-staging.vivacityapp.com`
 - Click **"Add secret"**
 
-#### Secret 2: TEST_USERNAME
+#### Secret 2: USERNAME
 - Click **"New repository secret"** (or edit if exists)
-- Name: `TEST_USERNAME`
+- Name: `USERNAME`
 - Value: `kc@vivacityapp.com`
 - Click **"Add secret"**
 
-#### Secret 3: TEST_PASSWORD
+#### Secret 3: PASSWORD
 - Click **"New repository secret"** (or edit if exists)
-- Name: `TEST_PASSWORD`
+- Name: `PASSWORD`
 - Value: `PAOpaopao@9696` (use your actual password)
 - Click **"Add secret"**
 
@@ -52,9 +52,9 @@ You need to create/update **3 secrets**:
 ### Step 3: Verify Secrets Are Set
 
 After adding all 3 secrets, you should see:
-- ✅ BASE_URL
-- ✅ TEST_USERNAME
-- ✅ TEST_PASSWORD
+- ✅ URL
+- ✅ USERNAME
+- ✅ PASSWORD
 
 **Important:** You won't be able to see the values (they're hidden for security), but the names should be visible.
 
@@ -69,9 +69,9 @@ After adding all 3 secrets, you should see:
 
 The debug step will now show:
 ```
-✅ BASE_URL is set: true
-✅ TEST_USERNAME is set: true
-✅ TEST_PASSWORD is set: true
+✅ URL is set: true
+✅ USERNAME is set: true
+✅ PASSWORD is set: true
 ```
 
 ---
@@ -99,22 +99,22 @@ We can enhance the email to include screenshots directly in the email body (adva
 ### Local Environment:
 ```typescript
 // From tests/helpers/auth.helper.ts
-export const LOGIN_URL = process.env.BASE_URL || 'https://app-staging.vivacityapp.com';
+export const LOGIN_URL = process.env.URL || 'https://app-staging.vivacityapp.com';
 ```
 
 When you run tests locally:
-- `process.env.BASE_URL` is **undefined**
+- `process.env.URL` is **undefined**
 - So it uses the **fallback** → `'https://app-staging.vivacityapp.com'`
 - ✅ Tests work!
 
 ### CI Environment (Before Fix):
-- `process.env.BASE_URL` is **undefined** (secret not set)
+- `process.env.URL` is **undefined** (secret not set)
 - Uses fallback → `'https://app-staging.vivacityapp.com'`
 - But GitHub Actions environment has issues with the URL
 - ❌ Tests fail with network error!
 
 ### CI Environment (After Fix):
-- `process.env.BASE_URL` = `'https://app-staging.vivacityapp.com'` (from secret)
+- `process.env.URL` = `'https://app-staging.vivacityapp.com'` (from secret)
 - ✅ Tests should work!
 
 ---
@@ -125,7 +125,7 @@ Once you set the secrets and run tests again, you should see:
 
 1. ✅ All tests pass (or most pass)
 2. ✅ Email shows correct statistics
-3. ✅ No more "BASE_URLSecret" errors
+3. ✅ No more "URLSecret" errors
 4. ✅ Screenshots/videos available in downloaded HTML report
 
 ---

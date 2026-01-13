@@ -41,18 +41,18 @@ Add these variables (click **+ Add** for each):
 
 | Variable Name | Value | Secret? |
 |---------------|-------|---------|
-| `TEST_USERNAME` | Your test account username | ✅ Yes |
-| `TEST_PASSWORD` | Your test account password | ✅ Yes |
-| `BASE_URL` | `https://app-staging.vivacityapp.com` | ❌ No |
+| `USERNAME` | Your test account username | ✅ Yes |
+| `PASSWORD` | Your test account password | ✅ Yes |
+| `URL` | `https://app-staging.vivacityapp.com` | ❌ No |
 | `EMAIL_USER` | Your Gmail address (optional) | ✅ Yes |
 | `EMAIL_PASSWORD` | Gmail app password (optional) | ✅ Yes |
 | `EMAIL_RECIPIENTS` | Comma-separated emails | ❌ No |
 
 **Example:**
 ```
-TEST_USERNAME: kiechee@ms.vivacityapp.com (Secret: ✓)
-TEST_PASSWORD: ********** (Secret: ✓)
-BASE_URL: https://app-staging.vivacityapp.com
+USERNAME: kiechee@ms.vivacityapp.com (Secret: ✓)
+PASSWORD: ********** (Secret: ✓)
+URL: https://app-staging.vivacityapp.com
 EMAIL_USER: your-email@gmail.com (Secret: ✓)
 EMAIL_PASSWORD: ********** (Secret: ✓)
 EMAIL_RECIPIENTS: team@vivacityapp.com,qa@vivacityapp.com

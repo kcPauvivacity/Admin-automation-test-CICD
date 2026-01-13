@@ -393,9 +393,9 @@ ${this.generateNavigationTest(module)}
 
 // Run the generator
 const generator = new AutoTestGenerator(
-    process.env.BASE_URL || 'https://app-staging.vivacityapp.com',
-    process.env.TEST_USERNAME || 'kc@vivacityapp.com',
-    process.env.TEST_PASSWORD || 'PAOpaopao@9696'
+    process.env.URL || 'https://app-staging.vivacityapp.com',
+    process.env.USERNAME || 'kc@vivacityapp.com',
+    process.env.PASSWORD || 'PAOpaopao@9696'
 );
 
 generator.run();

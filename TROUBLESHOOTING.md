@@ -34,8 +34,8 @@ git push
 
 **Possible causes:**
 1. **Secrets not set correctly** - Check all 6 secrets exist
-2. **Wrong credentials** - Verify TEST_USERNAME and TEST_PASSWORD are correct
-3. **Base URL wrong** - Check BASE_URL is correct
+2. **Wrong credentials** - Verify USERNAME and PASSWORD are correct
+3. **Base URL wrong** - Check URL is correct
 4. **Network timeout** - Tests take longer on CI
 
 **Solution:** Check the test logs for specific error messages
@@ -71,7 +71,7 @@ git push
 |--------------|---------------|-----|
 | `Error: Timeout of 30000ms exceeded` | Test took too long | Already fixed - increased timeout to 180s |
 | `Error: browserType.launch: Executable doesn't exist` | Browser not installed | Re-run workflow, should work on retry |
-| `Error: page.goto: net::ERR_NAME_NOT_RESOLVED` | Wrong URL or network issue | Check BASE_URL secret |
+| `Error: page.goto: net::ERR_NAME_NOT_RESOLVED` | Wrong URL or network issue | Check URL secret |
 | `Error: locator.click: Timeout 30000ms exceeded` | Login page element not found | Check if app is accessible, credentials correct |
 | `Authentication failed` | Wrong email credentials | Check EMAIL_USER and EMAIL_PASSWORD |
 | `npm ERR! code ELIFECYCLE` | npm command failed | Check package.json and dependencies |
@@ -84,18 +84,18 @@ git push
 Go to: https://github.com/kcPauvivacity/Admin-automation-test-CICD/settings/secrets/actions
 
 Should see:
-- ✅ BASE_URL
+- ✅ URL
 - ✅ EMAIL_PASSWORD  
 - ✅ EMAIL_RECIPIENTS
 - ✅ EMAIL_USER
-- ✅ TEST_PASSWORD
-- ✅ TEST_USERNAME
+- ✅ PASSWORD
+- ✅ USERNAME
 
 #### **Fix 2: Check secret values are correct**
 
-**TEST_USERNAME:** `kc@vivacityapp.com`
-**TEST_PASSWORD:** `PAOpaopao@9696`
-**BASE_URL:** `https://app-staging.vivacityapp.com`
+**USERNAME:** `kc@vivacityapp.com`
+**PASSWORD:** `PAOpaopao@9696`
+**URL:** `https://app-staging.vivacityapp.com`
 **EMAIL_USER:** Your Gmail (e.g., `yourname@gmail.com`)
 **EMAIL_PASSWORD:** 16-character App Password (e.g., `abcdefghijklmnop`)
 **EMAIL_RECIPIENTS:** Email addresses separated by comma (e.g., `user1@email.com,user2@email.com`)
@@ -129,7 +129,7 @@ The debug workflow runs just 1 test and shows detailed information:
 **Problem:** Secrets not added or wrong names
 
 **Fix:** 
-- Check secret names are EXACTLY: `TEST_USERNAME`, `TEST_PASSWORD`, `BASE_URL`, `EMAIL_USER`, `EMAIL_PASSWORD`, `EMAIL_RECIPIENTS`
+- Check secret names are EXACTLY: `USERNAME`, `PASSWORD`, `URL`, `EMAIL_USER`, `EMAIL_PASSWORD`, `EMAIL_RECIPIENTS`
 - Names are case-sensitive!
 
 #### **Scenario B: Tests fail but workflow completes**
@@ -169,8 +169,8 @@ If you need help, share:
 
 - [ ] All 6 secrets added to GitHub
 - [ ] Secret names are correct (case-sensitive)
-- [ ] TEST_USERNAME and TEST_PASSWORD match your app login
-- [ ] BASE_URL is correct
+- [ ] USERNAME and PASSWORD match your app login
+- [ ] URL is correct
 - [ ] EMAIL_PASSWORD is Gmail App Password (16 chars)
 - [ ] 2-Step Verification enabled on Gmail
 - [ ] Tried re-running the workflow

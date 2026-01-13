@@ -1,9 +1,9 @@
 import { Page, expect } from '@playwright/test';
 
 // Use environment variables with fallback to hardcoded values for local development
-export const LOGIN_URL = process.env.BASE_URL || 'https://app-staging.vivacityapp.com';
-export const VALID_EMAIL = process.env.TEST_USERNAME || 'kc@vivacityapp.com';
-export const VALID_PASSWORD = process.env.TEST_PASSWORD || 'PAOpaopao@9696';
+export const LOGIN_URL = process.env.URL || 'https://app-staging.vivacityapp.com';
+export const VALID_EMAIL = process.env.USERNAME || 'kc@vivacityapp.com';
+export const VALID_PASSWORD = process.env.PASSWORD || 'PAOpaopao@9696';
 
 /**
  * Shared login helper function for all tests

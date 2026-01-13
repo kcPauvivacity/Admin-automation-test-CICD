@@ -74,9 +74,9 @@ $ npm run generate-tests
 
 ### Use Different Credentials
 ```bash
-export BASE_URL="https://your-app.com"
-export TEST_USERNAME="your-email"
-export TEST_PASSWORD="your-password"
+export URL="https://your-app.com"
+export USERNAME="your-email"
+export PASSWORD="your-password"
 npm run generate-tests
 ```
 
