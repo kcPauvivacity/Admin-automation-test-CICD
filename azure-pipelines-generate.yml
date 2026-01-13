@@ -1,0 +1,133 @@
+# Azure Pipeline for Auto-Generating Tests
+# Runs weekly to scan for new modules and generate tests
+
+trigger: none  # Only run on schedule or manual
+
+schedules:
+- cron: "0 8 * * 1"  # Run every Monday at 8 AM UTC
+  displayName: Weekly Test Generation
+  branches:
+    include:
+    - main
+  always: true
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: playwright-secrets
+
+stages:
+- stage: Generate
+  displayName: 'Auto-Generate Tests'
+  jobs:
+  - job: TestGeneration
+    displayName: 'Generate Tests for New Modules'
+    timeoutInMinutes: 30
+    
+    steps:
+    - checkout: self
+      persistCredentials: true
+      displayName: 'Checkout Code'
+    
+    - task: NodeTool@0
+      displayName: 'Install Node.js'
+      inputs:
+        versionSpec: '18.x'
+    
+    - script: |
+        echo "Installing dependencies..."
+        npm ci
+      displayName: 'Install Dependencies'
+    
+    - script: |
+        echo "Installing Playwright browsers..."
+        npx playwright install --with-deps chromium
+      displayName: 'Install Playwright Browsers'
+    
+    - script: |
+        echo "🤖 Running auto-generation to scan for new modules..."
+        npm run generate-tests
+        echo ""
+        echo "✅ Auto-generation completed"
+        echo ""
+        echo "📋 Generating manual test cases..."
+        npm run generate-manual-tests
+        echo ""
+        echo "✅ Manual test case generation completed"
+      displayName: 'Generate Tests'
+      env:
+        TEST_USERNAME: $(TEST_USERNAME)
+        TEST_PASSWORD: $(TEST_PASSWORD)
+        BASE_URL: $(BASE_URL)
+      continueOnError: true
+    
+    - script: |
+        echo "📊 Generated automated test files:"
+        ls -la tests/auto-generated/ || echo "No files generated"
+        echo ""
+        echo "📋 Generated manual test cases:"
+        ls -la manual-test-cases/ || echo "No manual test cases generated"
+        echo ""
+        echo "📄 Generation report:"
+        cat tests/auto-generated/GENERATION_REPORT.md || echo "No report found"
+        echo ""
+        echo "📄 Manual test summary:"
+        cat manual-test-cases/SUMMARY.md || echo "No summary found"
+      displayName: 'Show Generated Files'
+      condition: always()
+    
+    - task: PublishPipelineArtifact@1
+      displayName: 'Upload Generation Report'
+      condition: always()
+      inputs:
+        targetPath: 'tests/auto-generated/GENERATION_REPORT.md'
+        artifact: 'generation-report'
+        publishLocation: 'pipeline'
+    
+    - task: PublishPipelineArtifact@1
+      displayName: 'Upload Manual Test Cases'
+      condition: always()
+      inputs:
+        targetPath: 'manual-test-cases'
+        artifact: 'manual-test-cases'
+        publishLocation: 'pipeline'
+    
+    - script: |
+        # Configure git
+        git config user.email "azure-pipelines@vivacityapp.com"
+        git config user.name "Azure Pipelines"
+        
+        # Check if there are changes
+        if git diff --quiet tests/auto-generated/ manual-test-cases/; then
+          echo "No new tests generated"
+          exit 0
+        fi
+        
+        echo "New tests detected! Creating commit..."
+        
+        # Add changes
+        git add tests/auto-generated/
+        git add manual-test-cases/
+        
+        # Commit
+        git commit -m "Auto-generate tests for new modules [skip ci]
+
+        Generated on: $(date)
+        
+        - Automated test files
+        - Manual test case documentation
+        "
+        
+        # Create a new branch
+        BRANCH_NAME="auto-generated-tests-$(date +%Y%m%d-%H%M%S)"
+        git checkout -b "$BRANCH_NAME"
+        
+        # Push the branch
+        git push origin "$BRANCH_NAME"
+        
+        echo "✅ Pushed changes to branch: $BRANCH_NAME"
+        echo "👉 Create a Pull Request in Azure DevOps to review and merge these changes"
+      displayName: 'Commit and Push Generated Tests'
+      condition: always()
+      continueOnError: true
