@@ -36,7 +36,9 @@ class AutoTestGenerator {
 
     async initialize() {
         console.log('🚀 Initializing test generator...');
-        this.browser = await chromium.launch({ headless: false });
+        // Run headless on CI, headed locally for debugging
+        const isCI = process.env.CI === 'true';
+        this.browser = await chromium.launch({ headless: isCI });
         this.page = await this.browser.newPage();
     }
 
