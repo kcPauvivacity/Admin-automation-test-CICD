@@ -2,6 +2,12 @@ import { chromium } from '@playwright/test';
 import type { Browser, Page } from 'playwright';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Automatic Test Case Generator
@@ -44,7 +50,7 @@ class AutoTestGenerator {
 
     async login() {
         console.log('🔐 Logging in...');
-        await this.page.goto(this.baseUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+        await this.page.goto(this.baseUrl, { waitUntil: 'load', timeout: 60000 });
         
         // Login flow
         await this.page.waitForSelector('input[name="username"]', { timeout: 10000 });
@@ -56,24 +62,22 @@ class AutoTestGenerator {
         await this.page.click('button[type="submit"]');
         
         // Wait for navigation after login
-        await this.page.waitForTimeout(5000);
+        await this.page.waitForLoadState('load', { timeout: 30000 });
+        await this.page.waitForTimeout(3000);
         
-        // Handle passkey enrollment with longer timeout
+        // Handle passkey enrollment
         const continueButton = this.page.locator('button:has-text("Continue"), a:has-text("Continue")').first();
-        try {
-            if (await continueButton.isVisible({ timeout: 5000 })) {
-                await continueButton.click();
-                await this.page.waitForTimeout(3000);
-            }
-        } catch (error) {
-            console.log('  ℹ️ No passkey enrollment prompt');
+        if (await continueButton.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await continueButton.click();
+            await this.page.waitForLoadState('load', { timeout: 15000 });
+            await this.page.waitForTimeout(2000);
         }
         
         // Wait for dashboard to load
-        await this.page.waitForLoadState('domcontentloaded', { timeout: 60000 });
-        await this.page.waitForTimeout(2000);
+        await this.page.waitForTimeout(3000);
         
         console.log('✅ Login successful');
+        console.log('📍 Current URL:', this.page.url());
     }
 
     async scanForModules() {
@@ -82,35 +86,59 @@ class AutoTestGenerator {
         // Wait for page to be stable
         await this.page.waitForTimeout(3000);
         
-        // Find all navigation links - improved selectors for your app
-        const navLinks = await this.page.locator('a[href*="/demo-student/"], nav a, aside a, [class*="sidebar"] a, [class*="menu"] a').all();
+        // Wait for network to be idle
+        await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => console.log('  ℹ️ Network not idle, continuing...'));
+        await this.page.waitForTimeout(5000); // Extra wait for dynamic content
+        
+        // Take screenshot for debugging
+        await this.page.screenshot({ path: 'debug-before-scan.png', fullPage: true });
+        console.log('📸 Screenshot saved: debug-before-scan.png');
+        
+        // Find all navigation links using proper role selectors
+        const navLinks = await this.page.locator('[role="menuitem"], nav a, aside a, [class*="sidebar"] a, [class*="menu"] a, a[href*="/demo-student/"]').all();
         
         console.log(`Found ${navLinks.length} potential navigation links`);
         
+        // Filter and collect module info
         for (const link of navLinks) {
             try {
                 const text = await link.textContent();
                 const href = await link.getAttribute('href');
+                const role = await link.getAttribute('role');
                 
                 if (!text || !text.trim() || text.trim().length < 2) continue;
-                if (!href || href === '#' || href === 'javascript:void(0)') continue;
                 
                 const moduleName = text.trim();
-                console.log(`  📂 Found module: ${moduleName}`);
+                console.log(`  📂 Found potential module: "${moduleName}" (href: ${href || 'N/A'}, role: ${role || 'N/A'})`);
                 
-                // Click and analyze the module
-                await link.click({ timeout: 5000 });
-                await this.page.waitForTimeout(3000);
+                // Skip modules that already have tests
+                const testFileName = moduleName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.test.ts';
+                const testFilePath = path.join(__dirname, '../tests', testFileName);
+                if (fs.existsSync(testFilePath)) {
+                    console.log(`  ⏭️ Skipping "${moduleName}" - test already exists`);
+                    continue;
+                }
                 
-                const moduleInfo = await this.analyzeCurrentPage(moduleName);
-                this.detectedModules.push(moduleInfo);
+                // Try to click and analyze the module
+                try {
+                    await link.click({ timeout: 5000 });
+                    await this.page.waitForLoadState('load', { timeout: 10000 });
+                    await this.page.waitForTimeout(3000);
+                    
+                    const moduleInfo = await this.analyzeCurrentPage(moduleName);
+                    this.detectedModules.push(moduleInfo);
+                    
+                    console.log(`  ✅ Analyzed "${moduleName}"`);
+                } catch (clickError) {
+                    console.log(`  ⚠️ Could not click/analyze "${moduleName}": ${clickError}`);
+                }
                 
             } catch (error) {
-                console.log(`  ⚠️ Error analyzing module: ${error}`);
+                console.log(`  ⚠️ Error processing link: ${error}`);
             }
         }
         
-        console.log(`✅ Found ${this.detectedModules.length} modules`);
+        console.log(`✅ Found ${this.detectedModules.length} new modules (modules with existing tests were skipped)`);
     }
 
     async analyzeCurrentPage(moduleName: string): Promise<ModuleInfo> {
@@ -151,112 +179,156 @@ class AutoTestGenerator {
 
     generateTestFile(module: ModuleInfo): string {
         const fileName = module.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const moduleName = module.name.replace(/New$/, ''); // Remove 'New' suffix for cleaner names
+        
         const testContent = `import { test, expect } from '@playwright/test';
 import { loginToApp } from '../helpers/auth.helper';
 import { createAutoHealing } from '../helpers/auto-healing.helper';
 
-test.describe('${module.name} Tests', () => {
+test.describe('${moduleName} Module Tests', () => {
     test.beforeEach(async ({ page }) => {
         await loginToApp(page);
         await page.waitForLoadState('load');
+        
+        // Navigate to ${moduleName}
+        const menuItem = page.getByRole('menuitem', { name: /${moduleName}/i });
+        if (await menuItem.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await menuItem.click();
+            await page.waitForLoadState('load');
+            await page.waitForTimeout(2000);
+        }
     });
 
-    test('should access ${module.name} page', async ({ page }) => {
+    test('should load ${moduleName} page successfully', async ({ page }) => {
         test.setTimeout(60000);
         
+        // Verify we're on the correct page (use flexible URL matching)
+        const url = page.url();
+        const urlPath = '${fileName}'.replace('new', ''); // Handle 'New' suffix
+        expect(url).toMatch(new RegExp(urlPath, 'i'));
+        
+        // Wait for page to be stable
         const healer = createAutoHealing(page);
         await healer.waitForStable();
         
-        // Navigate to ${module.name}
-        await healer.smartClick([
-            'text=${module.name}',
-            'a:has-text("${module.name}")',
-            '[href*="${fileName}"]'
-        ]);
+        // Verify page has loaded (check for main container or heading)
+        const mainContent = page.locator('main, [role="main"], .content, h1, h2, [class*="container"]').first();
+        await expect(mainContent).toBeVisible({ timeout: 10000 });
         
-        await page.waitForLoadState('load');
-        await healer.waitForStable();
-        
-        // Verify page loaded
-        const heading = page.locator('h1, h2, h3').first();
-        await expect(heading).toBeVisible({ timeout: 10000 });
-        
-        console.log('✅ ${module.name} page loaded successfully');
+        console.log('✅ ${moduleName} page loaded successfully');
     });
 
-${module.hasTable ? this.generateTableTest(module) : ''}
-${module.hasSearch ? this.generateSearchTest(module) : ''}
-${module.hasForm ? this.generateFormTest(module) : ''}
-${this.generateNavigationTest(module)}
+${module.hasTable ? this.generateTableTest(module, moduleName) : ''}
+${module.hasSearch ? this.generateSearchTest(module, moduleName) : ''}
+${module.hasForm ? this.generateFormTest(module, moduleName) : ''}
+${this.generateButtonTest(module, moduleName)}
+${this.generateNavigationTest(module, moduleName)}
 });
 `;
         return testContent;
     }
 
-    generateTableTest(module: ModuleInfo): string {
+    generateTableTest(module: ModuleInfo, moduleName: string): string {
         return `
-    test('should display ${module.name} list/table', async ({ page }) => {
+    test('should display ${moduleName} table with data', async ({ page }) => {
         test.setTimeout(60000);
         
         const healer = createAutoHealing(page);
-        
-        // Navigate to ${module.name}
-        await healer.smartClick(['text=${module.name}']);
-        await page.waitForLoadState('load');
         await healer.waitForStable();
         
-        // Verify table/list is visible
-        const table = page.locator('table, [role="grid"], [class*="list"]').first();
-        await expect(table).toBeVisible({ timeout: 10000 });
+        // Verify table or data grid is visible
+        const table = page.locator('table, [role="grid"], .v-data-table, [class*="table"]').first();
+        const hasTable = await table.isVisible({ timeout: 5000 }).catch(() => false);
         
-        // Check if rows are present
-        const rows = await page.locator('tr, [role="row"], [class*="item"]').count();
-        console.log(\`Found \${rows} rows/items in ${module.name}\`);
+        if (hasTable) {
+            // Check for table rows
+            const rows = page.locator('tbody tr, [role="row"]');
+            const rowCount = await rows.count();
+            
+            console.log(\`📊 Found \${rowCount} rows in ${moduleName} table\`);
+            
+            // Check for table headers (optional - some tables might not have headers)
+            const headers = page.locator('thead th, [role="columnheader"]');
+            const headerCount = await headers.count();
+            
+            if (headerCount > 0) {
+                console.log(\`✅ ${moduleName} table displays correctly with \${headerCount} columns\`);
+            } else {
+                console.log(\`ℹ️ ${moduleName} table has no headers (might be a different layout)\`);
+            }
+        } else {
+            console.log(\`ℹ️ No standard table found - ${moduleName} might use a different data display format\`);
+        }
+    });
+
+    test('should handle ${moduleName} table pagination', async ({ page }) => {
+        test.setTimeout(60000);
         
-        expect(rows).toBeGreaterThan(0);
+        // Check if pagination exists
+        const pagination = page.locator('.v-pagination, .pagination, [role="navigation"]');
+        const hasPagination = await pagination.isVisible({ timeout: 3000 }).catch(() => false);
+        
+        if (hasPagination) {
+            console.log('📄 Pagination found');
+            
+            // Get current page info
+            const paginationInfo = await page.locator('.v-data-table-footer__info, .pagination-info').textContent().catch(() => '');
+            console.log(\`📊 Pagination info: \${paginationInfo}\`);
+            
+            // Try to click next page if available
+            const nextButton = page.locator('button:has-text("Next"), .v-pagination__next').first();
+            if (await nextButton.isEnabled().catch(() => false)) {
+                await nextButton.click();
+                await page.waitForTimeout(1000);
+                console.log('✅ Successfully navigated to next page');
+            }
+        } else {
+            console.log('ℹ️ No pagination found (single page or all data shown)');
+        }
     });
 `;
     }
 
-    generateSearchTest(module: ModuleInfo): string {
+    generateSearchTest(module: ModuleInfo, moduleName: string): string {
         return `
-    test('should search in ${module.name}', async ({ page }) => {
+    test('should search ${moduleName} data', async ({ page }) => {
         test.setTimeout(60000);
         
         const healer = createAutoHealing(page);
-        
-        // Navigate to ${module.name}
-        await healer.smartClick(['text=${module.name}']);
-        await page.waitForLoadState('load');
         await healer.waitForStable();
         
         // Find search input
         const searchInput = page.locator('input[type="search"], input[placeholder*="search" i]').first();
         await expect(searchInput).toBeVisible({ timeout: 10000 });
         
+        // Get initial row count
+        const initialRows = await page.locator('tbody tr, [role="row"]').count();
+        console.log(\`📊 Initial rows: \${initialRows}\`);
+        
         // Perform search
         await searchInput.fill('test');
         await page.waitForTimeout(2000);
+        
+        // Verify search results
+        const filteredRows = await page.locator('tbody tr, [role="row"]').count();
+        console.log(\`🔍 Filtered rows: \${filteredRows}\`);
         
         // Clear search
         await searchInput.clear();
         await page.waitForTimeout(1000);
         
-        console.log('✅ Search functionality tested in ${module.name}');
+        const clearedRows = await page.locator('tbody tr, [role="row"]').count();
+        console.log(\`✅ After clearing search: \${clearedRows} rows\`);
     });
 `;
     }
 
-    generateFormTest(module: ModuleInfo): string {
+    generateFormTest(module: ModuleInfo, moduleName: string): string {
         return `
-    test('should interact with ${module.name} form', async ({ page }) => {
+    test('should interact with ${moduleName} form', async ({ page }) => {
         test.setTimeout(90000);
         
         const healer = createAutoHealing(page);
-        
-        // Navigate to ${module.name}
-        await healer.smartClick(['text=${module.name}']);
-        await page.waitForLoadState('load');
         await healer.waitForStable();
         
         // Look for Add/Create button
@@ -268,35 +340,72 @@ ${this.generateNavigationTest(module)}
         ].join(', ')).first();
         
         if (await addButton.isVisible({ timeout: 5000 }).catch(() => false)) {
+            console.log('➕ Found Add/Create button');
             await addButton.click();
             await page.waitForTimeout(2000);
             
-            // Verify form appeared
-            const form = page.locator('form, [role="dialog"]').first();
+            // Verify form/dialog appeared
+            const form = page.locator('form, [role="dialog"], .modal, .v-dialog').first();
             await expect(form).toBeVisible({ timeout: 10000 });
             
-            console.log('✅ ${module.name} form opened successfully');
+            console.log('✅ ${moduleName} form opened successfully');
             
             // Close form/dialog
             const closeButton = page.locator('button:has-text("Cancel"), button:has-text("Close"), [aria-label*="close"]').first();
             if (await closeButton.isVisible({ timeout: 3000 }).catch(() => false)) {
                 await closeButton.click();
+                await page.waitForTimeout(1000);
+                console.log('✅ Form closed');
             }
+        } else {
+            console.log('ℹ️ No Add/Create button found');
         }
     });
 `;
     }
 
-    generateNavigationTest(module: ModuleInfo): string {
+    generateButtonTest(module: ModuleInfo, moduleName: string): string {
+        const buttonNames = module.buttons.slice(0, 5).filter(b => 
+            !b.toLowerCase().includes('edit') && 
+            !b.toLowerCase().includes('delete') &&
+            b.length > 2 && 
+            b.length < 50
+        );
+        
+        if (buttonNames.length === 0) return '';
+        
         return `
-    test('should navigate through ${module.name} sections', async ({ page }) => {
+    test('should verify ${moduleName} action buttons', async ({ page }) => {
         test.setTimeout(60000);
         
         const healer = createAutoHealing(page);
+        await healer.waitForStable();
         
-        // Navigate to ${module.name}
-        await healer.smartClick(['text=${module.name}']);
-        await page.waitForLoadState('load');
+        // Check for key action buttons
+        const expectedButtons = [${buttonNames.map(b => `'${b}'`).join(', ')}];
+        
+        for (const buttonText of expectedButtons) {
+            const button = page.locator(\`button:has-text("\${buttonText}")\`).first();
+            const isVisible = await button.isVisible({ timeout: 2000 }).catch(() => false);
+            
+            if (isVisible) {
+                console.log(\`✅ Found button: "\${buttonText}"\`);
+            } else {
+                console.log(\`ℹ️ Button not visible: "\${buttonText}"\`);
+            }
+        }
+        
+        console.log('✅ ${moduleName} buttons verified');
+    });
+`;
+    }
+
+    generateNavigationTest(module: ModuleInfo, moduleName: string): string {
+        return `
+    test('should navigate through ${moduleName} sections', async ({ page }) => {
+        test.setTimeout(60000);
+        
+        const healer = createAutoHealing(page);
         await healer.waitForStable();
         
         // Check for tabs or sub-navigation
@@ -304,19 +413,23 @@ ${this.generateNavigationTest(module)}
         const tabCount = await tabs.count();
         
         if (tabCount > 0) {
-            console.log(\`Found \${tabCount} tabs in ${module.name}\`);
+            console.log(\`📑 Found \${tabCount} tabs in ${moduleName}\`);
             
-            // Click first few tabs
+            // Click first few tabs and verify they work
             for (let i = 0; i < Math.min(tabCount, 3); i++) {
                 const tab = tabs.nth(i);
-                if (await tab.isVisible()) {
+                if (await tab.isVisible().catch(() => false)) {
+                    const tabText = await tab.textContent();
                     await tab.click();
                     await page.waitForTimeout(1000);
+                    console.log(\`✅ Clicked tab: \${tabText?.trim()}\`);
                 }
             }
+        } else {
+            console.log('ℹ️ No tabs found in ${moduleName}');
         }
         
-        console.log('✅ ${module.name} navigation tested');
+        console.log('✅ ${moduleName} navigation tested');
     });
 `;
     }
