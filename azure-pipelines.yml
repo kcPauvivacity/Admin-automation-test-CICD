@@ -48,15 +48,34 @@ stages:
             inputs:
               versionSpec: '18.x'
 
+          - task: Cache@2
+            displayName: 'Cache npm packages'
+            inputs:
+              key: 'npm | "$(Agent.OS)" | package-lock.json'
+              path: $(Pipeline.Workspace)/.npm
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+
+          - task: Cache@2
+            displayName: 'Cache Playwright browsers'
+            inputs:
+              key: 'playwright | "$(Agent.OS)" | package-lock.json'
+              path: $(Pipeline.Workspace)/.playwright
+              restoreKeys: |
+                playwright | "$(Agent.OS)"
+
           - script: |
               echo "Installing dependencies..."
-              npm ci
+              npm ci --cache $(Pipeline.Workspace)/.npm --prefer-offline
             displayName: 'Install Dependencies'
 
           - script: |
               echo "Installing Playwright browsers..."
+              export PLAYWRIGHT_BROWSERS_PATH=$(Pipeline.Workspace)/.playwright
               npx playwright install --with-deps chromium
             displayName: 'Install Playwright Browsers'
+            env:
+              PLAYWRIGHT_BROWSERS_PATH: $(Pipeline.Workspace)/.playwright
 
           - script: |
               echo "Running Playwright tests..."
