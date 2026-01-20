@@ -25,109 +25,112 @@ stages:
 - stage: Test
   displayName: 'Run Playwright Tests'
   jobs:
-  - job: PlaywrightTests
+  - deployment: PlaywrightTests
     displayName: 'Playwright Test Execution'
     timeoutInMinutes: 90
-    
-    steps:
-    - task: NodeTool@0
-      displayName: 'Install Node.js'
-      inputs:
-        versionSpec: '18.x'
-    
-    - script: |
-        echo "Installing dependencies..."
-        npm ci
-      displayName: 'Install Dependencies'
-    
-    - script: |
-        echo "Installing Playwright browsers..."
-        npx playwright install --with-deps chromium
-      displayName: 'Install Playwright Browsers'
-    
-    - script: |
-        echo "Running Playwright tests..."
-        npx playwright test || true
-      displayName: 'Run Tests'
-      env:
-        USERNAME: $(USERNAME)
-        PASSWORD: $(PASSWORD)
-        URL: $(URL)
-        CI: true
-      continueOnError: true
-    
-    - task: PublishTestResults@2
-      displayName: 'Publish Test Results'
-      condition: always()
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: 'test-results.xml'
-        failTaskOnFailedTests: false
-        testRunTitle: 'Playwright Test Results'
-    
-    - task: PublishPipelineArtifact@1
-      displayName: 'Upload HTML Report'
-      condition: always()
-      inputs:
-        targetPath: 'playwright-report'
-        artifact: 'playwright-report'
-        publishLocation: 'pipeline'
-    
-    - task: PublishPipelineArtifact@1
-      displayName: 'Upload JSON Results'
-      condition: always()
-      inputs:
-        targetPath: 'test-results.json'
-        artifact: 'test-results-json'
-        publishLocation: 'pipeline'
-    
-    - task: PublishPipelineArtifact@1
-      displayName: 'Upload Screenshots/Videos'
-      condition: always()
-      inputs:
-        targetPath: 'test-results'
-        artifact: 'test-results-media'
-        publishLocation: 'pipeline'
-    
-    - script: |
-        echo "======================================"
-        echo "📧 SENDING EMAIL REPORT"
-        echo "======================================"
-        
-        if [ -z "$(EMAIL_USER)" ] || [ -z "$(EMAIL_PASSWORD)" ] || [ -z "$(EMAIL_RECIPIENTS)" ]; then
-          echo "⏭️ Email secrets not configured - skipping email notification"
-          echo "📥 Download test report from Artifacts section"
-          exit 0
-        fi
-        
-        echo "Installing nodemailer..."
-        npm install nodemailer
-        
-        echo "Sending email report..."
-        node scripts/send-email-report.js || {
-          echo "⚠️ Email sending failed"
-          echo "📥 Download test report from Artifacts instead"
-          exit 0
-        }
-        
-        echo "✅ Email sent successfully!"
-      displayName: 'Send Email Report'
-      condition: always()
-      env:
-        EMAIL_USER: $(EMAIL_USER)
-        EMAIL_PASSWORD: $(EMAIL_PASSWORD)
-        EMAIL_RECIPIENTS: $(EMAIL_RECIPIENTS)
-      continueOnError: true
-    
-    - script: |
-        echo "======================================"
-        echo "📊 TEST SUMMARY"
-        echo "======================================"
-        
-        if [ -f test-results.json ]; then
-          node scripts/generate-summary.js
-        else
-          echo "No test results found"
-        fi
-      displayName: 'Generate Test Summary'
-      condition: always()
+    environment: 'Admin Automation Test'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: NodeTool@0
+            displayName: 'Install Node.js'
+            inputs:
+              versionSpec: '18.x'
+
+          - script: |
+              echo "Installing dependencies..."
+              npm ci
+            displayName: 'Install Dependencies'
+
+          - script: |
+              echo "Installing Playwright browsers..."
+              npx playwright install --with-deps chromium
+            displayName: 'Install Playwright Browsers'
+
+          - script: |
+              echo "Running Playwright tests..."
+              npx playwright test || true
+            displayName: 'Run Tests'
+            env:
+              USERNAME: $(USERNAME)
+              PASSWORD: $(PASSWORD)
+              URL: $(URL)
+              CI: true
+            continueOnError: true
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Results'
+            condition: always()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'test-results.xml'
+              failTaskOnFailedTests: false
+              testRunTitle: 'Playwright Test Results'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Upload HTML Report'
+            condition: always()
+            inputs:
+              targetPath: 'playwright-report'
+              artifact: 'playwright-report'
+              publishLocation: 'pipeline'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Upload JSON Results'
+            condition: always()
+            inputs:
+              targetPath: 'test-results.json'
+              artifact: 'test-results-json'
+              publishLocation: 'pipeline'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Upload Screenshots/Videos'
+            condition: always()
+            inputs:
+              targetPath: 'test-results'
+              artifact: 'test-results-media'
+              publishLocation: 'pipeline'
+
+          - script: |
+              echo "======================================"
+              echo "📧 SENDING EMAIL REPORT"
+              echo "======================================"
+
+              if [ -z "$(EMAIL_USER)" ] || [ -z "$(EMAIL_PASSWORD)" ] || [ -z "$(EMAIL_RECIPIENTS)" ]; then
+                echo "⏭️ Email secrets not configured - skipping email notification"
+                echo "📥 Download test report from Artifacts section"
+                exit 0
+              fi
+
+              echo "Installing nodemailer..."
+              npm install nodemailer
+
+              echo "Sending email report..."
+              node scripts/send-email-report.js || {
+                echo "⚠️ Email sending failed"
+                echo "📥 Download test report from Artifacts instead"
+                exit 0
+              }
+
+              echo "✅ Email sent successfully!"
+            displayName: 'Send Email Report'
+            condition: always()
+            env:
+              EMAIL_USER: $(EMAIL_USER)
+              EMAIL_PASSWORD: $(EMAIL_PASSWORD)
+              EMAIL_RECIPIENTS: $(EMAIL_RECIPIENTS)
+            continueOnError: true
+
+          - script: |
+              echo "======================================"
+              echo "📊 TEST SUMMARY"
+              echo "======================================"
+
+              if [ -f test-results.json ]; then
+                node scripts/generate-summary.js
+              else
+                echo "No test results found"
+              fi
+            displayName: 'Generate Test Summary'
+            condition: always()
