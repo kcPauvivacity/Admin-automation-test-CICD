@@ -5,7 +5,6 @@ trigger:
   branches:
     include:
     - master
-    - main
 
 schedules:
 - cron: "0 9 * * *"  # Run daily at 9 AM UTC
