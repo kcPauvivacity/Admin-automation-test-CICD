@@ -51,31 +51,32 @@ stages:
           - task: Cache@2
             displayName: 'Cache npm packages'
             inputs:
-              key: 'npm | "$(Agent.OS)" | package-lock.json'
-              path: $(Pipeline.Workspace)/.npm
-              restoreKeys: |
-                npm | "$(Agent.OS)"
+              key: 'npm | $(Agent.OS) | $(Build.SourcesDirectory)/package-lock.json'
+              path: $(npm_config_cache)
+              cacheHitVar: NPM_CACHE_RESTORED
 
           - task: Cache@2
             displayName: 'Cache Playwright browsers'
             inputs:
-              key: 'playwright | "$(Agent.OS)" | package-lock.json'
-              path: $(Pipeline.Workspace)/.playwright
-              restoreKeys: |
-                playwright | "$(Agent.OS)"
+              key: 'playwright | $(Agent.OS) | $(Build.SourcesDirectory)/package-lock.json'
+              path: '$(HOME)/.cache/ms-playwright'
+              cacheHitVar: PLAYWRIGHT_CACHE_RESTORED
 
           - script: |
               echo "Installing dependencies..."
-              npm ci --cache $(Pipeline.Workspace)/.npm --prefer-offline
+              if [ "$NPM_CACHE_RESTORED" = "true" ]; then
+                echo "✅ npm cache restored"
+              fi
+              npm ci --prefer-offline
             displayName: 'Install Dependencies'
 
           - script: |
               echo "Installing Playwright browsers..."
-              export PLAYWRIGHT_BROWSERS_PATH=$(Pipeline.Workspace)/.playwright
+              if [ "$PLAYWRIGHT_CACHE_RESTORED" = "true" ]; then
+                echo "✅ Playwright cache restored"
+              fi
               npx playwright install --with-deps chromium
             displayName: 'Install Playwright Browsers'
-            env:
-              PLAYWRIGHT_BROWSERS_PATH: $(Pipeline.Workspace)/.playwright
 
           - script: |
               echo "Running Playwright tests..."
