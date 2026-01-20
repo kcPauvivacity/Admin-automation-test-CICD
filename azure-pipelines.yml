@@ -48,33 +48,51 @@ stages:
             inputs:
               versionSpec: '18.x'
 
-          - task: Cache@2
-            displayName: 'Cache npm packages'
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download npm cache'
+            continueOnError: true
             inputs:
-              key: 'npm | $(Agent.OS) | $(Build.SourcesDirectory)/package-lock.json'
-              path: $(npm_config_cache)
-              cacheHitVar: NPM_CACHE_RESTORED
+              artifact: 'npm-cache'
+              path: '$(Pipeline.Workspace)/cache'
 
-          - task: Cache@2
-            displayName: 'Cache Playwright browsers'
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download Playwright cache'
+            continueOnError: true
             inputs:
-              key: 'playwright | $(Agent.OS) | $(Build.SourcesDirectory)/package-lock.json'
-              path: '$(HOME)/.cache/ms-playwright'
-              cacheHitVar: PLAYWRIGHT_CACHE_RESTORED
+              artifact: 'playwright-cache'
+              path: '$(Pipeline.Workspace)/cache'
+
+          - script: |
+              echo "Restoring npm cache..."
+              if [ -f "$(Pipeline.Workspace)/cache/npm-cache.tar.gz" ]; then
+                echo "✅ Found npm cache artifact, extracting..."
+                mkdir -p ~/.npm
+                tar -xzf "$(Pipeline.Workspace)/cache/npm-cache.tar.gz" -C ~/
+                echo "✅ npm cache restored"
+              else
+                echo "⏭️  No npm cache found (first run)"
+              fi
+            displayName: 'Restore npm Cache'
+
+          - script: |
+              echo "Restoring Playwright cache..."
+              if [ -f "$(Pipeline.Workspace)/cache/playwright-cache.tar.gz" ]; then
+                echo "✅ Found Playwright cache artifact, extracting..."
+                mkdir -p ~/.cache
+                tar -xzf "$(Pipeline.Workspace)/cache/playwright-cache.tar.gz" -C ~/
+                echo "✅ Playwright cache restored"
+              else
+                echo "⏭️  No Playwright cache found (first run)"
+              fi
+            displayName: 'Restore Playwright Cache'
 
           - script: |
               echo "Installing dependencies..."
-              if [ "$NPM_CACHE_RESTORED" = "true" ]; then
-                echo "✅ npm cache restored"
-              fi
               npm ci --prefer-offline
             displayName: 'Install Dependencies'
 
           - script: |
               echo "Installing Playwright browsers..."
-              if [ "$PLAYWRIGHT_CACHE_RESTORED" = "true" ]; then
-                echo "✅ Playwright cache restored"
-              fi
               npx playwright install --with-deps chromium
             displayName: 'Install Playwright Browsers'
 
@@ -164,3 +182,46 @@ stages:
               fi
             displayName: 'Generate Test Summary'
             condition: always()
+
+          - script: |
+              echo "======================================"
+              echo "💾 SAVING CACHES"
+              echo "======================================"
+
+              echo "Creating npm cache archive..."
+              if [ -d ~/.npm ]; then
+                cd ~
+                tar -czf npm-cache.tar.gz .npm
+                mv npm-cache.tar.gz $(Build.ArtifactStagingDirectory)/
+                echo "✅ npm cache saved ($(du -sh .npm | cut -f1))"
+              else
+                echo "⏭️  No npm cache to save"
+              fi
+
+              echo "Creating Playwright cache archive..."
+              if [ -d ~/.cache/ms-playwright ]; then
+                cd ~
+                tar -czf playwright-cache.tar.gz .cache/ms-playwright
+                mv playwright-cache.tar.gz $(Build.ArtifactStagingDirectory)/
+                echo "✅ Playwright cache saved ($(du -sh .cache/ms-playwright | cut -f1))"
+              else
+                echo "⏭️  No Playwright cache to save"
+              fi
+            displayName: 'Save Caches as Artifacts'
+            condition: always()
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Upload npm Cache Artifact'
+            condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/npm-cache.tar.gz'
+              artifact: 'npm-cache'
+              publishLocation: 'pipeline'
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Upload Playwright Cache Artifact'
+            condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/playwright-cache.tar.gz'
+              artifact: 'playwright-cache'
+              publishLocation: 'pipeline'
