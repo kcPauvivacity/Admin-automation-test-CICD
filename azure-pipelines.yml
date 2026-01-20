@@ -32,6 +32,17 @@ stages:
       runOnce:
         deploy:
           steps:
+          - checkout: self
+            displayName: 'Checkout Repository'
+
+          - script: |
+              echo "Current directory: $(pwd)"
+              echo "Checking for package-lock.json..."
+              ls -la package-lock.json || echo "package-lock.json NOT FOUND"
+              echo "Git branch: $(git branch --show-current)"
+              echo "Git commit: $(git rev-parse HEAD)"
+            displayName: 'Debug: Verify Checkout'
+
           - task: NodeTool@0
             displayName: 'Install Node.js'
             inputs:
