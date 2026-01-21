@@ -1,8 +1,14 @@
 import { test, expect } from '@playwright/test';
+import config, { validateConfig } from './config';
 
-const LOGIN_URL = 'https://app-staging.vivacityapp.com';
-const VALID_EMAIL = 'kc@vivacityapp.com';
-const VALID_PASSWORD = 'PAOpaopao@9696';
+// Validate configuration before running tests
+test.beforeAll(() => {
+  validateConfig();
+});
+
+const LOGIN_URL = config.url;
+const VALID_EMAIL = config.username;
+const VALID_PASSWORD = config.password;
 
 test('successful login with valid credentials', async ({ page }) => {
     test.setTimeout(120000);
