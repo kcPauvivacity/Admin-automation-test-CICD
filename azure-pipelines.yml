@@ -49,16 +49,20 @@ stages:
               versionSpec: '18.x'
 
           - task: DownloadPipelineArtifact@2
-            displayName: 'Download npm cache'
+            displayName: 'Download npm cache (if available)'
             continueOnError: true
+            condition: succeeded()
             inputs:
+              source: 'current'
               artifact: 'npm-cache'
               path: '$(Pipeline.Workspace)/cache'
 
           - task: DownloadPipelineArtifact@2
-            displayName: 'Download Playwright cache'
+            displayName: 'Download Playwright cache (if available)'
             continueOnError: true
+            condition: succeeded()
             inputs:
+              source: 'current'
               artifact: 'playwright-cache'
               path: '$(Pipeline.Workspace)/cache'
 
@@ -212,7 +216,8 @@ stages:
 
           - task: PublishPipelineArtifact@1
             displayName: 'Upload npm Cache Artifact'
-            condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
+            condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'), exists('$(Build.ArtifactStagingDirectory)/npm-cache.tar.gz'))
+            continueOnError: true
             inputs:
               targetPath: '$(Build.ArtifactStagingDirectory)/npm-cache.tar.gz'
               artifact: 'npm-cache'
@@ -220,7 +225,8 @@ stages:
 
           - task: PublishPipelineArtifact@1
             displayName: 'Upload Playwright Cache Artifact'
-            condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
+            condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'), exists('$(Build.ArtifactStagingDirectory)/playwright-cache.tar.gz'))
+            continueOnError: true
             inputs:
               targetPath: '$(Build.ArtifactStagingDirectory)/playwright-cache.tar.gz'
               artifact: 'playwright-cache'
