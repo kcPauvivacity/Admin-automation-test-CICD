@@ -24,210 +24,206 @@ stages:
 - stage: Test
   displayName: 'Run Playwright Tests'
   jobs:
-  - deployment: PlaywrightTests
+  - job: PlaywrightTests
     displayName: 'Playwright Test Execution'
     timeoutInMinutes: 90
-    environment: 'Admin Automation Test'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - checkout: self
-            displayName: 'Checkout Repository'
+    steps:
+    - checkout: self
+      displayName: 'Checkout Repository'
 
-          - script: |
-              echo "Current directory: $(pwd)"
-              echo "Checking for package-lock.json..."
-              ls -la package-lock.json || echo "package-lock.json NOT FOUND"
-              echo "Git branch: $(git branch --show-current)"
-              echo "Git commit: $(git rev-parse HEAD)"
-            displayName: 'Debug: Verify Checkout'
+    - script: |
+        echo "Current directory: $(pwd)"
+        echo "Checking for package-lock.json..."
+        ls -la package-lock.json || echo "package-lock.json NOT FOUND"
+        echo "Git branch: $(git branch --show-current)"
+        echo "Git commit: $(git rev-parse HEAD)"
+      displayName: 'Debug: Verify Checkout'
 
-          - task: NodeTool@0
-            displayName: 'Install Node.js'
-            inputs:
-              versionSpec: '18.x'
+    - task: NodeTool@0
+      displayName: 'Install Node.js'
+      inputs:
+        versionSpec: '18.x'
 
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download npm cache (if available)'
-            continueOnError: true
-            condition: succeeded()
-            inputs:
-              source: 'current'
-              artifact: 'npm-cache'
-              path: '$(Pipeline.Workspace)/cache'
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download npm cache (if available)'
+      continueOnError: true
+      condition: succeeded()
+      inputs:
+        source: 'current'
+        artifact: 'npm-cache'
+        path: '$(Pipeline.Workspace)/cache'
 
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Playwright cache (if available)'
-            continueOnError: true
-            condition: succeeded()
-            inputs:
-              source: 'current'
-              artifact: 'playwright-cache'
-              path: '$(Pipeline.Workspace)/cache'
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download Playwright cache (if available)'
+      continueOnError: true
+      condition: succeeded()
+      inputs:
+        source: 'current'
+        artifact: 'playwright-cache'
+        path: '$(Pipeline.Workspace)/cache'
 
-          - script: |
-              echo "Restoring npm cache..."
-              if [ -f "$(Pipeline.Workspace)/cache/npm-cache.tar.gz" ]; then
-                echo "✅ Found npm cache artifact, extracting..."
-                mkdir -p ~/.npm
-                tar -xzf "$(Pipeline.Workspace)/cache/npm-cache.tar.gz" -C ~/
-                echo "✅ npm cache restored"
-              else
-                echo "⏭️  No npm cache found (first run)"
-              fi
-            displayName: 'Restore npm Cache'
+    - script: |
+        echo "Restoring npm cache..."
+        if [ -f "$(Pipeline.Workspace)/cache/npm-cache.tar.gz" ]; then
+          echo "✅ Found npm cache artifact, extracting..."
+          mkdir -p ~/.npm
+          tar -xzf "$(Pipeline.Workspace)/cache/npm-cache.tar.gz" -C ~/
+          echo "✅ npm cache restored"
+        else
+          echo "⏭️  No npm cache found (first run)"
+        fi
+      displayName: 'Restore npm Cache'
 
-          - script: |
-              echo "Restoring Playwright cache..."
-              if [ -f "$(Pipeline.Workspace)/cache/playwright-cache.tar.gz" ]; then
-                echo "✅ Found Playwright cache artifact, extracting..."
-                mkdir -p ~/.cache
-                tar -xzf "$(Pipeline.Workspace)/cache/playwright-cache.tar.gz" -C ~/
-                echo "✅ Playwright cache restored"
-              else
-                echo "⏭️  No Playwright cache found (first run)"
-              fi
-            displayName: 'Restore Playwright Cache'
+    - script: |
+        echo "Restoring Playwright cache..."
+        if [ -f "$(Pipeline.Workspace)/cache/playwright-cache.tar.gz" ]; then
+          echo "✅ Found Playwright cache artifact, extracting..."
+          mkdir -p ~/.cache
+          tar -xzf "$(Pipeline.Workspace)/cache/playwright-cache.tar.gz" -C ~/
+          echo "✅ Playwright cache restored"
+        else
+          echo "⏭️  No Playwright cache found (first run)"
+        fi
+      displayName: 'Restore Playwright Cache'
 
-          - script: |
-              echo "Installing dependencies..."
-              npm ci --prefer-offline
-            displayName: 'Install Dependencies'
+    - script: |
+        echo "Installing dependencies..."
+        npm ci --prefer-offline
+      displayName: 'Install Dependencies'
 
-          - script: |
-              echo "Installing Playwright browsers..."
-              npx playwright install --with-deps chromium
-            displayName: 'Install Playwright Browsers'
+    - script: |
+        echo "Installing Playwright browsers..."
+        npx playwright install --with-deps chromium
+      displayName: 'Install Playwright Browsers'
 
-          - script: |
-              echo "Running Playwright tests..."
-              npx playwright test || true
-            displayName: 'Run Tests'
-            env:
-              USERNAME: $(USERNAME)
-              PASSWORD: $(PASSWORD)
-              URL: $(URL)
-              CI: true
-            continueOnError: true
+    - script: |
+        echo "Running Playwright tests..."
+        npx playwright test || true
+      displayName: 'Run Tests'
+      env:
+        USERNAME: $(USERNAME)
+        PASSWORD: $(PASSWORD)
+        URL: $(URL)
+        CI: true
+      continueOnError: true
 
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
-            condition: always()
-            inputs:
-              testResultsFormat: 'JUnit'
-              testResultsFiles: 'test-results.xml'
-              failTaskOnFailedTests: false
-              testRunTitle: 'Playwright Test Results'
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
+      condition: always()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'test-results.xml'
+        failTaskOnFailedTests: false
+        testRunTitle: 'Playwright Test Results'
 
-          - task: PublishPipelineArtifact@1
-            displayName: 'Upload HTML Report'
-            condition: always()
-            inputs:
-              targetPath: 'playwright-report'
-              artifact: 'playwright-report'
-              publishLocation: 'pipeline'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Upload HTML Report'
+      condition: always()
+      inputs:
+        targetPath: 'playwright-report'
+        artifact: 'playwright-report'
+        publishLocation: 'pipeline'
 
-          - task: PublishPipelineArtifact@1
-            displayName: 'Upload JSON Results'
-            condition: always()
-            inputs:
-              targetPath: 'test-results.json'
-              artifact: 'test-results-json'
-              publishLocation: 'pipeline'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Upload JSON Results'
+      condition: always()
+      inputs:
+        targetPath: 'test-results.json'
+        artifact: 'test-results-json'
+        publishLocation: 'pipeline'
 
-          - task: PublishPipelineArtifact@1
-            displayName: 'Upload Screenshots/Videos'
-            condition: always()
-            inputs:
-              targetPath: 'test-results'
-              artifact: 'test-results-media'
-              publishLocation: 'pipeline'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Upload Screenshots/Videos'
+      condition: always()
+      inputs:
+        targetPath: 'test-results'
+        artifact: 'test-results-media'
+        publishLocation: 'pipeline'
 
-          - script: |
-              echo "======================================"
-              echo "📧 SENDING EMAIL REPORT"
-              echo "======================================"
+    - script: |
+        echo "======================================"
+        echo "📧 SENDING EMAIL REPORT"
+        echo "======================================"
 
-              if [ -z "$(EMAIL_USER)" ] || [ -z "$(EMAIL_PASSWORD)" ] || [ -z "$(EMAIL_RECIPIENTS)" ]; then
-                echo "⏭️ Email secrets not configured - skipping email notification"
-                echo "📥 Download test report from Artifacts section"
-                exit 0
-              fi
+        if [ -z "$(EMAIL_USER)" ] || [ -z "$(EMAIL_PASSWORD)" ] || [ -z "$(EMAIL_RECIPIENTS)" ]; then
+          echo "⏭️ Email secrets not configured - skipping email notification"
+        echo "📥 Download test report from Artifacts section"
+          exit 0
+        fi
 
-              echo "Installing nodemailer..."
-              npm install nodemailer
+        echo "Installing nodemailer..."
+        npm install nodemailer
 
-              echo "Sending email report..."
-              node scripts/send-email-report.js || {
-                echo "⚠️ Email sending failed"
-                echo "📥 Download test report from Artifacts instead"
-                exit 0
-              }
+        echo "Sending email report..."
+        node scripts/send-email-report.js || {
+          echo "⚠️ Email sending failed"
+          echo "📥 Download test report from Artifacts instead"
+          exit 0
+        }
 
-              echo "✅ Email sent successfully!"
-            displayName: 'Send Email Report'
-            condition: always()
-            env:
-              EMAIL_USER: $(EMAIL_USER)
-              EMAIL_PASSWORD: $(EMAIL_PASSWORD)
-              EMAIL_RECIPIENTS: $(EMAIL_RECIPIENTS)
-            continueOnError: true
+        echo "✅ Email sent successfully!"
+      displayName: 'Send Email Report'
+      condition: always()
+      env:
+        EMAIL_USER: $(EMAIL_USER)
+        EMAIL_PASSWORD: $(EMAIL_PASSWORD)
+        EMAIL_RECIPIENTS: $(EMAIL_RECIPIENTS)
+      continueOnError: true
 
-          - script: |
-              echo "======================================"
-              echo "📊 TEST SUMMARY"
-              echo "======================================"
+    - script: |
+        echo "======================================"
+        echo "📊 TEST SUMMARY"
+        echo "======================================"
 
-              if [ -f test-results.json ]; then
-                node scripts/generate-summary.js
-              else
-                echo "No test results found"
-              fi
-            displayName: 'Generate Test Summary'
-            condition: always()
+        if [ -f test-results.json ]; then
+          node scripts/generate-summary.js
+        else
+          echo "No test results found"
+        fi
+      displayName: 'Generate Test Summary'
+      condition: always()
 
-          - script: |
-              echo "======================================"
-              echo "💾 SAVING CACHES"
-              echo "======================================"
+    - script: |
+        echo "======================================"
+        echo "💾 SAVING CACHES"
+        echo "======================================"
 
-              echo "Creating npm cache archive..."
-              if [ -d ~/.npm ]; then
-                cd ~
-                tar -czf npm-cache.tar.gz .npm
-                mv npm-cache.tar.gz $(Build.ArtifactStagingDirectory)/
-                echo "✅ npm cache saved ($(du -sh .npm | cut -f1))"
-              else
-                echo "⏭️  No npm cache to save"
-              fi
+        echo "Creating npm cache archive..."
+        if [ -d ~/.npm ]; then
+          cd ~
+          tar -czf npm-cache.tar.gz .npm
+          mv npm-cache.tar.gz $(Build.ArtifactStagingDirectory)/
+          echo "✅ npm cache saved ($(du -sh .npm | cut -f1))"
+        else
+          echo "⏭️  No npm cache to save"
+        fi
 
-              echo "Creating Playwright cache archive..."
-              if [ -d ~/.cache/ms-playwright ]; then
-                cd ~
-                tar -czf playwright-cache.tar.gz .cache/ms-playwright
-                mv playwright-cache.tar.gz $(Build.ArtifactStagingDirectory)/
-                echo "✅ Playwright cache saved ($(du -sh .cache/ms-playwright | cut -f1))"
-              else
-                echo "⏭️  No Playwright cache to save"
-              fi
-            displayName: 'Save Caches as Artifacts'
-            condition: always()
+        echo "Creating Playwright cache archive..."
+        if [ -d ~/.cache/ms-playwright ]; then
+          cd ~
+          tar -czf playwright-cache.tar.gz .cache/ms-playwright
+          mv playwright-cache.tar.gz $(Build.ArtifactStagingDirectory)/
+          echo "✅ Playwright cache saved ($(du -sh .cache/ms-playwright | cut -f1))"
+        else
+          echo "⏭️  No Playwright cache to save"
+        fi
+      displayName: 'Save Caches as Artifacts'
+      condition: always()
 
-          - task: PublishPipelineArtifact@1
-            displayName: 'Upload npm Cache Artifact'
-            condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
-            continueOnError: true
-            inputs:
-              targetPath: '$(Build.ArtifactStagingDirectory)/npm-cache.tar.gz'
-              artifact: 'npm-cache'
-              publishLocation: 'pipeline'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Upload npm Cache Artifact'
+      condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
+      continueOnError: true
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/npm-cache.tar.gz'
+        artifact: 'npm-cache'
+        publishLocation: 'pipeline'
 
-          - task: PublishPipelineArtifact@1
-            displayName: 'Upload Playwright Cache Artifact'
-            condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
-            continueOnError: true
-            inputs:
-              targetPath: '$(Build.ArtifactStagingDirectory)/playwright-cache.tar.gz'
-              artifact: 'playwright-cache'
-              publishLocation: 'pipeline'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Upload Playwright Cache Artifact'
+      condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
+      continueOnError: true
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/playwright-cache.tar.gz'
+        artifact: 'playwright-cache'
+        publishLocation: 'pipeline'
