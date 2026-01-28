@@ -47,18 +47,24 @@ stages:
     - task: DownloadPipelineArtifact@2
       displayName: 'Download npm cache (if available)'
       continueOnError: true
-      condition: succeeded()
       inputs:
-        source: 'current'
+        source: 'specific'
+        project: '$(System.TeamProjectId)'
+        pipeline: '$(System.DefinitionId)'
+        runVersion: 'latestFromBranch'
+        runBranch: 'refs/heads/master'
         artifact: 'npm-cache'
         path: '$(Pipeline.Workspace)/cache'
 
     - task: DownloadPipelineArtifact@2
       displayName: 'Download Playwright cache (if available)'
       continueOnError: true
-      condition: succeeded()
       inputs:
-        source: 'current'
+        source: 'specific'
+        project: '$(System.TeamProjectId)'
+        pipeline: '$(System.DefinitionId)'
+        runVersion: 'latestFromBranch'
+        runBranch: 'refs/heads/master'
         artifact: 'playwright-cache'
         path: '$(Pipeline.Workspace)/cache'
 
