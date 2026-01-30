@@ -7,8 +7,8 @@ trigger:
     - master
 
 schedules:
-- cron: "0 21 * * *"  # Run daily at 5 AM Malaysia Time (MYT/UTC+8)
-  displayName: Daily Test Run (5 AM MYT)
+- cron: "0 21 * * 1-5"  # Run weekdays (Mon-Fri) at 5 AM Malaysia Time (MYT/UTC+8)
+  displayName: Weekday Test Run (5 AM MYT, Mon-Fri)
   branches:
     include:
     - master
