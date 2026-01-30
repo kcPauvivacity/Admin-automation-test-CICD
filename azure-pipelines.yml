@@ -7,8 +7,8 @@ trigger:
     - master
 
 schedules:
-- cron: "0 19 * * *"  # Run daily at 3 AM Malaysia Time (MYT/UTC+8)
-  displayName: Daily Test Run (3 AM MYT)
+- cron: "0 21 * * *"  # Run daily at 5 AM Malaysia Time (MYT/UTC+8)
+  displayName: Daily Test Run (5 AM MYT)
   branches:
     include:
     - master
@@ -47,18 +47,24 @@ stages:
     - task: DownloadPipelineArtifact@2
       displayName: 'Download npm cache (if available)'
       continueOnError: true
-      condition: succeeded()
       inputs:
-        source: 'current'
+        source: 'specific'
+        project: '$(System.TeamProjectId)'
+        pipeline: '$(System.DefinitionId)'
+        runVersion: 'latestFromBranch'
+        runBranch: 'refs/heads/master'
         artifact: 'npm-cache'
         path: '$(Pipeline.Workspace)/cache'
 
     - task: DownloadPipelineArtifact@2
       displayName: 'Download Playwright cache (if available)'
       continueOnError: true
-      condition: succeeded()
       inputs:
-        source: 'current'
+        source: 'specific'
+        project: '$(System.TeamProjectId)'
+        pipeline: '$(System.DefinitionId)'
+        runVersion: 'latestFromBranch'
+        runBranch: 'refs/heads/master'
         artifact: 'playwright-cache'
         path: '$(Pipeline.Workspace)/cache'
 
