@@ -1,10 +1,7 @@
 # Azure Pipeline for Playwright Tests
-# Runs tests daily and on code changes
+# Runs only on schedule (weekdays at 5 AM Malaysia Time)
 
-trigger:
-  branches:
-    include:
-    - master
+trigger: none  # Don't run on code push
 
 schedules:
 - cron: "0 21 * * 1-5"  # Run weekdays (Mon-Fri) at 5 AM Malaysia Time (MYT/UTC+8)
