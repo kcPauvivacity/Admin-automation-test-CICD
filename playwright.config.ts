@@ -6,14 +6,14 @@ dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 180000, // 3 minutes per test for CI
+  timeout: 120000, // Reduced to 2 minutes per test
   expect: {
-    timeout: 10000 // 10 seconds for assertions
+    timeout: 8000 // Reduced to 8 seconds for assertions
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0, // Retry once on CI
-  workers: process.env.CI ? 4 : undefined, // Increased to 4 parallel workers on CI for faster execution
+  retries: process.env.CI ? 0 : 0, // No retries to save time
+  workers: process.env.CI ? 8 : undefined, // Increased to 8 parallel workers for faster execution
   reporter: process.env.CI ? [
     ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results.json' }], 
