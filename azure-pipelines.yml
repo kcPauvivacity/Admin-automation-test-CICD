@@ -150,7 +150,7 @@ stages:
         echo "📧 SENDING EMAIL REPORT"
         echo "======================================"
 
-        if [ -z "$(EMAIL_USER)" ] || [ -z "$(EMAIL_PASSWORD)" ] || [ -z "$(EMAIL_RECIPIENTS)" ]; then
+        if [ -z "$(EMAIL_USER1)" ] || [ -z "$(EMAIL_PASSWORD1)" ] || [ -z "$(EMAIL_RECIPIENTS)" ]; then
           echo "⏭️ Email secrets not configured - skipping email notification"
         echo "📥 Download test report from Artifacts section"
           exit 0
@@ -170,8 +170,8 @@ stages:
       displayName: 'Send Email Report'
       condition: always()
       env:
-        EMAIL_USER: $(EMAIL_USER)
-        EMAIL_PASSWORD: $(EMAIL_PASSWORD)
+        EMAIL_USER: $(EMAIL_USER1)
+        EMAIL_PASSWORD: $(EMAIL_PASSWORD1)
         EMAIL_RECIPIENTS: $(EMAIL_RECIPIENTS)
       continueOnError: true
 
