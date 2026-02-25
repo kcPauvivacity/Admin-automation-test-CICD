@@ -1,10 +1,14 @@
 // Simple test script to verify Gmail credentials work
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 
-// Replace these with your actual values
-const EMAIL_USER = 'kc@vivacityapp.com';
-const EMAIL_PASSWORD = 'xpxvytjxjantlkge';
-const EMAIL_RECIPIENTS = 'kc@vivacityapp.com';
+// Load environment variables from .env file
+dotenv.config();
+
+// Get credentials from environment variables
+const EMAIL_USER = process.env.EMAIL_USER;
+const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
+const EMAIL_RECIPIENTS = process.env.EMAIL_RECIPIENTS;
 
 async function testEmail() {
     console.log('🧪 Testing Gmail connection...\n');

@@ -41,3 +41,4 @@ az pipelines create \
 
 echo "✅ Azure DevOps pipelines created!"
 echo "👉 Go to https://dev.azure.com/vivacityapp/Viva/_build to view"
+
