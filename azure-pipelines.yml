@@ -103,9 +103,8 @@ stages:
 
     - script: |
         echo "Running Playwright tests..."
-        # Only run stable tests to reduce runtime
-        npx playwright test tests/login.test.ts || true
-      displayName: 'Run Tests (Stable Only)'
+        npx playwright test || true
+      displayName: 'Run All Tests'
       env:
         USERNAME: $(TEST_USERNAME1)
         PASSWORD: $(TEST_PASSWORD2)
