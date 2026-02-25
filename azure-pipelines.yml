@@ -124,8 +124,7 @@ stages:
 
     - task: PublishPipelineArtifact@1
       displayName: 'Upload HTML Report'
-      condition: always()
-      continueOnError: true
+      condition: eq(variables['System.JobAttempt'], '1')
       inputs:
         targetPath: 'playwright-report'
         artifact: 'playwright-report'
@@ -133,8 +132,7 @@ stages:
 
     - task: PublishPipelineArtifact@1
       displayName: 'Upload JSON Results'
-      condition: always()
-      continueOnError: true
+      condition: eq(variables['System.JobAttempt'], '1')
       inputs:
         targetPath: 'test-results.json'
         artifact: 'test-results-json'
@@ -142,8 +140,7 @@ stages:
 
     - task: PublishPipelineArtifact@1
       displayName: 'Upload Screenshots/Videos'
-      condition: always()
-      continueOnError: true
+      condition: eq(variables['System.JobAttempt'], '1')
       inputs:
         targetPath: 'test-results'
         artifact: 'test-results-media'
