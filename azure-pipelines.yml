@@ -107,9 +107,9 @@ stages:
         npx playwright test tests/login.test.ts || true
       displayName: 'Run Tests (Stable Only)'
       env:
-        USERNAME: $(USERNAME)
-        PASSWORD: $(PASSWORD)
-        URL: $(URL)
+        USERNAME: $(TEST_USERNAME)
+        PASSWORD: $(TEST_PASSWORD)
+        URL: $(BASE_URL)
         CI: true
       continueOnError: true
 
