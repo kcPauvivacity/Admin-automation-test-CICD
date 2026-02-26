@@ -5,9 +5,9 @@ dotenv.config();
 
 export const config = {
   // Login Credentials
-  username: process.env.USERNAME || '',
-  password: process.env.PASSWORD || '',
-  url: process.env.URL || 'https://app-staging.vivacityapp.com',
+  username: process.env.TEST_USERNAME || '',
+  password: process.env.TEST_PASSWORD || '',
+  url: process.env.TEST_URL || 'https://app-staging.vivacityapp.com',
   
   // Email Configuration
   emailUser: process.env.EMAIL_USER || '',
@@ -19,9 +19,9 @@ export const config = {
 export function validateConfig() {
   const missing: string[] = [];
   
-  if (!config.username) missing.push('USERNAME');
-  if (!config.password) missing.push('PASSWORD');
-  if (!config.url) missing.push('URL');
+  if (!config.username) missing.push('TEST_USERNAME');
+  if (!config.password) missing.push('TEST_PASSWORD');
+  if (!config.url) missing.push('TEST_URL');
   
   if (missing.length > 0) {
     throw new Error(
