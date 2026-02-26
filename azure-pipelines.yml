@@ -107,7 +107,7 @@ stages:
       displayName: 'Run All Tests'
       env:
         USERNAME: $(TEST_USERNAME1)
-        PASSWORD: $(TEST_PASSWORD2)
+        PASSWORD: $(TEST_PASSWORD1)
         URL: $(BASE_URL)
         CI: true
       continueOnError: true
