@@ -10,6 +10,7 @@ export const VALID_PASSWORD = process.env.TEST_PASSWORD || 'PAOpaopao@9696';
  * Handles the complete login flow including passkey enrollment
  */
 export async function loginToApp(page: Page, timeout: number = 60000) {
+    console.log(`🔍 Login attempt: email=${VALID_EMAIL}, url=${LOGIN_URL}, password_length=${VALID_PASSWORD.length}`);
     // Navigate to the application (will redirect to auth0 login)
     await page.goto(LOGIN_URL, { waitUntil: 'networkidle', timeout });
 

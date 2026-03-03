@@ -102,6 +102,24 @@ stages:
       displayName: 'Install Playwright Browsers'
 
     - script: |
+        echo "======================================"
+        echo "🔍 DEBUG: Checking credential setup"
+        echo "======================================"
+        echo "TEST_USERNAME value: $TEST_USERNAME"
+        echo "TEST_URL value: $TEST_URL"
+        if [ -z "$TEST_PASSWORD" ]; then
+          echo "TEST_PASSWORD: EMPTY (will use hardcoded fallback)"
+        else
+          echo "TEST_PASSWORD: SET (length: ${#TEST_PASSWORD} chars)"
+        fi
+        echo "======================================"
+      displayName: 'Debug: Check Credentials'
+      env:
+        TEST_USERNAME: $(TEST_USERNAME1)
+        TEST_PASSWORD: $(TEST_PASSWORD1)
+        TEST_URL: $(BASE_URL)
+
+    - script: |
         echo "Running Playwright tests..."
         npx playwright test || true
       displayName: 'Run All Tests'
