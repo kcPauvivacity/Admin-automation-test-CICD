@@ -1,5 +1,8 @@
 # Azure Pipeline for Playwright Tests
 # Runs only on schedule (weekdays at 5 AM Malaysia Time)
+#
+# CREDENTIALS: Update tests/.env file and push to change login credentials.
+# Current test account: see .env file (TEST_USERNAME / TEST_PASSWORD)
 
 trigger: none  # Don't run on code push
 
@@ -26,28 +29,16 @@ stages:
       displayName: 'Checkout Repository'
 
     - script: |
-        echo "Current directory: $(pwd)"
         echo "Git commit: $(git rev-parse HEAD)"
-      displayName: 'Debug: Verify Checkout'
+        # Show which account will be used for tests
+        TEST_USERNAME=$(grep "^TEST_USERNAME=" .env | cut -d'=' -f2)
+        echo "Test account: $TEST_USERNAME"
+      displayName: 'Show Test Account'
 
     - task: NodeTool@0
       displayName: 'Install Node.js'
       inputs:
         versionSpec: '18.x'
-
-    - task: DownloadSecureFile@1
-      displayName: 'Download credentials (.env)'
-      name: envFile
-      inputs:
-        secureFile: 'playwright.env'
-
-    - script: |
-        cp $(envFile.secureFilePath) .env
-        echo "✅ Credentials loaded from Secure File"
-        # Show which email will be used (not the password)
-        TEST_USERNAME=$(grep "^TEST_USERNAME=" .env | cut -d'=' -f2)
-        echo "TEST_USERNAME: $TEST_USERNAME"
-      displayName: 'Load Credentials'
 
     - script: |
         echo "Installing dependencies..."
@@ -109,22 +100,17 @@ stages:
         set -a; source .env; set +a
 
         if [ -z "$EMAIL_USER" ] || [ -z "$EMAIL_PASSWORD" ] || [ -z "$EMAIL_RECIPIENTS" ]; then
-          echo "⏭️ Email secrets not configured - skipping email notification"
-          echo "📥 Download test report from Artifacts section"
+          echo "⏭️ Email not configured in .env - skipping"
           exit 0
         fi
 
-        echo "Installing nodemailer..."
         npm install nodemailer
-
-        echo "Sending email report..."
         node scripts/send-email-report.js || {
-          echo "⚠️ Email sending failed"
-          echo "📥 Download test report from Artifacts instead"
+          echo "⚠️ Email sending failed - download report from Artifacts"
           exit 0
         }
 
-        echo "✅ Email sent successfully!"
+        echo "✅ Email sent!"
       displayName: 'Send Email Report'
       condition: always()
       continueOnError: true
