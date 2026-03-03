@@ -14,9 +14,6 @@ schedules:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  - group: playwright-secrets  # Create this variable group in Azure DevOps
-
 stages:
 - stage: Test
   displayName: 'Run Playwright Tests'
@@ -30,9 +27,6 @@ stages:
 
     - script: |
         echo "Current directory: $(pwd)"
-        echo "Checking for package-lock.json..."
-        ls -la package-lock.json || echo "package-lock.json NOT FOUND"
-        echo "Git branch: $(git branch --show-current)"
         echo "Git commit: $(git rev-parse HEAD)"
       displayName: 'Debug: Verify Checkout'
 
@@ -41,55 +35,19 @@ stages:
       inputs:
         versionSpec: '18.x'
 
-    # Skip cache download for now - it causes errors on first runs
-    # - task: DownloadPipelineArtifact@2
-    #   displayName: 'Download npm cache (if available)'
-    #   continueOnError: true
-    #   inputs:
-    #     source: 'specific'
-    #     project: '$(System.TeamProjectId)'
-    #     pipeline: '$(System.DefinitionId)'
-    #     runVersion: 'latestFromBranch'
-    #     runBranch: 'refs/heads/master'
-    #     artifact: 'npm-cache'
-    #     path: '$(Pipeline.Workspace)/cache'
+    - task: DownloadSecureFile@1
+      displayName: 'Download credentials (.env)'
+      name: envFile
+      inputs:
+        secureFile: 'playwright.env'
 
-    # - task: DownloadPipelineArtifact@2
-    #   displayName: 'Download Playwright cache (if available)'
-    #   continueOnError: true
-    #   inputs:
-    #     source: 'specific'
-    #     project: '$(System.TeamProjectId)'
-    #     pipeline: '$(System.DefinitionId)'
-    #     runVersion: 'latestFromBranch'
-    #     runBranch: 'refs/heads/master'
-    #     artifact: 'playwright-cache'
-    #     path: '$(Pipeline.Workspace)/cache'
-
-    # Skip cache restore for now
-    # - script: |
-    #     echo "Restoring npm cache..."
-    #     if [ -f "$(Pipeline.Workspace)/cache/npm-cache.tar.gz" ]; then
-    #       echo "✅ Found npm cache artifact, extracting..."
-    #       mkdir -p ~/.npm
-    #       tar -xzf "$(Pipeline.Workspace)/cache/npm-cache.tar.gz" -C ~/
-    #       echo "✅ npm cache restored"
-    #     else
-    #       echo "⏭️  No npm cache found (first run)"
-    #     fi
-    #   displayName: 'Restore npm Cache'
-
-    # - script: |
-    #     echo "Restoring Playwright cache..."
-    #     if [ -f "$(Pipeline.Workspace)/cache/playwright-cache.tar.gz" ]; then
-    #       echo "✅ Found Playwright cache artifact, extracting..."
-    #       mkdir -p ~/.cache
-    #       tar -xzf "$(Pipeline.Workspace)/cache/playwright-cache.tar.gz" -C ~/
-    #       echo "✅ Playwright cache restored"
-    #     else
-    #       echo "⏭️  No Playwright cache found (first run)"
-    #     fi
-    #   displayName: 'Restore Playwright Cache'
+    - script: |
+        cp $(envFile.secureFilePath) .env
+        echo "✅ Credentials loaded from Secure File"
+        # Show which email will be used (not the password)
+        TEST_USERNAME=$(grep "^TEST_USERNAME=" .env | cut -d'=' -f2)
+        echo "TEST_USERNAME: $TEST_USERNAME"
+      displayName: 'Load Credentials'
 
     - script: |
         echo "Installing dependencies..."
@@ -102,31 +60,10 @@ stages:
       displayName: 'Install Playwright Browsers'
 
     - script: |
-        echo "======================================"
-        echo "🔍 DEBUG: Checking credential setup"
-        echo "======================================"
-        echo "TEST_USERNAME value: $TEST_USERNAME"
-        echo "TEST_URL value: $TEST_URL"
-        if [ -z "$TEST_PASSWORD" ]; then
-          echo "TEST_PASSWORD: EMPTY (will use hardcoded fallback)"
-        else
-          echo "TEST_PASSWORD: SET (length: ${#TEST_PASSWORD} chars)"
-        fi
-        echo "======================================"
-      displayName: 'Debug: Check Credentials'
-      env:
-        TEST_USERNAME: $(TEST_USERNAME1)
-        TEST_PASSWORD: $(TEST_PASSWORD1)
-        TEST_URL: $(BASE_URL)
-
-    - script: |
         echo "Running Playwright tests..."
         npx playwright test || true
       displayName: 'Run All Tests'
       env:
-        TEST_USERNAME: $(TEST_USERNAME1)
-        TEST_PASSWORD: $(TEST_PASSWORD1)
-        TEST_URL: $(BASE_URL)
         CI: true
       continueOnError: true
 
@@ -168,9 +105,12 @@ stages:
         echo "📧 SENDING EMAIL REPORT"
         echo "======================================"
 
-        if [ -z "$(EMAIL_USER1)" ] || [ -z "$(EMAIL_PASSWORD1)" ] || [ -z "$(EMAIL_RECIPIENTS)" ]; then
+        # Load credentials from .env
+        set -a; source .env; set +a
+
+        if [ -z "$EMAIL_USER" ] || [ -z "$EMAIL_PASSWORD" ] || [ -z "$EMAIL_RECIPIENTS" ]; then
           echo "⏭️ Email secrets not configured - skipping email notification"
-        echo "📥 Download test report from Artifacts section"
+          echo "📥 Download test report from Artifacts section"
           exit 0
         fi
 
@@ -187,10 +127,6 @@ stages:
         echo "✅ Email sent successfully!"
       displayName: 'Send Email Report'
       condition: always()
-      env:
-        EMAIL_USER: $(EMAIL_USER1)
-        EMAIL_PASSWORD: $(EMAIL_PASSWORD1)
-        EMAIL_RECIPIENTS: $(EMAIL_RECIPIENTS)
       continueOnError: true
 
     - script: |
@@ -205,49 +141,3 @@ stages:
         fi
       displayName: 'Generate Test Summary'
       condition: always()
-
-    # Skip cache saving for now - causes artifact conflicts
-    # - script: |
-    #     echo "======================================"
-    #     echo "💾 SAVING CACHES"
-    #     echo "======================================"
-
-    #     echo "Creating npm cache archive..."
-    #     if [ -d ~/.npm ]; then
-    #       cd ~
-    #       tar -czf npm-cache.tar.gz .npm
-    #       mv npm-cache.tar.gz $(Build.ArtifactStagingDirectory)/
-    #       echo "✅ npm cache saved ($(du -sh .npm | cut -f1))"
-    #     else
-    #       echo "⏭️  No npm cache to save"
-    #     fi
-
-    #     echo "Creating Playwright cache archive..."
-    #     if [ -d ~/.cache/ms-playwright ]; then
-    #       cd ~
-    #       tar -czf playwright-cache.tar.gz .cache/ms-playwright
-    #       mv playwright-cache.tar.gz $(Build.ArtifactStagingDirectory)/
-    #       echo "✅ Playwright cache saved ($(du -sh .cache/ms-playwright | cut -f1))"
-    #     else
-    #       echo "⏭️  No Playwright cache to save"
-    #     fi
-    #   displayName: 'Save Caches as Artifacts'
-    #   condition: always()
-
-    # - task: PublishPipelineArtifact@1
-    #   displayName: 'Upload npm Cache Artifact'
-    #   condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
-    #   continueOnError: true
-    #   inputs:
-    #     targetPath: '$(Build.ArtifactStagingDirectory)/npm-cache.tar.gz'
-    #     artifact: 'npm-cache'
-    #     publishLocation: 'pipeline'
-
-    # - task: PublishPipelineArtifact@1
-    #   displayName: 'Upload Playwright Cache Artifact'
-    #   condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
-    #   continueOnError: true
-    #   inputs:
-    #     targetPath: '$(Build.ArtifactStagingDirectory)/playwright-cache.tar.gz'
-    #     artifact: 'playwright-cache'
-    #     publishLocation: 'pipeline'
