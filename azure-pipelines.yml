@@ -1,5 +1,6 @@
 # Azure Pipeline for Playwright Tests
-# Runs only on schedule (weekdays at 5 AM Malaysia Time)
+# Runs ALL test cases (76+ tests) on schedule (weekdays at 5 AM Malaysia Time)
+# Expected runtime: 30-40 minutes
 #
 # CREDENTIALS: Update tests/.env file and push to change login credentials.
 # Current test account: see .env file (TEST_USERNAME / TEST_PASSWORD)
@@ -8,7 +9,7 @@ trigger: none  # Don't run on code push
 
 schedules:
 - cron: "0 21 * * 1-5"  # Run weekdays (Mon-Fri) at 5 AM Malaysia Time (MYT/UTC+8)
-  displayName: Weekday Test Run (5 AM MYT, Mon-Fri)
+  displayName: Weekday Full Test Suite (5 AM MYT, Mon-Fri)
   branches:
     include:
     - master
@@ -52,8 +53,10 @@ stages:
 
     - script: |
         echo "Running Playwright tests..."
+        echo "Running ALL test suites (76+ test files)"
+        echo "Expected runtime: 30-40 minutes"
         npx playwright test || true
-      displayName: 'Run All Tests'
+      displayName: 'Run All Test Cases'
       env:
         CI: true
       continueOnError: true
