@@ -98,22 +98,7 @@ stages:
         echo "======================================"
         echo "📧 SENDING EMAIL REPORT"
         echo "======================================"
-
-        # Set email credentials from Azure Pipeline variables
-        export EMAIL_USER="kc@vivacityapp.com"
-        export EMAIL_PASSWORD="$(EMAIL_PASSWORD)"
-        export EMAIL_RECIPIENTS="kc@vivacityapp.com"
-
-        echo "📧 EMAIL_USER: ${EMAIL_USER}"
-        echo "🔑 EMAIL_PASSWORD: Set ✓"
-        echo "📬 EMAIL_RECIPIENTS: ${EMAIL_RECIPIENTS}"
-
-        if [ -z "$EMAIL_PASSWORD" ]; then
-          echo "⚠️ EMAIL_PASSWORD variable not configured in Azure DevOps"
-          echo "ℹ️ Please add EMAIL_PASSWORD to pipeline variables"
-          echo "⏭️ Skipping email notification"
-          exit 0
-        fi
+        echo "📬 Email will be sent to: kc@vivacityapp.com"
 
         npm install nodemailer
         node scripts/send-email-report.js || {
@@ -121,7 +106,7 @@ stages:
           exit 0
         }
 
-        echo "✅ Email sent to ${EMAIL_RECIPIENTS}!"
+        echo "✅ Email sent to kc@vivacityapp.com!"
       displayName: 'Send Email Report'
       condition: always()
       continueOnError: true

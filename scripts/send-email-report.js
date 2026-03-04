@@ -7,23 +7,21 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configuration - Update these with your email settings
+// Configuration - Hardcoded email settings
 const EMAIL_CONFIG = {
     host: 'smtp.gmail.com',
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: process.env.EMAIL_USER || 'your-email@gmail.com',
-        pass: process.env.EMAIL_PASSWORD || 'your-app-password'
+        user: 'kc@vivacityapp.com',
+        pass: 'zxlmoffobvxedpds'  // Gmail App Password
     },
     tls: {
         rejectUnauthorized: false
     }
 };
 
-const RECIPIENTS = process.env.EMAIL_RECIPIENTS 
-    ? process.env.EMAIL_RECIPIENTS.split(',') 
-    : ['recipient@example.com'];
+const RECIPIENTS = ['kc@vivacityapp.com'];
 
 async function sendEmailReport() {
     try {
