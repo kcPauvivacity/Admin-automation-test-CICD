@@ -99,11 +99,19 @@ stages:
         echo "📧 SENDING EMAIL REPORT"
         echo "======================================"
 
-        # Load credentials from .env
-        set -a; source .env; set +a
+        # Set email credentials from Azure Pipeline variables
+        export EMAIL_USER="kc@vivacityapp.com"
+        export EMAIL_PASSWORD="$(EMAIL_PASSWORD)"
+        export EMAIL_RECIPIENTS="kc@vivacityapp.com"
 
-        if [ -z "$EMAIL_USER" ] || [ -z "$EMAIL_PASSWORD" ] || [ -z "$EMAIL_RECIPIENTS" ]; then
-          echo "⏭️ Email not configured in .env - skipping"
+        echo "📧 EMAIL_USER: ${EMAIL_USER}"
+        echo "🔑 EMAIL_PASSWORD: Set ✓"
+        echo "📬 EMAIL_RECIPIENTS: ${EMAIL_RECIPIENTS}"
+
+        if [ -z "$EMAIL_PASSWORD" ]; then
+          echo "⚠️ EMAIL_PASSWORD variable not configured in Azure DevOps"
+          echo "ℹ️ Please add EMAIL_PASSWORD to pipeline variables"
+          echo "⏭️ Skipping email notification"
           exit 0
         fi
 
@@ -113,7 +121,7 @@ stages:
           exit 0
         }
 
-        echo "✅ Email sent!"
+        echo "✅ Email sent to ${EMAIL_RECIPIENTS}!"
       displayName: 'Send Email Report'
       condition: always()
       continueOnError: true
