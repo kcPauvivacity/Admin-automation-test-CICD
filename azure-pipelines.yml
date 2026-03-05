@@ -1,6 +1,7 @@
 # Azure Pipeline for Playwright Tests
 # Runs ALL test cases (76+ tests) on schedule (weekdays at 5 AM Malaysia Time)
-# Expected runtime: 30-40 minutes
+# Expected runtime: 60-90 minutes (running in parallel with 4 workers)
+# Timeout: 120 minutes (2 hours) to allow completion
 #
 # CREDENTIALS: Update tests/.env file and push to change login credentials.
 # Current test account: see .env file (TEST_USERNAME / TEST_PASSWORD)
@@ -24,7 +25,8 @@ stages:
   jobs:
   - job: PlaywrightTests
     displayName: 'Playwright Test Execution'
-    timeoutInMinutes: 90
+    timeoutInMinutes: 120  # Increased from 90 to 120 minutes (2 hours)
+    cancelTimeoutInMinutes: 5  # Give 5 minutes to cleanup
     steps:
     - checkout: self
       displayName: 'Checkout Repository'
@@ -54,8 +56,11 @@ stages:
     - script: |
         echo "Running Playwright tests..."
         echo "Running ALL test suites (76+ test files)"
-        echo "Expected runtime: 30-40 minutes"
-        npx playwright test || true
+        echo "Expected runtime: 60-90 minutes with parallel execution"
+        echo "Workers: 4 (optimized for Azure Pipelines)"
+        
+        # Run tests with optimized settings for CI
+        npx playwright test --workers=4 || true
       displayName: 'Run All Test Cases'
       env:
         CI: true
@@ -72,7 +77,7 @@ stages:
 
     - task: PublishPipelineArtifact@1
       displayName: 'Upload HTML Report'
-      condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
+      condition: always()  # Always upload, even on timeout
       continueOnError: true
       inputs:
         targetPath: 'playwright-report'
@@ -81,7 +86,7 @@ stages:
 
     - task: PublishPipelineArtifact@1
       displayName: 'Upload JSON Results'
-      condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
+      condition: always()  # Always upload, even on timeout
       continueOnError: true
       inputs:
         targetPath: 'test-results.json'
@@ -90,7 +95,7 @@ stages:
 
     - task: PublishPipelineArtifact@1
       displayName: 'Upload Screenshots/Videos'
-      condition: and(always(), eq(variables['Agent.JobStatus'], 'Succeeded'))
+      condition: always()  # Always upload, even on timeout
       continueOnError: true
       inputs:
         targetPath: 'test-results'
