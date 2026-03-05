@@ -461,9 +461,17 @@ test('verify promotions pagination', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
+    
+    // Wait for page to fully load with extended timeout
+    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {
+        console.log('⚠️ Page did not reach networkidle state, continuing...');
+    });
+    await page.waitForTimeout(2000);
 
     // Navigate to Promotions
-    await page.getByRole('menuitem', { name: 'Promotions' }).click();
+    const promotionsMenu = page.getByRole('menuitem', { name: 'Promotions' });
+    await expect(promotionsMenu).toBeVisible({ timeout: 10000 });
+    await promotionsMenu.click();
     await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 

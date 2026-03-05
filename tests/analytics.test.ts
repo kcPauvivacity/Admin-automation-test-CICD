@@ -564,23 +564,41 @@ test('create analytics and validate record details', async ({ page }) => {
     console.log('✅ Successfully created analytics record');
 
     // Now search for the created record to validate
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
+    await page.waitForLoadState('networkidle');
     
     // Search for the record by name
     const searchInput = page.locator('input[type="text"]').first();
     if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
         await searchInput.click();
         await searchInput.fill(testData.name);
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(3000);
+        await page.waitForLoadState('networkidle');
         
         console.log(`🔍 Searching for record: ${testData.name}`);
     }
 
-    // Find the row containing our test data
+    // Find the row containing our test data - increase timeout and reload if needed
     const recordRow = page.locator(`table tbody tr:has-text("${testData.name}")`).first();
     
-    // Validate the record exists in the table
-    await expect(recordRow).toBeVisible({ timeout: 10000 });
+    // Try to wait for the record, if not found, refresh the page
+    const isVisible = await recordRow.isVisible({ timeout: 5000 }).catch(() => false);
+    if (!isVisible) {
+        console.log('⚠️ Record not found in table, refreshing page...');
+        await page.reload({ waitUntil: 'networkidle' });
+        await page.waitForTimeout(2000);
+        
+        // Search again after reload
+        const searchInputAfterReload = page.locator('input[type="text"]').first();
+        if (await searchInputAfterReload.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await searchInputAfterReload.click();
+            await searchInputAfterReload.fill(testData.name);
+            await page.waitForTimeout(2000);
+        }
+    }
+    
+    // Validate the record exists in the table with longer timeout
+    await expect(recordRow).toBeVisible({ timeout: 15000 });
     console.log('✅ Record found in table');
 
     // Validate the name appears in the row

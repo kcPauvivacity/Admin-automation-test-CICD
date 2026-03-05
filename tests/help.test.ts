@@ -329,9 +329,17 @@ test('verify help menu closes when clicking outside', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
+    
+    // Wait for page to fully load
+    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {
+        console.log('⚠️ Page did not reach networkidle state, continuing...');
+    });
+    await page.waitForTimeout(2000);
 
     // Open help menu
-    await page.getByRole('button', { name: 'Open help menu' }).click();
+    const helpButton = page.getByRole('button', { name: 'Open help menu' });
+    await expect(helpButton).toBeVisible({ timeout: 10000 });
+    await helpButton.click();
     await page.waitForTimeout(500);
     
     // Verify menu is open

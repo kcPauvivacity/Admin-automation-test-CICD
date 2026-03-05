@@ -580,8 +580,13 @@ test('create attribute with Chinese characters only', async ({ page }) => {
 
     // Save
     await page.getByRole('button', { name: 'Save' }).click();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
     await page.waitForLoadState('networkidle');
 
     console.log('✅ Successfully created attribute with Chinese characters');
+    
+    // Verify we're back on the listing page or detail page
+    const currentUrl = page.url();
+    await expect(page).toHaveURL(/app-staging\.vivacityapp\.com\/(demo-student|attributes)/);
+    console.log(`✅ Redirected to: ${currentUrl}`);
 });
