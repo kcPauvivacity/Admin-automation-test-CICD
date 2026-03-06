@@ -13,8 +13,8 @@ const EMAIL_CONFIG = {
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: 'kc@vivacityapp.com',
-        pass: 'zxlmoffobvxedpds'  // Gmail App Password
+        user: 'paukiechee96@gmail.com',
+        pass: 'npxtpruuasfmggdz'  // Gmail App Password
     },
     tls: {
         rejectUnauthorized: false
