@@ -9,19 +9,21 @@ export const VALID_PASSWORD = process.env.TEST_PASSWORD || 'PAOpaopao@9696';
  * Shared login helper function for all tests
  * Handles the complete login flow including passkey enrollment
  */
-export async function loginToApp(page: Page, timeout: number = 60000) {
-    console.log(`🔍 Login attempt: email=${VALID_EMAIL}, url=${LOGIN_URL}, password_length=${VALID_PASSWORD.length}`);
+export async function loginToApp(page: Page, timeout: number = 60000, email?: string, password?: string) {
+    const loginEmail = email || VALID_EMAIL;
+    const loginPassword = password || VALID_PASSWORD;
+    console.log(`🔍 Login attempt: email=${loginEmail}, url=${LOGIN_URL}, password_length=${loginPassword.length}`);
     // Navigate to the application (will redirect to auth0 login)
     await page.goto(LOGIN_URL, { waitUntil: 'networkidle', timeout });
 
     // Wait for and fill email
     await page.waitForSelector('input[name="username"]', { timeout: 10000 });
-    await page.fill('input[name="username"]', VALID_EMAIL);
+    await page.fill('input[name="username"]', loginEmail);
     await page.click('button[type="submit"]');
 
     // Wait for and fill password
     await page.waitForSelector('input[name="password"]', { timeout: 10000 });
-    await page.fill('input[name="password"]', VALID_PASSWORD);
+    await page.fill('input[name="password"]', loginPassword);
     await page.click('button[type="submit"]');
 
     // Wait for navigation after login (use load instead of networkidle due to 503 errors)
