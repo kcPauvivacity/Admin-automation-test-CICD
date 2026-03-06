@@ -21,7 +21,7 @@ const EMAIL_CONFIG = {
     }
 };
 
-const RECIPIENTS = ['kc@vivacityapp.com'];
+const RECIPIENTS = ['paukiechee96@gmail.com'];
 
 async function sendEmailReport() {
     try {
