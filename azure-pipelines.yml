@@ -75,6 +75,18 @@ stages:
         failTaskOnFailedTests: false
         testRunTitle: 'Playwright Test Results'
 
+    - script: |
+        if [ ! -f test-results.json ]; then
+          echo "⚠️ test-results.json not found (pipeline may have timed out) - creating fallback"
+          echo '{"suites":[],"stats":{"expected":0,"skipped":0,"unexpected":0,"flaky":0},"errors":["test-results.json was not generated - pipeline may have timed out or tests were interrupted"]}' > test-results.json
+        else
+          echo "✅ test-results.json found"
+          node -e "const r=JSON.parse(require('fs').readFileSync('test-results.json','utf8')); console.log('Stats:', JSON.stringify(r.stats||{}));"
+        fi
+      displayName: 'Ensure JSON Report Exists'
+      condition: always()
+      continueOnError: true
+
     - task: PublishPipelineArtifact@1
       displayName: 'Upload HTML Report'
       condition: always()  # Always upload, even on timeout
