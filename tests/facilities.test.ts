@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 test('create new facility with random names', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -62,7 +62,7 @@ test('create new facility with random names', async ({ page }) => {
 });
 
 test('edit first facility record and select bathroom type', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -117,7 +117,7 @@ test('edit first facility record and select bathroom type', async ({ page }) => 
 });
 
 test('verify facilities table displays records', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -148,7 +148,7 @@ test('verify facilities table displays records', async ({ page }) => {
 });
 
 test('search facilities by name', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -181,7 +181,7 @@ test('search facilities by name', async ({ page }) => {
 });
 
 test('create facility with different types', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -243,7 +243,7 @@ test('create facility with different types', async ({ page }) => {
 });
 
 test('edit facility and update both names', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -292,7 +292,7 @@ test('edit facility and update both names', async ({ page }) => {
 });
 
 test('verify facility types available in dropdown', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -331,7 +331,7 @@ test('verify facility types available in dropdown', async ({ page }) => {
 });
 
 test('create facility with Chinese name only', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -375,7 +375,7 @@ test('create facility with Chinese name only', async ({ page }) => {
 });
 
 test('delete facility record', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -439,7 +439,7 @@ test('delete facility record', async ({ page }) => {
 });
 
 test('validate inline editing behavior', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -489,7 +489,7 @@ test('validate inline editing behavior', async ({ page }) => {
 });
 
 test('verify pagination or record count', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 

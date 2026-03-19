@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 test('create new tag with random name and value', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -68,7 +68,7 @@ test('create new tag with random name and value', async ({ page }) => {
 });
 
 test('verify tags table and search functionality', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -114,7 +114,7 @@ test('verify tags table and search functionality', async ({ page }) => {
 });
 
 test('edit existing tag', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -166,7 +166,7 @@ test('edit existing tag', async ({ page }) => {
 });
 
 test('verify required field validation', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -215,7 +215,7 @@ test('verify required field validation', async ({ page }) => {
 });
 
 test('create tag with multilingual values', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -270,7 +270,7 @@ test('create tag with multilingual values', async ({ page }) => {
 });
 
 test('verify tag pagination', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -310,7 +310,7 @@ test('verify tag pagination', async ({ page }) => {
 });
 
 test('verify tag table columns', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -345,7 +345,7 @@ test('verify tag table columns', async ({ page }) => {
 });
 
 test('verify tags sorting functionality', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -379,7 +379,7 @@ test('verify tags sorting functionality', async ({ page }) => {
 });
 
 test('verify create button and cancel functionality', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 

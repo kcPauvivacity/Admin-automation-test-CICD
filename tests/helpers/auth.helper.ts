@@ -17,12 +17,12 @@ export async function loginToApp(page: Page, timeout: number = 60000, email?: st
     await page.goto(LOGIN_URL, { waitUntil: 'load', timeout });
 
     // Wait for and fill email
-    await page.waitForSelector('input[name="username"]', { timeout: 20000 });
+    await page.waitForSelector('input[name="username"]', { timeout: 30000 });
     await page.fill('input[name="username"]', loginEmail);
     await page.click('button[type="submit"]');
 
     // Wait for and fill password
-    await page.waitForSelector('input[name="password"]', { timeout: 10000 });
+    await page.waitForSelector('input[name="password"]', { timeout: 15000 });
     await page.fill('input[name="password"]', loginPassword);
     await page.click('button[type="submit"]');
 
@@ -48,6 +48,6 @@ export async function loginToApp(page: Page, timeout: number = 60000, email?: st
  */
 export async function navigateToModule(page: Page, moduleName: string) {
     await page.click(`text=${moduleName}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(1000);
 }

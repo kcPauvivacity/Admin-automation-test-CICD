@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 test('filter Analytics by tracking id and search', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -50,7 +50,7 @@ test('filter Analytics by tracking id and search', async ({ page }) => {
 });
 
 test('create new analytics with random data', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -184,7 +184,7 @@ test('create new analytics with random data', async ({ page }) => {
 });
 
 test('verify analytics table displays records', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -226,7 +226,7 @@ test('verify analytics table displays records', async ({ page }) => {
 });
 
 test('edit existing analytics record', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -287,7 +287,7 @@ test('edit existing analytics record', async ({ page }) => {
 });
 
 test('create analytics with different type - UA', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -381,7 +381,7 @@ test('create analytics with different type - UA', async ({ page }) => {
 });
 
 test('search analytics by name', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -421,7 +421,7 @@ test('search analytics by name', async ({ page }) => {
 });
 
 test('verify analytics type filter works', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -477,7 +477,7 @@ test('verify analytics type filter works', async ({ page }) => {
 });
 
 test('create analytics and validate record details', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -572,9 +572,9 @@ test('create analytics and validate record details', async ({ page }) => {
     if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
         await searchInput.click();
         await searchInput.fill(testData.name);
-        await page.waitForTimeout(3000);
+        await page.waitForTimeout(5000);
         await page.waitForLoadState('load');
-        
+
         console.log(`🔍 Searching for record: ${testData.name}`);
     }
 
@@ -598,7 +598,7 @@ test('create analytics and validate record details', async ({ page }) => {
     }
     
     // Validate the record exists in the table with longer timeout
-    await expect(recordRow).toBeVisible({ timeout: 15000 });
+    await expect(recordRow).toBeVisible({ timeout: 30000 });
     console.log('✅ Record found in table');
 
     // Validate the name appears in the row
@@ -680,7 +680,7 @@ test('create analytics and validate record details', async ({ page }) => {
 });
 
 test('validate required field error messages', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);

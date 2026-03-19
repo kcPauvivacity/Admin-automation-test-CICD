@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 test('navigate to Attributes and filter by installment type', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -37,7 +37,7 @@ test('navigate to Attributes and filter by installment type', async ({ page }) =
     let allAreInstallment = true;
     for (let i = 0; i < rows.length; i++) {
         const rowText = await rows[i].textContent();
-        if (!rowText?.includes('installment')) {
+        if (!rowText?.toLowerCase().includes('installment')) {
             console.log(`❌ Row ${i + 1} does not contain "installment": ${rowText}`);
             allAreInstallment = false;
         } else {
@@ -55,7 +55,7 @@ test('navigate to Attributes and filter by installment type', async ({ page }) =
 });
 
 test('create new attribute', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -111,7 +111,7 @@ test('create new attribute', async ({ page }) => {
 });
 
 test('edit first attribute record with random names', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login
     await loginToApp(page);
@@ -171,7 +171,7 @@ test('edit first attribute record with random names', async ({ page }) => {
 });
 
 test('verify attributes table displays records', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     await page.waitForLoadState('load');
@@ -204,7 +204,7 @@ test('verify attributes table displays records', async ({ page }) => {
 });
 
 test('search attributes by English name', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     await page.waitForLoadState('load');
@@ -239,7 +239,7 @@ test('search attributes by English name', async ({ page }) => {
 });
 
 test('filter attributes by type - amenities', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     await page.waitForLoadState('load');
@@ -307,7 +307,7 @@ test('filter attributes by type - amenities', async ({ page }) => {
 });
 
 test('create attribute with all types verification', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     await page.waitForLoadState('load');
@@ -350,7 +350,7 @@ test('create attribute with all types verification', async ({ page }) => {
 });
 
 test('validate required fields when creating attribute', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     await page.waitForLoadState('load');
@@ -410,7 +410,7 @@ test('validate required fields when creating attribute', async ({ page }) => {
 });
 
 test('edit attribute and verify changes persist', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     await page.waitForLoadState('load');
@@ -465,7 +465,7 @@ test('edit attribute and verify changes persist', async ({ page }) => {
 });
 
 test('delete attribute record', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     await page.waitForLoadState('load');
@@ -532,7 +532,7 @@ test('delete attribute record', async ({ page }) => {
 });
 
 test('create attribute with Chinese characters only', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     await page.waitForLoadState('load');

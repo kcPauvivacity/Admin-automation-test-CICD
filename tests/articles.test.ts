@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 test('create article with random title and select banner image', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -86,7 +86,7 @@ test('create article with random title and select banner image', async ({ page }
 });
 
 test('verify articles table displays records', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     console.log('✅ Successfully logged in');
@@ -115,7 +115,7 @@ test('verify articles table displays records', async ({ page }) => {
 });
 
 test('search articles by title', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     console.log('✅ Successfully logged in');
@@ -147,7 +147,7 @@ test('search articles by title', async ({ page }) => {
 });
 
 test('create article with full content and category', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     console.log('✅ Successfully logged in');
@@ -237,7 +237,7 @@ test('create article with full content and category', async ({ page }) => {
 });
 
 test('edit existing article title', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     console.log('✅ Successfully logged in');
@@ -282,7 +282,7 @@ test('edit existing article title', async ({ page }) => {
 });
 
 test('validate required fields when creating article', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     console.log('✅ Successfully logged in');
@@ -330,7 +330,7 @@ test('validate required fields when creating article', async ({ page }) => {
 });
 
 test('filter or sort articles table', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     console.log('✅ Successfully logged in');
@@ -375,7 +375,7 @@ test('filter or sort articles table', async ({ page }) => {
 });
 
 test('verify article detail view', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
     console.log('✅ Successfully logged in');

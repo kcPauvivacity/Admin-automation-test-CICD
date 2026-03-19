@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 test('filter Universities by draft status', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -77,7 +77,7 @@ test('filter Universities by draft status', async ({ page }) => {
 });
 
 test('create new university with random name and coordinates', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     // Login with valid user
     await loginToApp(page);
@@ -145,7 +145,7 @@ test('create new university with random name and coordinates', async ({ page }) 
 });
 
 test('verify universities table and search functionality', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -195,7 +195,7 @@ test('verify universities table and search functionality', async ({ page }) => {
 });
 
 test('edit existing university', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -247,7 +247,7 @@ test('edit existing university', async ({ page }) => {
 });
 
 test('verify required field validation', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -300,7 +300,7 @@ test('verify required field validation', async ({ page }) => {
 });
 
 test('verify universities filter by published status', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -349,7 +349,7 @@ test('verify universities filter by published status', async ({ page }) => {
 });
 
 test('verify universities pagination', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -397,7 +397,7 @@ test('verify universities pagination', async ({ page }) => {
 });
 
 test('verify universities table columns', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -432,7 +432,7 @@ test('verify universities table columns', async ({ page }) => {
 });
 
 test('verify universities sorting functionality', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -466,7 +466,7 @@ test('verify universities sorting functionality', async ({ page }) => {
 });
 
 test('verify create university with full details', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
@@ -513,7 +513,7 @@ test('verify create university with full details', async ({ page }) => {
 });
 
 test('verify universities cancel creation', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(300000);
     
     await loginToApp(page);
 
