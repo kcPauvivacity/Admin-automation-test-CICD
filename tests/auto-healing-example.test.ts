@@ -52,7 +52,7 @@ test.describe('Auto-Healing Example Tests', () => {
             'text=Dashboard',
             'text=Welcome',
             '[class*="dashboard"]'
-        ], { timeout: 30000 });
+        ], { timeout: 15000 });
         
         console.log('✅ Login successful with auto-healing!');
     });

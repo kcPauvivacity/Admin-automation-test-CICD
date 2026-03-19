@@ -8,6 +8,7 @@ const USERNAME = process.env.TEST_USERNAME || '';
 const PASSWORD = process.env.TEST_PASSWORD || '';
 
 test.describe('Mobile Login Tests', () => {
+  test.use({ hasTouch: true });
 
   test('login page renders correctly on mobile', async ({ page }) => {
     await page.goto(LOGIN_URL, { waitUntil: 'load' });

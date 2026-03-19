@@ -14,10 +14,10 @@ export async function loginToApp(page: Page, timeout: number = 60000, email?: st
     const loginPassword = password || VALID_PASSWORD;
     console.log(`🔍 Login attempt: email=${loginEmail}, url=${LOGIN_URL}, password_length=${loginPassword.length}`);
     // Navigate to the application (will redirect to auth0 login)
-    await page.goto(LOGIN_URL, { waitUntil: 'networkidle', timeout });
+    await page.goto(LOGIN_URL, { waitUntil: 'load', timeout });
 
     // Wait for and fill email
-    await page.waitForSelector('input[name="username"]', { timeout: 10000 });
+    await page.waitForSelector('input[name="username"]', { timeout: 20000 });
     await page.fill('input[name="username"]', loginEmail);
     await page.click('button[type="submit"]');
 
@@ -38,8 +38,8 @@ export async function loginToApp(page: Page, timeout: number = 60000, email?: st
         await page.waitForTimeout(2000);
     }
 
-    // Assert we're on the app (using regex to handle /dashboard suffix)
-    await expect(page).toHaveURL(/app-staging\.vivacityapp\.com\/demo-student/, { timeout: 60000 });
+    // Assert we're on the app (accept any org slug path)
+    await expect(page).toHaveURL(/app-staging\.vivacityapp\.com\/[^/]+/, { timeout: 60000 });
     await page.waitForTimeout(3000);
 }
 

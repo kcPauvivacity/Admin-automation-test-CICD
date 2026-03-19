@@ -463,7 +463,7 @@ test('verify promotions pagination', async ({ page }) => {
     await loginToApp(page);
     
     // Wait for page to fully load with extended timeout
-    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {
+    await page.waitForLoadState('load', { timeout: 30000 }).catch(() => {
         console.log('⚠️ Page did not reach networkidle state, continuing...');
     });
     await page.waitForTimeout(2000);

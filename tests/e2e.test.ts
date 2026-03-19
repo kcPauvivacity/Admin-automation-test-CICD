@@ -15,14 +15,14 @@ test.describe('End-to-End User Workflow', () => {
         
         // Step 1: Navigate to Dashboard
         console.log('📊 Step 1: Verify Dashboard');
-        await page.waitForSelector('text=Dashboard', { timeout: 15000 });
-        const dashboardVisible = await page.locator('text=Dashboard').isVisible();
+        await page.locator('text=Dashboard').first().waitFor({ timeout: 15000 });
+        const dashboardVisible = await page.locator('text=Dashboard').first().isVisible();
         expect(dashboardVisible).toBeTruthy();
         await page.waitForTimeout(2000);
         
         // Step 2: Navigate to Properties
         console.log('🏢 Step 2: Navigate to Properties section');
-        await page.click('text=Properties', { timeout: 15000 });
+        await page.locator('text=Properties').first().click({ timeout: 15000 });
         await page.waitForLoadState('load');
         await page.waitForTimeout(2000);
         
@@ -60,7 +60,7 @@ test.describe('End-to-End User Workflow', () => {
         
         // Step 6: Navigate to Analytics/Reports
         console.log('📈 Step 6: Navigate to Analytics section');
-        const analyticsLink = page.locator('text=Analytics, text=Reports, text=Dashboard').first();
+        const analyticsLink = page.locator('text=Analytics').or(page.locator('text=Reports')).or(page.locator('text=Dashboard')).first();
         await analyticsLink.click({ timeout: 15000 });
         await page.waitForLoadState('load');
         await page.waitForTimeout(3000);
@@ -123,11 +123,11 @@ test.describe('End-to-End User Workflow', () => {
         
         // Step 10: Return to Dashboard
         console.log('🏠 Step 10: Return to Dashboard');
-        await page.click('text=Dashboard', { timeout: 15000 });
+        await page.locator('text=Dashboard').first().click({ timeout: 15000 });
         await page.waitForLoadState('load');
         await page.waitForTimeout(2000);
         
-        const finalDashboard = page.locator('text=Dashboard, text=Welcome').first();
+        const finalDashboard = page.locator('text=Dashboard').or(page.locator('text=Welcome')).first();
         await expect(finalDashboard).toBeVisible({ timeout: 10000 });
         console.log('✅ Returned to Dashboard successfully');
         

@@ -7,7 +7,7 @@ test('create new tag with random name and value', async ({ page }) => {
     // Login with valid user
     await loginToApp(page);
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully logged in');
@@ -23,7 +23,7 @@ test('create new tag with random name and value', async ({ page }) => {
     await page.waitForTimeout(500);
     
     await page.getByText('Tags').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Tags under Data Management');
@@ -62,7 +62,7 @@ test('create new tag with random name and value', async ({ page }) => {
     // Click Create Tag button - use exact match to avoid matching "Close create tag dialog"
     await page.getByRole('button', { name: 'Create tag', exact: true }).click();
     await page.waitForTimeout(3000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log('✅ Successfully created new tag with random name and value');
 });

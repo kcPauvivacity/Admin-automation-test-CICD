@@ -565,7 +565,7 @@ test('create analytics and validate record details', async ({ page }) => {
 
     // Now search for the created record to validate
     await page.waitForTimeout(3000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     
     // Search for the record by name
     const searchInput = page.locator('input[type="text"]').first();
@@ -573,7 +573,7 @@ test('create analytics and validate record details', async ({ page }) => {
         await searchInput.click();
         await searchInput.fill(testData.name);
         await page.waitForTimeout(3000);
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
         
         console.log(`🔍 Searching for record: ${testData.name}`);
     }
@@ -585,7 +585,7 @@ test('create analytics and validate record details', async ({ page }) => {
     const isVisible = await recordRow.isVisible({ timeout: 5000 }).catch(() => false);
     if (!isVisible) {
         console.log('⚠️ Record not found in table, refreshing page...');
-        await page.reload({ waitUntil: 'networkidle' });
+        await page.reload({ waitUntil: 'load' });
         await page.waitForTimeout(2000);
         
         // Search again after reload

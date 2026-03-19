@@ -18,7 +18,7 @@ test('create new facility with random names', async ({ page }) => {
     await page.waitForTimeout(500);
     
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities under Data Management');
@@ -56,7 +56,7 @@ test('create new facility with random names', async ({ page }) => {
     // Click Save button
     await page.getByRole('button', { name: 'Save' }).click();
     await page.waitForTimeout(3000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log('✅ Successfully created new facility with random names');
 });
@@ -76,7 +76,7 @@ test('edit first facility record and select bathroom type', async ({ page }) => 
     await page.waitForTimeout(500);
     
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities under Data Management');
@@ -127,7 +127,7 @@ test('verify facilities table displays records', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities');
@@ -158,7 +158,7 @@ test('search facilities by name', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities');
@@ -191,7 +191,7 @@ test('create facility with different types', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities');
@@ -237,7 +237,7 @@ test('create facility with different types', async ({ page }) => {
     // Save
     await page.getByRole('button', { name: 'Save' }).click();
     await page.waitForTimeout(3000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log('✅ Successfully created facility with type');
 });
@@ -253,7 +253,7 @@ test('edit facility and update both names', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities');
@@ -286,7 +286,7 @@ test('edit facility and update both names', async ({ page }) => {
     // Save
     await page.getByRole('button', { name: 'Save' }).click();
     await page.waitForTimeout(3000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log('✅ Successfully edited facility names');
 });
@@ -302,7 +302,7 @@ test('verify facility types available in dropdown', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities');
@@ -341,7 +341,7 @@ test('create facility with Chinese name only', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities');
@@ -369,7 +369,7 @@ test('create facility with Chinese name only', async ({ page }) => {
     // Save
     await page.getByRole('button', { name: 'Save' }).click();
     await page.waitForTimeout(3000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log('✅ Successfully created facility with Chinese name');
 });
@@ -385,7 +385,7 @@ test('delete facility record', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities');
@@ -415,7 +415,7 @@ test('delete facility record', async ({ page }) => {
             if (await confirmButton.isVisible({ timeout: 3000 }).catch(() => false)) {
                 await confirmButton.click();
                 await page.waitForTimeout(2000);
-                await page.waitForLoadState('networkidle');
+                await page.waitForLoadState('load');
                 console.log('✅ Confirmed deletion');
 
                 // Verify record count
@@ -449,7 +449,7 @@ test('validate inline editing behavior', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities');
@@ -499,7 +499,7 @@ test('verify pagination or record count', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Facilities').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Facilities');

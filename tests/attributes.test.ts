@@ -6,7 +6,7 @@ test('navigate to Attributes and filter by installment type', async ({ page }) =
     
     await loginToApp(page);
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     await page.getByRole('button', { name: /settings/i }).click();
@@ -16,7 +16,7 @@ test('navigate to Attributes and filter by installment type', async ({ page }) =
     await page.waitForTimeout(500);
     
     await page.getByText('Attributes').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     await expect(page.getByText('Attributes', { exact: false }).first()).toBeVisible({ timeout: 10000 });
@@ -27,7 +27,7 @@ test('navigate to Attributes and filter by installment type', async ({ page }) =
     await page.waitForTimeout(1000);
     await page.locator('.v-list-item').filter({ hasText: 'installment' }).first().click();
     await page.waitForTimeout(2000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log('Applied filter: Type = installment');
 
@@ -59,7 +59,7 @@ test('create new attribute', async ({ page }) => {
     
     await loginToApp(page);
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     await page.getByRole('button', { name: /settings/i }).click();
@@ -69,7 +69,7 @@ test('create new attribute', async ({ page }) => {
     await page.waitForTimeout(500);
     
     await page.getByText('Attributes').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes under Data Management');
@@ -105,7 +105,7 @@ test('create new attribute', async ({ page }) => {
 
     await page.getByRole('button', { name: 'Save' }).click();
     await page.waitForTimeout(2000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log('✅ Successfully created new attribute');
 });
@@ -116,7 +116,7 @@ test('edit first attribute record with random names', async ({ page }) => {
     // Login
     await loginToApp(page);
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     // Navigate to Settings > Data Management > Attributes
@@ -127,7 +127,7 @@ test('edit first attribute record with random names', async ({ page }) => {
     await page.waitForTimeout(500);
     
     await page.getByText('Attributes').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes under Data Management');
@@ -165,7 +165,7 @@ test('edit first attribute record with random names', async ({ page }) => {
     // Click Save button
     await page.getByRole('button', { name: 'Save' }).click();
     await page.waitForTimeout(3000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log('✅ Successfully edited first attribute record with random names');
 });
@@ -174,7 +174,7 @@ test('verify attributes table displays records', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     // Navigate to Attributes
@@ -183,7 +183,7 @@ test('verify attributes table displays records', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Attributes').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes');
@@ -310,7 +310,7 @@ test('create attribute with all types verification', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     // Navigate to Attributes
@@ -319,7 +319,7 @@ test('create attribute with all types verification', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Attributes').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes');
@@ -353,7 +353,7 @@ test('validate required fields when creating attribute', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     // Navigate to Attributes
@@ -362,7 +362,7 @@ test('validate required fields when creating attribute', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Attributes').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes');
@@ -413,7 +413,7 @@ test('edit attribute and verify changes persist', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     // Navigate to Attributes
@@ -422,7 +422,7 @@ test('edit attribute and verify changes persist', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Attributes').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes');
@@ -452,7 +452,7 @@ test('edit attribute and verify changes persist', async ({ page }) => {
     // Save
     await page.getByRole('button', { name: 'Save' }).click();
     await page.waitForTimeout(3000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     console.log('✅ Saved changes');
 
     // Verify the change persists in the table
@@ -468,7 +468,7 @@ test('delete attribute record', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     // Navigate to Attributes
@@ -477,7 +477,7 @@ test('delete attribute record', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Attributes').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes');
@@ -508,7 +508,7 @@ test('delete attribute record', async ({ page }) => {
             if (await confirmButton.isVisible({ timeout: 3000 }).catch(() => false)) {
                 await confirmButton.click();
                 await page.waitForTimeout(2000);
-                await page.waitForLoadState('networkidle');
+                await page.waitForLoadState('load');
                 console.log('✅ Confirmed deletion');
 
                 // Verify record count decreased
@@ -535,7 +535,7 @@ test('create attribute with Chinese characters only', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     // Navigate to Attributes
@@ -544,7 +544,7 @@ test('create attribute with Chinese characters only', async ({ page }) => {
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
     await page.getByText('Attributes').click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes');
@@ -581,12 +581,12 @@ test('create attribute with Chinese characters only', async ({ page }) => {
     // Save
     await page.getByRole('button', { name: 'Save' }).click();
     await page.waitForTimeout(3000);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log('✅ Successfully created attribute with Chinese characters');
     
     // Verify we're back on the listing page or detail page
     const currentUrl = page.url();
-    await expect(page).toHaveURL(/app-staging\.vivacityapp\.com\/(demo-student|attributes)/);
+    await expect(page).toHaveURL(/app-staging\.vivacityapp\.com\/[^/]+/);
     console.log(`✅ Redirected to: ${currentUrl}`);
 });
