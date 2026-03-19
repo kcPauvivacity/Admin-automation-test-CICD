@@ -57,10 +57,10 @@ stages:
         echo "Running Playwright tests..."
         echo "Running ALL test suites (76+ test files)"
         echo "Expected runtime: 60-90 minutes with parallel execution"
-        echo "Workers: 4 (optimized for Azure Pipelines)"
-        
+        echo "Workers: 6 (increased to finish within 120 min timeout)"
+
         # Run tests with optimized settings for CI
-        npx playwright test --workers=4 || true
+        npx playwright test --workers=6 || true
       displayName: 'Run All Test Cases'
       env:
         CI: true
@@ -84,6 +84,12 @@ stages:
           node -e "const r=JSON.parse(require('fs').readFileSync('test-results.json','utf8')); console.log('Stats:', JSON.stringify(r.stats||{}));"
         fi
       displayName: 'Ensure JSON Report Exists'
+      condition: always()
+      continueOnError: true
+
+    - script: |
+        mkdir -p playwright-report test-results
+      displayName: 'Ensure artifact directories exist'
       condition: always()
       continueOnError: true
 
