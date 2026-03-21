@@ -57,7 +57,9 @@ stages:
         echo "Running Playwright tests..."
         echo "Running ALL test suites (76+ test files)"
         echo "Expected runtime: 60-90 minutes with parallel execution"
-        echo "Workers: 4 (reduced to prevent timeout - optimized for 2h limit)"
+        echo "Workers: 4 (reduced from 6 to prevent timeout - optimized for 2h limit)"
+        echo "Previous timeout issue: Build 38222 with 6 workers failed after 2h"
+        echo "Working baseline: Build 38062 with 4 workers completed in 1.9h"
 
         # Run tests with optimized settings for CI
         npx playwright test --workers=4 || true
