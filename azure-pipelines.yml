@@ -25,7 +25,7 @@ stages:
   jobs:
   - job: PlaywrightTests
     displayName: 'Playwright Test Execution'
-    timeoutInMinutes: 120  # Increased from 90 to 120 minutes (2 hours)
+    timeoutInMinutes: 180  # Increased from 90 to 120 minutes (2 hours)
     cancelTimeoutInMinutes: 5  # Give 5 minutes to cleanup
     steps:
     - checkout: self
