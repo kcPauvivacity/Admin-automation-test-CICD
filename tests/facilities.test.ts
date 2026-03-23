@@ -32,23 +32,29 @@ test('create new facility with random names', async ({ page }) => {
     const timestamp = Date.now();
     const randomEnglishName = `FacilityTest${timestamp}`;
 
-    // Select an existing facility to use as template
-    const searchBox = dialog.locator('input[type="text"], textbox').first();
+    // Search for an existing facility to use as template
+    const searchBox = dialog.locator('input[type="text"], [role="textbox"]').first();
     await searchBox.click();
     await searchBox.fill('35sqm');
     await page.waitForTimeout(1500);
 
-    // Select the first option from dropdown
-    const firstOption = page.locator('.v-list-item, [role="option"]').first();
-    if (await firstOption.isVisible({ timeout: 5000 }).catch(() => false)) {
-        await firstOption.click();
+    // Select the first option from the combobox dropdown (scoped to dialog to avoid sidebar nav items)
+    const comboboxOptions = dialog.locator('[role="listbox"] [role="option"]');
+    const optionCount = await comboboxOptions.count();
+    const firstOptionText = optionCount > 0 ? await comboboxOptions.first().textContent().catch(() => '') : '';
+
+    // Only click if it's a real option (not "No data available")
+    if (optionCount > 0 && firstOptionText && !firstOptionText.includes('No data available')) {
+        await comboboxOptions.first().click();
         await page.waitForTimeout(1000);
         console.log('✅ Selected template facility');
+    } else {
+        console.log(`ℹ️ No template found for "35sqm" (got: "${firstOptionText?.trim()}")`);
     }
 
     // Click Next
     const nextBtn = dialog.getByRole('button', { name: 'Next' });
-    if (await nextBtn.isEnabled({ timeout: 5000 }).catch(() => false)) {
+    if (await nextBtn.isEnabled({ timeout: 3000 }).catch(() => false)) {
         await nextBtn.click();
         await page.waitForTimeout(2000);
         console.log('✅ Clicked Next');

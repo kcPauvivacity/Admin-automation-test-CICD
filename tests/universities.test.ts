@@ -115,13 +115,18 @@ test('create new university with random name and coordinates', async ({ page }) 
     console.log(`Latitude: 78906`);
     console.log(`Longitude: 123456`);
 
-    // Insert name - the Name field is a combobox/autocomplete input
-    const nameInput = page.locator('input').first(); // First input on create page
-    await nameInput.click();
-    await nameInput.fill(randomName);
+    // The Name field is a Vuetify combobox - click the role="combobox" element directly
+    // (clicking the inner input fails because v-field__input overlay intercepts)
+    const nameCombobox = page.getByRole('combobox').first();
+    await nameCombobox.click();
     await page.waitForTimeout(500);
+    await page.keyboard.type(randomName);
+    await page.waitForTimeout(500);
+    // Close dropdown if it opened
+    await page.keyboard.press('Escape').catch(() => {});
+    await page.waitForTimeout(200);
 
-    console.log('Filled in university name');
+    console.log(`Filled in university name: ${randomName}`);
 
     // Insert Latitude as a number (use type: integer)
     const latInput = page.getByRole('spinbutton', { name: /latitude/i }).first();
