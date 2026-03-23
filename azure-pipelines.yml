@@ -1,10 +1,15 @@
 # Azure Pipeline for Playwright Tests
-# Runs ALL test cases (401 tests) on schedule (weekdays at 5 AM Malaysia Time)
-# Expected runtime: 90-120 minutes (running in parallel with 6 workers)
-# Timeout: 180 minutes (3 hours) to allow completion
+# Runs ALL test cases across 4 parallel shards (weekdays at 5 AM Malaysia Time)
+# Expected runtime: ~35-40 min per shard (down from 120 min single-job)
+# Timeout per shard: 60 minutes (was 120 for single job)
+#
+# HOW SHARDING WORKS:
+#   - 401 tests are split evenly across 4 agents (~100 tests each)
+#   - All 4 shards run simultaneously in parallel
+#   - Blob reports are uploaded per shard, then merged into one HTML/JSON report
+#   - Email is sent from the merge job once all shards complete
 #
 # CREDENTIALS: Update tests/.env file and push to change login credentials.
-# Current test account: see .env file (TEST_USERNAME / TEST_PASSWORD)
 
 trigger: none  # Don't run on code push
 
@@ -20,23 +25,39 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
+
+# ─────────────────────────────────────────────
+# STAGE 1: Run tests in 4 parallel shards
+# ─────────────────────────────────────────────
 - stage: Test
-  displayName: 'Run Playwright Tests'
+  displayName: 'Run Playwright Tests (4 Shards)'
   jobs:
-  - job: PlaywrightTests
-    displayName: 'Playwright Test Execution'
-    timeoutInMinutes: 180  # Increased from 120 to 180 minutes (3 hours)
-    cancelTimeoutInMinutes: 5  # Give 5 minutes to cleanup
+  - job: PlaywrightShard
+    displayName: 'Shard $(SHARD_INDEX) of 4'
+    timeoutInMinutes: 60       # Each shard runs ~100 tests — 60 min is plenty
+    cancelTimeoutInMinutes: 5
+
+    strategy:
+      matrix:
+        Shard_1:
+          SHARD_INDEX: 1
+        Shard_2:
+          SHARD_INDEX: 2
+        Shard_3:
+          SHARD_INDEX: 3
+        Shard_4:
+          SHARD_INDEX: 4
+
     steps:
     - checkout: self
       displayName: 'Checkout Repository'
 
     - script: |
         echo "Git commit: $(git rev-parse HEAD)"
-        # Show which account will be used for tests
         TEST_USERNAME=$(grep "^TEST_USERNAME=" .env | cut -d'=' -f2)
         echo "Test account: $TEST_USERNAME"
-      displayName: 'Show Test Account'
+        echo "Running shard $(SHARD_INDEX) of 4"
+      displayName: 'Show Test Info'
 
     - task: NodeTool@0
       displayName: 'Install Node.js'
@@ -54,31 +75,91 @@ stages:
       displayName: 'Install Playwright Browsers'
 
     - script: |
-        echo "Running Playwright tests..."
-        echo "Running ALL test suites (76+ test files)"
-        echo "Expected runtime: 60-90 minutes with parallel execution"
-        echo "Workers: 6 (increased to finish within 120 min timeout)"
-
-        # Run tests with optimized settings for CI
-        npx playwright test --workers=6 || true
-      displayName: 'Run All Test Cases'
+        echo "========================================"
+        echo "▶ Running shard $(SHARD_INDEX)/4"
+        echo "   ~100 of 401 tests will run here"
+        echo "========================================"
+        npx playwright test \
+          --shard=$(SHARD_INDEX)/4 \
+          --workers=4 \
+          --reporter=blob \
+          || true
+      displayName: 'Run Test Shard $(SHARD_INDEX)/4'
       env:
         CI: true
       continueOnError: true
 
-    - task: PublishTestResults@2
-      displayName: 'Publish Test Results'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Upload Blob Report (Shard $(SHARD_INDEX))'
       condition: always()
+      continueOnError: true
       inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: 'test-results.xml'
-        failTaskOnFailedTests: false
-        testRunTitle: 'Playwright Test Results'
+        targetPath: 'blob-report'
+        artifact: 'blob-report-$(SHARD_INDEX)'
+        publishLocation: 'pipeline'
+
+
+# ─────────────────────────────────────────────
+# STAGE 2: Merge all shard reports & notify
+# ─────────────────────────────────────────────
+- stage: Report
+  displayName: 'Merge Reports & Send Notification'
+  dependsOn: Test
+  condition: always()
+
+  jobs:
+  - job: MergeAndReport
+    displayName: 'Merge Results & Send Email'
+    timeoutInMinutes: 30
+
+    steps:
+    - checkout: self
+      displayName: 'Checkout Repository'
+
+    - task: NodeTool@0
+      displayName: 'Install Node.js'
+      inputs:
+        versionSpec: '18.x'
+
+    - script: |
+        npm ci --prefer-offline
+      displayName: 'Install Dependencies'
+
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download All Shard Blob Reports'
+      inputs:
+        buildType: 'current'
+        itemPattern: 'blob-report-*/**/*'
+        targetPath: 'all-blob-reports'
+
+    - script: |
+        echo "========================================"
+        echo "📦 Downloaded blob reports:"
+        ls -la all-blob-reports/ || echo "  (empty)"
+        echo "========================================"
+
+        echo "Merging reports from all 4 shards..."
+        npx playwright merge-reports \
+          --reporter=html,json \
+          all-blob-reports/blob-report-1 \
+          all-blob-reports/blob-report-2 \
+          all-blob-reports/blob-report-3 \
+          all-blob-reports/blob-report-4 \
+          || true
+
+        echo ""
+        echo "📊 Merged HTML report:"
+        ls -la playwright-report/ || echo "  No HTML report generated"
+        echo ""
+        echo "📊 Merged JSON:"
+        ls -la test-results.json || echo "  No test-results.json generated"
+      displayName: 'Merge Playwright Reports'
+      continueOnError: true
 
     - script: |
         if [ ! -f test-results.json ]; then
-          echo "⚠️ test-results.json not found (pipeline may have timed out) - creating fallback"
-          echo '{"suites":[],"stats":{"expected":0,"skipped":0,"unexpected":0,"flaky":0},"errors":["test-results.json was not generated - pipeline may have timed out or tests were interrupted"]}' > test-results.json
+          echo "⚠️ test-results.json not found - creating fallback"
+          echo '{"suites":[],"stats":{"expected":0,"skipped":0,"unexpected":0,"flaky":0},"errors":["test-results.json was not generated - check shard logs"]}' > test-results.json
         else
           echo "✅ test-results.json found"
           node -e "const r=JSON.parse(require('fs').readFileSync('test-results.json','utf8')); console.log('Stats:', JSON.stringify(r.stats||{}));"
@@ -94,8 +175,8 @@ stages:
       continueOnError: true
 
     - task: PublishPipelineArtifact@1
-      displayName: 'Upload HTML Report'
-      condition: always()  # Always upload, even on timeout
+      displayName: 'Upload Merged HTML Report'
+      condition: always()
       continueOnError: true
       inputs:
         targetPath: 'playwright-report'
@@ -103,21 +184,12 @@ stages:
         publishLocation: 'pipeline'
 
     - task: PublishPipelineArtifact@1
-      displayName: 'Upload JSON Results'
-      condition: always()  # Always upload, even on timeout
+      displayName: 'Upload Merged JSON Results'
+      condition: always()
       continueOnError: true
       inputs:
         targetPath: 'test-results.json'
         artifact: 'test-results-json'
-        publishLocation: 'pipeline'
-
-    - task: PublishPipelineArtifact@1
-      displayName: 'Upload Screenshots/Videos'
-      condition: always()  # Always upload, even on timeout
-      continueOnError: true
-      inputs:
-        targetPath: 'test-results'
-        artifact: 'test-results-media'
         publishLocation: 'pipeline'
 
     - script: |
