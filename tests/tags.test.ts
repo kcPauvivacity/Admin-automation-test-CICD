@@ -60,7 +60,7 @@ test('create new tag with random name and value', async ({ page }) => {
     console.log('Filled in value (English)');
 
     // Click Create Tag button - use exact match to avoid matching "Close create tag dialog"
-    await page.getByRole('button', { name: 'Create tag', exact: true }).click();
+    await page.getByRole('button', { name: /Save Tag|Create tag/, exact: false }).click();
     await page.waitForTimeout(3000);
     await page.waitForLoadState('load');
 
@@ -186,7 +186,7 @@ test('verify required field validation', async ({ page }) => {
     console.log('✅ Opened create tag form');
 
     // Try to submit without filling required fields
-    const createBtn = page.getByRole('button', { name: 'Create tag', exact: true });
+    const createBtn = page.getByRole('button', { name: /Save Tag|Create tag/, exact: false });
     await createBtn.click();
     await page.waitForTimeout(1000);
 
@@ -263,7 +263,7 @@ test('create tag with multilingual values', async ({ page }) => {
     }
 
     // Create tag
-    await page.getByRole('button', { name: 'Create tag', exact: true }).click();
+    await page.getByRole('button', { name: /Save Tag|Create tag/, exact: false }).click();
     await page.waitForTimeout(3000);
 
     console.log('✅ Successfully created multilingual tag');

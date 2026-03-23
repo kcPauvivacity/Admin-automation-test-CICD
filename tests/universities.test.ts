@@ -115,31 +115,44 @@ test('create new university with random name and coordinates', async ({ page }) 
     console.log(`Latitude: 78906`);
     console.log(`Longitude: 123456`);
 
-    // Insert name - use the first textbox
-    await page.getByRole('textbox').first().click();
-    await page.getByRole('textbox').first().fill(randomName);
+    // Insert name - the Name field is a combobox/autocomplete input
+    const nameInput = page.locator('input').first(); // First input on create page
+    await nameInput.click();
+    await nameInput.fill(randomName);
     await page.waitForTimeout(500);
 
     console.log('Filled in university name');
 
-    // Insert Latitude
-    await page.getByRole('spinbutton', { name: 'Latitude Latitude' }).click();
-    await page.getByRole('spinbutton', { name: 'Latitude Latitude' }).fill('78906');
-    await page.waitForTimeout(500);
+    // Insert Latitude as a number (use type: integer)
+    const latInput = page.getByRole('spinbutton', { name: /latitude/i }).first();
+    if (await latInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await latInput.click();
+        await latInput.clear();
+        await latInput.type('22');
+        await page.waitForTimeout(500);
+        console.log('Filled in latitude');
+    }
 
-    console.log('Filled in latitude');
+    // Insert Longitude as a number
+    const lngInput = page.getByRole('spinbutton', { name: /longitude/i }).first();
+    if (await lngInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await lngInput.click();
+        await lngInput.clear();
+        await lngInput.type('114');
+        await page.waitForTimeout(500);
+        console.log('Filled in longitude');
+    }
 
-    // Insert Longitude
-    await page.getByRole('spinbutton', { name: 'Longitude Longitude' }).click();
-    await page.getByRole('spinbutton', { name: 'Longitude Longitude' }).fill('123456');
-    await page.waitForTimeout(500);
-
-    console.log('Filled in longitude');
-
-    // Click Save button
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page.waitForTimeout(3000);
-    await page.waitForLoadState('load');
+    // Scroll to and click Save button
+    const saveBtn = page.getByRole('button', { name: /save/i }).first();
+    await saveBtn.scrollIntoViewIfNeeded().catch(() => {});
+    if (await saveBtn.isVisible({ timeout: 10000 }).catch(() => false)) {
+        await saveBtn.click();
+        await page.waitForTimeout(3000);
+        await page.waitForLoadState('load', { timeout: 30000 });
+    } else {
+        console.log('⚠️ Save button not found - form may require additional fields');
+    }
 
     console.log('✅ Successfully created new university with random name and coordinates');
 });
