@@ -138,14 +138,24 @@ stages:
         ls -la all-blob-reports/ || echo "  (empty)"
         echo "========================================"
 
-        echo "Merging reports from all 4 shards..."
-        npx playwright merge-reports \
-          --reporter=html,json \
-          all-blob-reports/blob-report-1 \
-          all-blob-reports/blob-report-2 \
-          all-blob-reports/blob-report-3 \
-          all-blob-reports/blob-report-4 \
-          || true
+        # Collect only the blob report dirs that actually exist
+        BLOB_DIRS=""
+        for i in 1 2 3 4; do
+          DIR="all-blob-reports/blob-report-$i"
+          if [ -d "$DIR" ]; then
+            echo "✅ Found shard $i blob report"
+            BLOB_DIRS="$BLOB_DIRS $DIR"
+          else
+            echo "⚠️  Shard $i blob report missing (shard may have timed out)"
+          fi
+        done
+
+        if [ -z "$BLOB_DIRS" ]; then
+          echo "❌ No blob reports found — skipping merge"
+        else
+          echo "Merging available reports:$BLOB_DIRS"
+          npx playwright merge-reports --reporter=html,json $BLOB_DIRS || true
+        fi
 
         echo ""
         echo "📊 Merged HTML report:"
@@ -153,7 +163,7 @@ stages:
         echo ""
         echo "📊 Merged JSON:"
         ls -la test-results.json || echo "  No test-results.json generated"
-      displayName: 'Merge Playwright Reports'
+      displayName: 'Merge Playwright Reports (available shards only)'
       continueOnError: true
 
     - script: |
