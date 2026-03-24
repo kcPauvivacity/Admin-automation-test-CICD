@@ -138,23 +138,25 @@ stages:
         ls -la all-blob-reports/ || echo "  (empty)"
         echo "========================================"
 
-        # Collect only the blob report dirs that actually exist
-        BLOB_DIRS=""
+        # Consolidate all shard blob reports into one directory (merge-reports accepts 1 dir)
+        mkdir -p all-blob-merged
+        FOUND_ANY=false
         for i in 1 2 3 4; do
           DIR="all-blob-reports/blob-report-$i"
           if [ -d "$DIR" ]; then
-            echo "✅ Found shard $i blob report"
-            BLOB_DIRS="$BLOB_DIRS $DIR"
+            echo "✅ Found shard $i blob report — copying into all-blob-merged/"
+            cp -r "$DIR"/. all-blob-merged/
+            FOUND_ANY=true
           else
             echo "⚠️  Shard $i blob report missing (shard may have timed out)"
           fi
         done
 
-        if [ -z "$BLOB_DIRS" ]; then
+        if [ "$FOUND_ANY" = "false" ]; then
           echo "❌ No blob reports found — skipping merge"
         else
-          echo "Merging available reports:$BLOB_DIRS"
-          npx playwright merge-reports --reporter=html,json $BLOB_DIRS || true
+          echo "Merging consolidated reports from all-blob-merged/"
+          npx playwright merge-reports --reporter=html,json all-blob-merged/ || true
         fi
 
         echo ""
