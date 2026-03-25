@@ -24,7 +24,7 @@ pool:
 jobs:
 - job: PlaywrightTests
   displayName: 'Run All Playwright Tests'
-  timeoutInMinutes: 180
+  timeoutInMinutes: 240
   cancelTimeoutInMinutes: 5
 
   steps:
