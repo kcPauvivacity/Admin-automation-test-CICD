@@ -189,23 +189,33 @@ test('Neighbourhoods - [CREATE] create new neighbourhood with English and Chines
     const cityInput = page.locator('tbody tr').first().locator('input[placeholder="Select City"]');
     await cityInput.click({ force: true });
     await page.waitForTimeout(1000);
-    // Skip subheader/group-header items, pick first real selectable option
+    // Pick first REAL option — group headers (e.g. "Cities") leave the dropdown open after click;
+    // real options close it. Detect by checking if options are still visible after clicking.
     const cityOptions = page.locator('[role="option"]');
     const cityCount = await cityOptions.count();
     let citySelected = false;
     for (let i = 0; i < cityCount; i++) {
         const opt = cityOptions.nth(i);
         const text = await opt.textContent().catch(() => '');
-        if (text && text.trim().length > 0) {
-            await opt.click();
-            await page.waitForTimeout(500);
+        if (!text?.trim()) continue;
+        await opt.click();
+        await page.waitForTimeout(500);
+        // Real option closes the dropdown; header keeps it open
+        const dropdownOpen = await page.locator('[role="option"]').first().isVisible({ timeout: 500 }).catch(() => false);
+        if (!dropdownOpen) {
             console.log(`✅ Selected City: ${text.trim()}`);
             citySelected = true;
             break;
         }
+        // Header clicked — dropdown still open, try next option
     }
-    if (!citySelected) console.log('ℹ️ No city options found');
-    // Close any overlay scrim left by the dropdown before clicking Save
+    if (!citySelected) console.log('ℹ️ No selectable city found');
+    // Dismiss any remaining scrim — click it directly, then Escape as backup
+    const scrimEl = page.locator('.v-overlay__scrim').first();
+    if (await scrimEl.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await scrimEl.click();
+        await page.waitForTimeout(500);
+    }
     await page.keyboard.press('Escape');
     await page.waitForTimeout(500);
 
@@ -442,17 +452,28 @@ test('Neighbourhoods - [DELETE] delete newly created neighbourhood', async ({ pa
     await page.waitForTimeout(1000);
     const delCityOptions = page.locator('[role="option"]');
     const delCityCount = await delCityOptions.count();
+    let delCitySelected = false;
     for (let i = 0; i < delCityCount; i++) {
         const opt = delCityOptions.nth(i);
         const text = await opt.textContent().catch(() => '');
-        if (text && text.trim().length > 0) {
-            await opt.click();
-            await page.waitForTimeout(500);
+        if (!text?.trim()) continue;
+        await opt.click();
+        await page.waitForTimeout(500);
+        // Real options close the dropdown; group headers leave it open
+        const dropdownOpen = await page.locator('[role="option"]').first().isVisible({ timeout: 500 }).catch(() => false);
+        if (!dropdownOpen) {
             console.log(`✅ Selected city: ${text.trim()}`);
+            delCitySelected = true;
             break;
         }
     }
-    // Dismiss any remaining overlay scrim
+    if (!delCitySelected) console.log('ℹ️ No selectable city found');
+    // Dismiss any remaining scrim — click it directly, then Escape as backup
+    const delScrim = page.locator('.v-overlay__scrim').first();
+    if (await delScrim.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await delScrim.click();
+        await page.waitForTimeout(500);
+    }
     await page.keyboard.press('Escape');
     await page.waitForTimeout(500);
 
