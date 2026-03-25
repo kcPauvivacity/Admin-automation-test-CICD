@@ -1,13 +1,10 @@
 # Azure Pipeline for Playwright Tests
-# Runs ALL test cases across 4 parallel shards (weekdays at 5 AM Malaysia Time)
-# Expected runtime: ~35-40 min per shard (down from 120 min single-job)
-# Timeout per shard: 60 minutes (was 120 for single job)
+# Runs ALL tests in a single job (1 Microsoft-hosted parallel slot)
+# Expected runtime: ~120 min
+# Timeout: 180 minutes
 #
-# HOW SHARDING WORKS:
-#   - 401 tests are split evenly across 4 agents (~100 tests each)
-#   - All 4 shards run simultaneously in parallel
-#   - Blob reports are uploaded per shard, then merged into one HTML/JSON report
-#   - Email is sent from the merge job once all shards complete
+# NOTE: Sharding was removed — only 1 parallel job slot is available,
+#       so 4 shards would queue sequentially anyway. Single job is simpler.
 #
 # CREDENTIALS: Update tests/.env file and push to change login credentials.
 
@@ -24,212 +21,112 @@ schedules:
 pool:
   vmImage: 'ubuntu-latest'
 
-stages:
+jobs:
+- job: PlaywrightTests
+  displayName: 'Run All Playwright Tests'
+  timeoutInMinutes: 180
+  cancelTimeoutInMinutes: 5
 
-# ─────────────────────────────────────────────
-# STAGE 1: Run tests in 4 parallel shards
-# ─────────────────────────────────────────────
-- stage: Test
-  displayName: 'Run Playwright Tests (4 Shards)'
-  jobs:
-  - job: PlaywrightShard
-    displayName: 'Shard $(SHARD_INDEX) of 4'
-    timeoutInMinutes: 60       # Each shard runs ~100 tests — 60 min is plenty
-    cancelTimeoutInMinutes: 5
+  steps:
+  - checkout: self
+    displayName: 'Checkout Repository'
 
-    strategy:
-      matrix:
-        Shard_1:
-          SHARD_INDEX: 1
-        Shard_2:
-          SHARD_INDEX: 2
-        Shard_3:
-          SHARD_INDEX: 3
-        Shard_4:
-          SHARD_INDEX: 4
+  - script: |
+      echo "Git commit: $(git rev-parse HEAD)"
+      TEST_USERNAME=$(grep "^TEST_USERNAME=" .env | cut -d'=' -f2)
+      echo "Test account: $TEST_USERNAME"
+    displayName: 'Show Test Info'
 
-    steps:
-    - checkout: self
-      displayName: 'Checkout Repository'
+  - task: NodeTool@0
+    displayName: 'Install Node.js'
+    inputs:
+      versionSpec: '18.x'
 
-    - script: |
-        echo "Git commit: $(git rev-parse HEAD)"
-        TEST_USERNAME=$(grep "^TEST_USERNAME=" .env | cut -d'=' -f2)
-        echo "Test account: $TEST_USERNAME"
-        echo "Running shard $(SHARD_INDEX) of 4"
-      displayName: 'Show Test Info'
+  - script: |
+      echo "Installing dependencies..."
+      npm ci --prefer-offline
+    displayName: 'Install Dependencies'
 
-    - task: NodeTool@0
-      displayName: 'Install Node.js'
-      inputs:
-        versionSpec: '18.x'
+  - script: |
+      echo "Installing Playwright browsers..."
+      npx playwright install --with-deps chromium
+    displayName: 'Install Playwright Browsers'
 
-    - script: |
-        echo "Installing dependencies..."
-        npm ci --prefer-offline
-      displayName: 'Install Dependencies'
+  - script: |
+      echo "======================================"
+      echo "▶ Running all tests (workers=1)"
+      echo "======================================"
+      npx playwright test \
+        --workers=1 \
+        --reporter=html,json \
+        || true
+    displayName: 'Run All Playwright Tests'
+    env:
+      CI: true
+    continueOnError: true
 
-    - script: |
-        echo "Installing Playwright browsers..."
-        npx playwright install --with-deps chromium
-      displayName: 'Install Playwright Browsers'
+  - script: |
+      if [ ! -f test-results.json ]; then
+        echo "⚠️ test-results.json not found - creating fallback"
+        echo '{"suites":[],"stats":{"expected":0,"skipped":0,"unexpected":0,"flaky":0},"errors":["test-results.json was not generated"]}' > test-results.json
+      else
+        echo "✅ test-results.json found"
+        node -e "const r=JSON.parse(require('fs').readFileSync('test-results.json','utf8')); console.log('Stats:', JSON.stringify(r.stats||{}));"
+      fi
+    displayName: 'Ensure JSON Report Exists'
+    condition: always()
+    continueOnError: true
 
-    - script: |
-        echo "========================================"
-        echo "▶ Running shard $(SHARD_INDEX)/4"
-        echo "   ~100 of 401 tests will run here"
-        echo "========================================"
-        npx playwright test \
-          --shard=$(SHARD_INDEX)/4 \
-          --workers=4 \
-          --reporter=blob \
-          || true
-      displayName: 'Run Test Shard $(SHARD_INDEX)/4'
-      env:
-        CI: true
-      continueOnError: true
+  - script: |
+      mkdir -p playwright-report test-results
+    displayName: 'Ensure artifact directories exist'
+    condition: always()
+    continueOnError: true
 
-    - task: PublishPipelineArtifact@1
-      displayName: 'Upload Blob Report (Shard $(SHARD_INDEX))'
-      condition: always()
-      continueOnError: true
-      inputs:
-        targetPath: 'blob-report'
-        artifact: 'blob-report-$(SHARD_INDEX)'
-        publishLocation: 'pipeline'
+  - task: PublishPipelineArtifact@1
+    displayName: 'Upload HTML Report'
+    condition: always()
+    continueOnError: true
+    inputs:
+      targetPath: 'playwright-report'
+      artifact: 'playwright-report'
+      publishLocation: 'pipeline'
 
+  - task: PublishPipelineArtifact@1
+    displayName: 'Upload JSON Results'
+    condition: always()
+    continueOnError: true
+    inputs:
+      targetPath: 'test-results.json'
+      artifact: 'test-results-json'
+      publishLocation: 'pipeline'
 
-# ─────────────────────────────────────────────
-# STAGE 2: Merge all shard reports & notify
-# ─────────────────────────────────────────────
-- stage: Report
-  displayName: 'Merge Reports & Send Notification'
-  dependsOn: Test
-  condition: always()
+  - script: |
+      echo "======================================"
+      echo "📧 SENDING EMAIL REPORT"
+      echo "======================================"
+      echo "📬 Email will be sent to: paukiechee96@gmail.com"
 
-  jobs:
-  - job: MergeAndReport
-    displayName: 'Merge Results & Send Email'
-    timeoutInMinutes: 30
+      npm install nodemailer
+      node scripts/send-email-report.js || {
+        echo "⚠️ Email sending failed - download report from Artifacts"
+        exit 0
+      }
 
-    steps:
-    - checkout: self
-      displayName: 'Checkout Repository'
+      echo "✅ Email sent to paukiechee96@gmail.com!"
+    displayName: 'Send Email Report'
+    condition: always()
+    continueOnError: true
 
-    - task: NodeTool@0
-      displayName: 'Install Node.js'
-      inputs:
-        versionSpec: '18.x'
+  - script: |
+      echo "======================================"
+      echo "📊 TEST SUMMARY"
+      echo "======================================"
 
-    - script: |
-        npm ci --prefer-offline
-      displayName: 'Install Dependencies'
-
-    - task: DownloadPipelineArtifact@2
-      displayName: 'Download All Shard Blob Reports'
-      inputs:
-        buildType: 'current'
-        itemPattern: 'blob-report-*/**/*'
-        targetPath: 'all-blob-reports'
-
-    - script: |
-        echo "========================================"
-        echo "📦 Downloaded blob reports:"
-        ls -la all-blob-reports/ || echo "  (empty)"
-        echo "========================================"
-
-        # Consolidate all shard blob reports into one directory (merge-reports accepts 1 dir)
-        mkdir -p all-blob-merged
-        FOUND_ANY=false
-        for i in 1 2 3 4; do
-          DIR="all-blob-reports/blob-report-$i"
-          if [ -d "$DIR" ]; then
-            echo "✅ Found shard $i blob report — copying into all-blob-merged/"
-            cp -r "$DIR"/. all-blob-merged/
-            FOUND_ANY=true
-          else
-            echo "⚠️  Shard $i blob report missing (shard may have timed out)"
-          fi
-        done
-
-        if [ "$FOUND_ANY" = "false" ]; then
-          echo "❌ No blob reports found — skipping merge"
-        else
-          echo "Merging consolidated reports from all-blob-merged/"
-          npx playwright merge-reports --reporter=html,json all-blob-merged/ || true
-        fi
-
-        echo ""
-        echo "📊 Merged HTML report:"
-        ls -la playwright-report/ || echo "  No HTML report generated"
-        echo ""
-        echo "📊 Merged JSON:"
-        ls -la test-results.json || echo "  No test-results.json generated"
-      displayName: 'Merge Playwright Reports (available shards only)'
-      continueOnError: true
-
-    - script: |
-        if [ ! -f test-results.json ]; then
-          echo "⚠️ test-results.json not found - creating fallback"
-          echo '{"suites":[],"stats":{"expected":0,"skipped":0,"unexpected":0,"flaky":0},"errors":["test-results.json was not generated - check shard logs"]}' > test-results.json
-        else
-          echo "✅ test-results.json found"
-          node -e "const r=JSON.parse(require('fs').readFileSync('test-results.json','utf8')); console.log('Stats:', JSON.stringify(r.stats||{}));"
-        fi
-      displayName: 'Ensure JSON Report Exists'
-      condition: always()
-      continueOnError: true
-
-    - script: |
-        mkdir -p playwright-report test-results
-      displayName: 'Ensure artifact directories exist'
-      condition: always()
-      continueOnError: true
-
-    - task: PublishPipelineArtifact@1
-      displayName: 'Upload Merged HTML Report'
-      condition: always()
-      continueOnError: true
-      inputs:
-        targetPath: 'playwright-report'
-        artifact: 'playwright-report'
-        publishLocation: 'pipeline'
-
-    - task: PublishPipelineArtifact@1
-      displayName: 'Upload Merged JSON Results'
-      condition: always()
-      continueOnError: true
-      inputs:
-        targetPath: 'test-results.json'
-        artifact: 'test-results-json'
-        publishLocation: 'pipeline'
-
-    - script: |
-        echo "======================================"
-        echo "📧 SENDING EMAIL REPORT"
-        echo "======================================"
-        echo "📬 Email will be sent to: paukiechee96@gmail.com"
-
-        npm install nodemailer
-        node scripts/send-email-report.js || {
-          echo "⚠️ Email sending failed - download report from Artifacts"
-          exit 0
-        }
-
-        echo "✅ Email sent to paukiechee96@gmail.com!"
-      displayName: 'Send Email Report'
-      condition: always()
-      continueOnError: true
-
-    - script: |
-        echo "======================================"
-        echo "📊 TEST SUMMARY"
-        echo "======================================"
-
-        if [ -f test-results.json ]; then
-          node scripts/generate-summary.js
-        else
-          echo "No test results found"
-        fi
-      displayName: 'Generate Test Summary'
-      condition: always()
+      if [ -f test-results.json ]; then
+        node scripts/generate-summary.js
+      else
+        echo "No test results found"
+      fi
+    displayName: 'Generate Test Summary'
+    condition: always()
