@@ -1,10 +1,11 @@
 # Azure Pipeline for Playwright Tests
 # Runs ALL tests in a single job (1 Microsoft-hosted parallel slot)
-# Expected runtime: ~120 min
-# Timeout: 180 minutes
+# Expected runtime: ~90 min (workers=2)
+# Timeout: 240 minutes
 #
 # NOTE: Sharding was removed — only 1 parallel job slot is available,
 #       so 4 shards would queue sequentially anyway. Single job is simpler.
+#       workers=2 runs tests in parallel within the same machine (~1.5h vs ~3h for workers=1)
 #
 # CREDENTIALS: Update tests/.env file and push to change login credentials.
 
@@ -54,10 +55,10 @@ jobs:
 
   - script: |
       echo "======================================"
-      echo "▶ Running all tests (workers=1)"
+      echo "▶ Running all tests (workers=2)"
       echo "======================================"
       npx playwright test \
-        --workers=1 \
+        --workers=2 \
         --reporter=html,json \
         || true
     displayName: 'Run All Playwright Tests'
