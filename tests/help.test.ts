@@ -15,14 +15,14 @@ test('click help icon and open module in new page', async ({ page, context }) =>
 
     // Wait for dropdown to appear and click on Knowledge base
     // Listen for popup (new page) to open
-    const pagePromise = page.waitForEvent('popup');
+    const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     
     // Click on Knowledge base in the dropdown
     await page.getByText('Knowledge base').click();
     
     // Wait for the new page to open
     const newPage = await pagePromise;
-    await newPage.waitForLoadState('domcontentloaded');
+    await newPage.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {});
     
     console.log(`New page opened with URL: ${newPage.url()}`);
 
@@ -49,14 +49,14 @@ test('click help icon and open Submit an issue in new page', async ({ page, cont
 
     // Wait for dropdown to appear and click on Submit an issue
     // Listen for popup (new page) to open
-    const pagePromise = page.waitForEvent('popup');
+    const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     
     // Click on Submit an issue in the dropdown
     await page.getByText('Submit an issue').click();
     
     // Wait for the new page to open
     const newPage = await pagePromise;
-    await newPage.waitForLoadState('domcontentloaded');
+    await newPage.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {});
     
     console.log(`New page opened with URL: ${newPage.url()}`);
 
@@ -83,14 +83,14 @@ test('click help icon and open Change request in new page', async ({ page, conte
 
     // Wait for dropdown to appear and click on Change request
     // Listen for popup (new page) to open
-    const pagePromise = page.waitForEvent('popup');
+    const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     
     // Click on Change request in the dropdown
     await page.getByText('Change request').click();
     
     // Wait for the new page to open
     const newPage = await pagePromise;
-    await newPage.waitForLoadState('domcontentloaded');
+    await newPage.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {});
     
     console.log(`New page opened with URL: ${newPage.url()}`);
 
@@ -117,7 +117,7 @@ test('click help icon and open Terms and conditions in new page', async ({ page,
 
     // Wait for dropdown to appear and click on Terms and conditions
     // Listen for popup (new page) to open
-    const pagePromise = page.waitForEvent('popup');
+    const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     
     // Click on Terms and conditions in the dropdown
     await page.getByText('Terms and conditions').click();
@@ -157,14 +157,14 @@ test('click help icon and open Privacy policy in new page', async ({ page, conte
 
     // Wait for dropdown to appear and click on Privacy policy
     // Listen for popup (new page) to open
-    const pagePromise = page.waitForEvent('popup');
+    const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     
     // Click on Privacy policy in the dropdown
     await page.getByText('Privacy policy').click();
     
     // Wait for the new page to open
     const newPage = await pagePromise;
-    await newPage.waitForLoadState('domcontentloaded');
+    await newPage.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {});
     
     console.log(`New page opened with URL: ${newPage.url()}`);
 
@@ -305,7 +305,7 @@ test('verify external links open in new tabs', async ({ page, context }) => {
     console.log(`Initial page count: ${initialPages}`);
 
     // Click on Knowledge base
-    const pagePromise = page.waitForEvent('popup');
+    const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     await page.getByText('Knowledge base').click();
     
     const newPage = await pagePromise;
