@@ -35,38 +35,33 @@ test('click help icon and open module in new page', async ({ page, context }) =>
     }
 });
 
-test('click help icon and open Submit an issue in new page', async ({ page, context }) => {
+test('click help icon and open Submit an issue modal', async ({ page }) => {
     test.setTimeout(120000);
     
     // Login with valid user
     await loginToApp(page);
 
-    // Click on the help icon on the top right - use specific label
+    // Click on the help icon on the top right
     await page.getByRole('button', { name: 'Open help menu' }).click();
     await page.waitForTimeout(1000);
 
     console.log('Clicked Help icon');
 
-    // Wait for dropdown to appear and click on Submit an issue
-    // Listen for popup (new page) to open
-    const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
-    
-    // Click on Submit an issue in the dropdown
+    // Submit an issue opens a modal (not a new tab)
     await page.getByText('Submit an issue').click();
     
-    // Wait for the new page to open
-    const newPage = await pagePromise;
-    await newPage.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {});
+    // Verify the modal appeared
+    const modal = page.locator('[role="dialog"]').first();
+    await expect(modal).toBeVisible({ timeout: 10000 });
     
-    console.log(`New page opened with URL: ${newPage.url()}`);
+    const modalTitle = modal.locator('h1, h2, h3, [class*="title"]').first();
+    const titleText = await modalTitle.textContent().catch(() => '');
+    console.log(`Modal opened: "${titleText?.trim()}"`);
+    console.log('✅ Submit an issue modal opened successfully');
 
-    // Validate that a new page was opened
-    if (newPage && newPage.url()) {
-        console.log('✅ Successfully opened Submit an issue in new page');
-        await newPage.close();
-    } else {
-        throw new Error('Failed to open Submit an issue in new page');
-    }
+    // Close the modal
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(500);
 });
 
 test.skip('click help icon and open Change request in new page', async ({ page, context }) => {
