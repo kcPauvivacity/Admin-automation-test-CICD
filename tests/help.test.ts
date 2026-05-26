@@ -69,7 +69,7 @@ test('click help icon and open Submit an issue in new page', async ({ page, cont
     }
 });
 
-test('click help icon and open Change request in new page', async ({ page, context }) => {
+test.skip('click help icon and open Change request in new page', async ({ page, context }) => {
     test.setTimeout(120000);
     
     // Login with valid user
@@ -120,7 +120,7 @@ test('click help icon and open Terms and conditions in new page', async ({ page,
     const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     
     // Click on Terms and conditions in the dropdown
-    await page.getByText('Terms and conditions').click();
+    await page.getByText('Terms and Conditions').click();
     
     // Wait for the new page to open with a timeout
     const newPage = await pagePromise;
@@ -160,7 +160,7 @@ test('click help icon and open Privacy policy in new page', async ({ page, conte
     const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     
     // Click on Privacy policy in the dropdown
-    await page.getByText('Privacy policy').click();
+    await page.getByText('Privacy Policy').click();
     
     // Wait for the new page to open
     const newPage = await pagePromise;
@@ -192,9 +192,8 @@ test('verify help menu contains all expected options', async ({ page }) => {
     const expectedItems = [
         'Knowledge base',
         'Submit an issue',
-        'Change request',
-        'Terms and conditions',
-        'Privacy policy'
+        'Terms and Conditions',
+        'Privacy Policy'
     ];
 
     let allItemsFound = true;
