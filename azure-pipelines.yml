@@ -22,6 +22,9 @@ schedules:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+- group: qa-agent-secrets
+
 jobs:
 - job: PlaywrightTests
   displayName: 'Run All Playwright Tests'
@@ -130,3 +133,20 @@ jobs:
       fi
     displayName: 'Generate Test Summary'
     condition: always()
+
+  - script: |
+      echo "======================================"
+      echo "🤖 QA AI AGENT"
+      echo "======================================"
+      node scripts/qa-agent.mjs --results test-results.json || {
+        echo "⚠️ QA Agent encountered an error"
+        exit 0
+      }
+    displayName: 'QA AI Agent - Auto Fix & Report'
+    condition: always()
+    continueOnError: true
+    env:
+      ANTHROPIC_API_KEY: $(ANTHROPIC_API_KEY)
+      GITHUB_TOKEN: $(GITHUB_TOKEN)
+      ADO_PAT: $(ADO_PAT)
+      SLACK_WEBHOOK_URL: $(SLACK_WEBHOOK_URL)
