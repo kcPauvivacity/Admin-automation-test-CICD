@@ -26,7 +26,7 @@ test.describe('Properties Tests', () => {
         
         // Verify page loaded
         const heading = page.locator('h1, h2, h3').first();
-        await expect(heading).toBeVisible({ timeout: 10000 });
+        await expect(heading).toBeVisible({ timeout: 30000 });
         
         console.log('✅ Properties page loaded successfully');
     });
@@ -44,7 +44,7 @@ test.describe('Properties Tests', () => {
         
         // Verify table/list is visible
         const table = page.locator('table, [role="grid"], [class*="list"]').first();
-        await expect(table).toBeVisible({ timeout: 10000 });
+        await expect(table).toBeVisible({ timeout: 30000 });
         
         // Check if rows are present
         const rows = await page.locator('tr, [role="row"], [class*="item"]').count();

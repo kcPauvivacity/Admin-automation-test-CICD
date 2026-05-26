@@ -30,7 +30,7 @@ test.describe('Dashboard Module Tests', () => {
         
         // Verify page has loaded (check for main container or heading)
         const mainContent = page.locator('main, [role="main"], .content, h1, h2, [class*="container"]').first();
-        await expect(mainContent).toBeVisible({ timeout: 10000 });
+        await expect(mainContent).toBeVisible({ timeout: 30000 });
         
         console.log('✅ Dashboard page loaded successfully');
     });

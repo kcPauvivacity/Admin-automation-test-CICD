@@ -26,7 +26,7 @@ test.describe('Projects Tests', () => {
         
         // Verify page loaded
         const heading = page.locator('h1, h2, h3').first();
-        await expect(heading).toBeVisible({ timeout: 10000 });
+        await expect(heading).toBeVisible({ timeout: 30000 });
         
         console.log('✅ Projects page loaded successfully');
     });

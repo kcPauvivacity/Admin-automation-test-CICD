@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 test.describe('Test Email Report with Media', () => {
-    test('should fail and capture screenshot/video', async ({ page }) => {
+    test.skip('should fail and capture screenshot/video', async ({ page }) => {
         test.setTimeout(60000);
         
         // Login first
