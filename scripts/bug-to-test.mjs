@@ -392,14 +392,34 @@ async function generatePhase(tracking) {
 
   tracking.processedIds = [...alreadyDone];
 
-  if (generatedFiles.length > 0 && GITHUB_TOKEN) {
-    console.log('\n🚀 Creating GitHub PR...');
-    try {
-      const prUrl = await createGitHubPR(generatedFiles);
-      console.log(`  ✅ PR: ${prUrl}`);
-      await sendSlack(`🤖 *QA Bot* generated ${generatedFiles.length} regression test(s)\nPR: ${prUrl}`);
-    } catch (err) {
-      console.error('  ❌ PR creation failed:', err.message);
+  if (generatedFiles.length > 0) {
+    // Send Slack summary — skip AppEditor bugs (too noisy, batch bugs)
+    const notifyFiles = generatedFiles.filter(f => {
+      const id = path.basename(f).replace('bug-', '').replace('.test.ts', '');
+      const title = (tracking.bugs[id]?.title || '').toLowerCase();
+      return !title.includes('appeditor');
+    });
+
+    if (notifyFiles.length > 0) {
+      const bugList = notifyFiles.map(f => {
+        const id = path.basename(f).replace('bug-', '').replace('.test.ts', '');
+        const info = tracking.bugs[id];
+        return `• *#${id}* ${info?.title || ''}\n  ADO: https://dev.azure.com/vivacityapp/Viva/_workitems/edit/${id}`;
+      }).join('\n');
+
+      const slackMsg = `🤖 *QA Bot* — Auto-generated regression tests for the following bugs:\n\n${bugList}\n\n_Tests will automatically run when the bug is closed to verify the fix._`;
+      await sendSlack(slackMsg);
+    }
+
+    if (GITHUB_TOKEN) {
+      console.log('\n🚀 Creating GitHub PR...');
+      try {
+        const prUrl = await createGitHubPR(generatedFiles);
+        console.log(`  ✅ PR: ${prUrl}`);
+        await sendSlack(`🔗 PR ready for review: ${prUrl}`);
+      } catch (err) {
+        console.error('  ❌ PR creation failed:', err.message);
+      }
     }
   }
 
