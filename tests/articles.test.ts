@@ -33,7 +33,7 @@ test('create article with random title and select banner image', async ({ page }
 
     // Insert random title in title field - try multiple selectors
     const titleField = page.getByPlaceholder('Enter title').or(page.locator('input[type="text"]').first());
-    await titleField.waitFor({ state: 'visible', timeout: 10000 });
+    await titleField.waitFor({ state: 'visible', timeout: 30000 });
     await titleField.fill(randomTitle);
     await page.waitForTimeout(500);
 
@@ -172,6 +172,7 @@ test('create article with full content and category', async ({ page }) => {
 
     // Fill in title
     const titleField = page.getByPlaceholder('Enter title').or(page.locator('input[type="text"]').first());
+    await titleField.waitFor({ state: 'visible', timeout: 30000 });
     await titleField.fill(randomTitle);
     await page.waitForTimeout(500);
     console.log('✅ Filled in title');

@@ -50,6 +50,8 @@ const FORCE_ID     = process.argv.includes('--id')
   ? parseInt(process.argv[process.argv.indexOf('--id') + 1])
   : null;
 
+const SUMMARY_FILE = path.join(SCRIPT_DIR, 'last-run-summary.json');
+
 // ─── Tracking file ────────────────────────────────────────────────────────────
 // Structure:
 // {
@@ -409,6 +411,12 @@ async function generatePhase(tracking) {
 
       const slackMsg = `🤖 *QA Bot* — Auto-generated regression tests for the following bugs:\n\n${bugList}\n\n_Tests will automatically run when the bug is closed to verify the fix._`;
       await sendSlack(slackMsg);
+
+      // Store for MCP notification
+      generatedFiles._notifyBugs = notifyFiles.map(f => {
+        const id = path.basename(f).replace('bug-', '').replace('.test.ts', '');
+        return { id, title: tracking.bugs[id]?.title || '' };
+      });
     }
 
     if (GITHUB_TOKEN) {
@@ -417,6 +425,7 @@ async function generatePhase(tracking) {
         const prUrl = await createGitHubPR(generatedFiles);
         console.log(`  ✅ PR: ${prUrl}`);
         await sendSlack(`🔗 PR ready for review: ${prUrl}`);
+        generatedFiles._prUrl = prUrl;
       } catch (err) {
         console.error('  ❌ PR creation failed:', err.message);
       }
@@ -428,7 +437,7 @@ async function generatePhase(tracking) {
 
 // ─── Phase 2: Verify closed bugs ─────────────────────────────────────────────
 
-async function verifyPhase(tracking) {
+async function verifyPhase(tracking, summary = { verified: [] }) {
   const trackedBugs = Object.entries(tracking.bugs).filter(([, info]) => !info.verified);
   if (trackedBugs.length === 0) {
     console.log('✅ No pending verifications.');
@@ -469,6 +478,8 @@ async function verifyPhase(tracking) {
 
     const adoUrl = `https://dev.azure.com/vivacityapp/Viva/_workitems/edit/${id}`;
 
+    summary.verified.push({ id, title: info.title, passed, adoUrl });
+
     if (passed) {
       console.log(`  ✅ VERIFIED FIXED — bug #${id} passes the regression test`);
       await sendSlack(`✅ *Bug #${id} VERIFIED FIXED*\n"${info.title}"\nRegression test passed after closing.\nADO: ${adoUrl}`);
@@ -491,17 +502,28 @@ async function main() {
   }
 
   const tracking = loadTracking();
+  const summary = { date: new Date().toISOString(), generated: [], verified: [] };
 
   if (!VERIFY_ONLY) {
-    await generatePhase(tracking);
+    const generated = await generatePhase(tracking);
+    if (generated._notifyBugs) {
+      summary.generated = generated._notifyBugs;
+    }
   }
 
-  await verifyPhase(tracking);
+  await verifyPhase(tracking, summary);
 
   tracking.lastRun = new Date().toISOString();
   saveTracking(tracking);
 
+  // Write summary for MCP notification
+  fs.writeFileSync(SUMMARY_FILE, JSON.stringify(summary, null, 2));
+
   console.log('\n✅ Done.');
+  if (summary.generated.length > 0 || summary.verified.length > 0) {
+    console.log('\n📋 Run summary saved to scripts/last-run-summary.json');
+    console.log('   Ask Claude to send the Slack notification when ready.');
+  }
 }
 
 main().catch(err => {

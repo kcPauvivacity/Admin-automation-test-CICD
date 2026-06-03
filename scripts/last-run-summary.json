@@ -1,0 +1,12 @@
+{
+  "date": "2026-06-03T01:00:01.094Z",
+  "generated": [],
+  "verified": [
+    {
+      "id": 17030,
+      "title": "[Admin] Organisation Settings — University address 'x' button should be disabled (read-only, editable in System Settings only)",
+      "passed": false,
+      "adoUrl": "https://dev.azure.com/vivacityapp/Viva/_workitems/edit/17030"
+    }
+  ]
+}

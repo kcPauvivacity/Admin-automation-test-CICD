@@ -1,5 +1,168 @@
 {
-  "processedIds": [],
-  "bugs": {},
-  "lastRun": "2026-05-27T08:14:53.219Z"
+  "processedIds": [
+    16114,
+    16916,
+    16913,
+    16912,
+    16878,
+    16871,
+    16870,
+    16637,
+    16104,
+    15766,
+    16915,
+    16914,
+    16113,
+    16112,
+    16111,
+    16110,
+    16109,
+    16108,
+    16107,
+    16106,
+    16103,
+    16102,
+    16101,
+    16917,
+    16937,
+    16938,
+    16936,
+    16935,
+    17032,
+    17031,
+    17030
+  ],
+  "bugs": {
+    "16101": {
+      "title": "[BUG]Appeditor > unable to use ai chat",
+      "testFile": "tests/generated/bug-16101.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16102": {
+      "title": "[BUG]Appeditor> unable to generate qr",
+      "testFile": "tests/generated/bug-16102.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16103": {
+      "title": "[BUG]Appeditor > unable to select page",
+      "testFile": "tests/generated/bug-16103.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16106": {
+      "title": "[BUG]Appeditor > disable the configure until the user select the card",
+      "testFile": "tests/generated/bug-16106.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16107": {
+      "title": "[BUG]Appeditor > select any field will trigger save function",
+      "testFile": "tests/generated/bug-16107.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16108": {
+      "title": "[BUG]Appeditor > unable to preview",
+      "testFile": "tests/generated/bug-16108.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16109": {
+      "title": "[BUG]Appeditor > Create field is not working",
+      "testFile": "tests/generated/bug-16109.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16110": {
+      "title": "[BUG]Appeditor > Page is overlay and preview not showing",
+      "testFile": "tests/generated/bug-16110.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16111": {
+      "title": "[BUG]Appeditor > showing error when click connect",
+      "testFile": "tests/generated/bug-16111.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16112": {
+      "title": "[BUG]Appeditor > Unable to upload assets",
+      "testFile": "tests/generated/bug-16112.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16113": {
+      "title": "[BUG]Appeditor > Mention generate success but unable to view",
+      "testFile": "tests/generated/bug-16113.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16114": {
+      "title": "[BUG]Appeditor > Unable to save",
+      "testFile": "tests/generated/bug-16114.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16914": {
+      "title": "[Fresh] ES search issues — wrong university ranking, CN name mismatch, city filter not filtering universities",
+      "testFile": "tests/generated/bug-16914.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16915": {
+      "title": "[Admin] Venue > Menus > Dishes page cut off — cannot scroll to see all dishes",
+      "testFile": "tests/generated/bug-16915.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-05-28"
+    },
+    "16917": {
+      "title": "[Admin] Property name missing on detail page across multiple clients (iQ, HFS and others)",
+      "testFile": "tests/generated/bug-16917.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-05-29"
+    },
+    "16935": {
+      "title": "[Admin] Dark theme display issue",
+      "testFile": "tests/generated/bug-16935.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-02"
+    },
+    "16936": {
+      "title": "[Quintain Living] Portal loading slow / failing when accessing Properties tab",
+      "testFile": "tests/generated/bug-16936.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "16938": {
+      "title": "[Admin] University feature search not working — cannot search existing universities",
+      "testFile": "tests/generated/bug-16938.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-02"
+    },
+    "17030": {
+      "title": "[Admin] Organisation Settings — University address 'x' button should be disabled (read-only, editable in System Settings only)",
+      "testFile": "tests/generated/bug-17030.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-03"
+    },
+    "17031": {
+      "title": "[Admin] Promotion 'Save & Publish' button not working — requires manual publish workaround via listing",
+      "testFile": "tests/generated/bug-17031.test.ts",
+      "lastState": "New",
+      "verified": false
+    }
+  },
+  "lastRun": "2026-06-03T01:00:10.417Z"
 }
