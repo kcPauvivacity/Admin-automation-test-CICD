@@ -181,6 +181,17 @@ function isAdminAppBug(title) {
   return false;
 }
 
+const FUSIONETA_ONLY_KEYWORDS = [
+  'app editor', 'appeditor', 'mini program', 'miniprogram',
+  'sales consultant', 'chat centre', 'managed services',
+  'system-settings', 'system settings',
+];
+
+function isFusonlyBug(title) {
+  const lower = title.toLowerCase();
+  return FUSIONETA_ONLY_KEYWORDS.some(kw => lower.includes(kw));
+}
+
 // ─── Claude API ───────────────────────────────────────────────────────────────
 
 async function callClaude(prompt, systemPrompt) {
@@ -222,8 +233,10 @@ ${bug.reproSteps || '(none)'}
 CONTEXT:
 - App URL: https://app-staging.vivacityapp.com
 - Import loginToApp from '../helpers/auth.helper'
-- loginToApp(page) → kc@vivacityapp.com (org modules: /demo-student/*)
-- loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696') → fusioneta (system-settings/*)
+- loginToApp(page) → kc@vivacityapp.com (standard org modules under /demo-student/*)
+- loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696') → fusioneta account ONLY (required for: system-settings/*, App Editor, Sales Consultant, Chat Centre, Managed Services)
+- THIS BUG IS: ${isFusonlyBug(bug.title) ? 'FUSIONETA-ONLY — use fusioneta creds' : 'STANDARD — use default loginToApp(page)'}
+- App Editor URL pattern: https://app-staging.vivacityapp.com/fusioneta/app-editor (fusioneta account only)
 - Vuetify 3: .v-application.v-theme--DARK_BLUE_THEME (dark), .v-theme--BLUE_THEME (light)
 
 REQUIREMENTS:
@@ -470,6 +483,17 @@ async function verifyPhase(tracking, summary = { verified: [] }) {
     }
 
     console.log(`\n  🐛 Bug #${id} is now ${currentState}: "${info.title}"`);
+
+    // App Editor / fusioneta-only bugs require a specific mini program ID to navigate deep —
+    // auto-generated tests can't reliably verify these. Mark as manual review.
+    if (isFusonlyBug(info.title)) {
+      console.log(`  ⚠️  MANUAL REVIEW — App Editor / fusioneta-only bug, skipping auto-verify`);
+      tracking.bugs[idStr].verified = true;
+      tracking.bugs[idStr].verifyResult = 'manual';
+      tracking.bugs[idStr].verifyDate = new Date().toISOString().slice(0, 10);
+      continue;
+    }
+
     const { passed, output } = runTest(testFile);
 
     tracking.bugs[idStr].verified = true;

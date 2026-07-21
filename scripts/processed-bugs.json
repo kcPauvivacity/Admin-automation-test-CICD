@@ -30,86 +30,210 @@
     16935,
     17032,
     17031,
-    17030
+    17030,
+    17076,
+    17078,
+    17077,
+    17163,
+    17180,
+    17179,
+    17222,
+    17216,
+    17212,
+    17211,
+    17209,
+    17223,
+    17221,
+    17219,
+    17218,
+    17217,
+    17215,
+    17214,
+    17213,
+    17210,
+    17208,
+    17294,
+    17249,
+    17265,
+    17264,
+    17263,
+    17262,
+    17261,
+    17260,
+    17259,
+    17258,
+    17257,
+    17254,
+    17253,
+    17252,
+    17248,
+    17302,
+    17298,
+    17297,
+    17295,
+    17300,
+    17299,
+    17347,
+    17368,
+    17378,
+    17377,
+    17376,
+    17375,
+    17374,
+    17373,
+    17645,
+    17644,
+    17526,
+    17372,
+    17693,
+    17692,
+    17691,
+    17690,
+    17689,
+    17688,
+    17687,
+    17649,
+    17648,
+    17647,
+    17646,
+    17640,
+    17638,
+    17592,
+    17355,
+    17354,
+    17715,
+    17714,
+    17753,
+    17752,
+    17751,
+    17772,
+    17764,
+    17756,
+    17755,
+    17754,
+    17773,
+    17771,
+    17770,
+    17769,
+    17768,
+    17767,
+    17766,
+    17765,
+    17763,
+    17809,
+    17797,
+    17796,
+    17795,
+    17794,
+    17798,
+    17793,
+    17839,
+    17838
   ],
   "bugs": {
     "16101": {
       "title": "[BUG]Appeditor > unable to use ai chat",
       "testFile": "tests/generated/bug-16101.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16102": {
       "title": "[BUG]Appeditor> unable to generate qr",
       "testFile": "tests/generated/bug-16102.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16103": {
       "title": "[BUG]Appeditor > unable to select page",
       "testFile": "tests/generated/bug-16103.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16106": {
       "title": "[BUG]Appeditor > disable the configure until the user select the card",
       "testFile": "tests/generated/bug-16106.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16107": {
       "title": "[BUG]Appeditor > select any field will trigger save function",
       "testFile": "tests/generated/bug-16107.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16108": {
       "title": "[BUG]Appeditor > unable to preview",
       "testFile": "tests/generated/bug-16108.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16109": {
       "title": "[BUG]Appeditor > Create field is not working",
       "testFile": "tests/generated/bug-16109.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16110": {
       "title": "[BUG]Appeditor > Page is overlay and preview not showing",
       "testFile": "tests/generated/bug-16110.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16111": {
       "title": "[BUG]Appeditor > showing error when click connect",
       "testFile": "tests/generated/bug-16111.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16112": {
       "title": "[BUG]Appeditor > Unable to upload assets",
       "testFile": "tests/generated/bug-16112.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16113": {
       "title": "[BUG]Appeditor > Mention generate success but unable to view",
       "testFile": "tests/generated/bug-16113.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16114": {
       "title": "[BUG]Appeditor > Unable to save",
       "testFile": "tests/generated/bug-16114.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16914": {
       "title": "[Fresh] ES search issues — wrong university ranking, CN name mismatch, city filter not filtering universities",
       "testFile": "tests/generated/bug-16914.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-09"
     },
     "16915": {
       "title": "[Admin] Venue > Menus > Dishes page cut off — cannot scroll to see all dishes",
@@ -138,8 +262,10 @@
     "16936": {
       "title": "[Quintain Living] Portal loading slow / failing when accessing Properties tab",
       "testFile": "tests/generated/bug-16936.test.ts",
-      "lastState": "New",
-      "verified": false
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-19"
     },
     "16938": {
       "title": "[Admin] University feature search not working — cannot search existing universities",
@@ -160,9 +286,435 @@
     "17031": {
       "title": "[Admin] Promotion 'Save & Publish' button not working — requires manual publish workaround via listing",
       "testFile": "tests/generated/bug-17031.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-04"
+    },
+    "17077": {
+      "title": "[Admin] Error when saving tasks in Managed Service Hours",
+      "testFile": "tests/generated/bug-17077.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-05"
+    },
+    "17078": {
+      "title": "[Admin] Popup covers dropdown list when entering tasks in Managed Service Hours",
+      "testFile": "tests/generated/bug-17078.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-05"
+    },
+    "17163": {
+      "title": "[Admin] Consent field in lead form should be a checkbox, not free text",
+      "testFile": "tests/generated/bug-17163.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-11"
+    },
+    "17208": {
+      "title": "[App Editor] Assets - Table view missing SIZE and LAST MODIFIED columns",
+      "testFile": "tests/generated/bug-17208.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17210": {
+      "title": "[App Editor] Integration - \"Chatwoot Integration\" tab renamed to \"Other Integration\"",
+      "testFile": "tests/generated/bug-17210.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17213": {
+      "title": "[App Editor] Releases - Step 2 and Step 3 circles should be filled, not outline",
+      "testFile": "tests/generated/bug-17213.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17214": {
+      "title": "[App Editor] Integration > Tencent Cloud - Extra \"Back\" link shown, missing Refresh/Disconnect buttons",
+      "testFile": "tests/generated/bug-17214.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17215": {
+      "title": "[App Editor] Integration > Other Integration - Card title changed from \"Chat Centre\" to \"Call Centre\"",
+      "testFile": "tests/generated/bug-17215.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17217": {
+      "title": "[App Editor] EXT Json - Extra \"Preview\" button not in design",
+      "testFile": "tests/generated/bug-17217.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17218": {
+      "title": "[App Editor] Sidebar - Extra \"Widget\" navigation item not in design",
+      "testFile": "tests/generated/bug-17218.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17219": {
+      "title": "Appeditor > Release > click generate beta",
+      "testFile": "tests/generated/bug-17219.test.ts",
+      "lastState": "Active",
+      "verified": false
+    },
+    "17221": {
+      "title": "Appeditor > Assets change image name will change the setting",
+      "testFile": "tests/generated/bug-17221.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17223": {
+      "title": "Appeditor > Reset and save changes is missing",
+      "testFile": "tests/generated/bug-17223.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17248": {
+      "title": "[Admin] Connectors - Add Property Mapping field does not appear on first click",
+      "testFile": "tests/generated/bug-17248.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17252": {
+      "title": "[App Editor] Global Settings - \"Sales\" item missing from CONTENT sidebar",
+      "testFile": "tests/generated/bug-17252.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17253": {
+      "title": "[App Editor] Global Settings > Window - Field labels use Title Case instead of lowercase",
+      "testFile": "tests/generated/bug-17253.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17254": {
+      "title": "[App Editor] Global Settings > Window - \"Reset\" button missing",
+      "testFile": "tests/generated/bug-17254.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17257": {
+      "title": "[App Editor] Global Settings > Tab Bar - \"Top bar color\" renamed to \"Bar Color\"",
+      "testFile": "tests/generated/bug-17257.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17258": {
+      "title": "[App Editor] Global Settings > Tab Bar - Tab type selector changed from toggle buttons to dropdown",
+      "testFile": "tests/generated/bug-17258.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17259": {
+      "title": "[App Editor] Global Settings > Settings - \"FEATURE FLAGS\" section split into \"DISPLAY\" and \"FEATURES\"",
+      "testFile": "tests/generated/bug-17259.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17260": {
+      "title": "[App Editor] Global Settings > Share - \"Image key / URL\" field label simplified to \"Image\"",
+      "testFile": "tests/generated/bug-17260.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17261": {
+      "title": "[App Editor] Global Settings > Settings - \"Google Analytics debug\" renamed to \"GA Debug\"",
+      "testFile": "tests/generated/bug-17261.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17262": {
+      "title": "[App Editor] Global Settings - Change counter always shows \"You've changed 0 setting\" regardless of actual changes",
+      "testFile": "tests/generated/bug-17262.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17263": {
+      "title": "[App Editor] Global Settings > Window - Empty Title Text can be saved without validation error",
+      "testFile": "tests/generated/bug-17263.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17264": {
+      "title": "[App Editor] Global Settings > Window - No character limit or input sanitisation on Title Text",
+      "testFile": "tests/generated/bug-17264.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17265": {
+      "title": "[App Editor] Global Settings > Tab Bar - No confirmation dialog when deleting a tab item",
+      "testFile": "tests/generated/bug-17265.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-10"
+    },
+    "17299": {
+      "title": "[App Editor] Assets - \"Rename\" option in context menu has no effect",
+      "testFile": "tests/generated/bug-17299.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17300": {
+      "title": "[App Editor] Assets - Asset thumbnail shows broken image icon instead of preview",
+      "testFile": "tests/generated/bug-17300.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "manual",
+      "verifyDate": "2026-07-21"
+    },
+    "17347": {
+      "title": "[CRM Students] Unpublished cities still showing in Search Cities with blank property count",
+      "testFile": "tests/generated/bug-17347.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-06-17"
+    },
+    "17354": {
+      "title": "[App Editor] Integration > Other Integration - Call Centre \"Connect\" returns 400 with invalid JSON response",
+      "testFile": "tests/generated/bug-17354.test.ts",
       "lastState": "New",
       "verified": false
+    },
+    "17355": {
+      "title": "[App Editor] Integration > Tencent Cloud - \"Create Cloud Environment\" button missing",
+      "testFile": "tests/generated/bug-17355.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17592": {
+      "title": "[Admin] Dashboard total/all leading card not visible on some accounts - scroll indicator unclear",
+      "testFile": "tests/generated/bug-17592.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17638": {
+      "title": "[UniLodge] 3 forms not syncing - wrong price ID sent to contacts API causing missing price_data",
+      "testFile": "tests/generated/bug-17638.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17640": {
+      "title": "[Admin] Chat Centre contact tab - cannot navigate back to enquiries list from a specific enquiry",
+      "testFile": "tests/generated/bug-17640.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17646": {
+      "title": "Appeditor = AI assitant is not replying message",
+      "testFile": "tests/generated/bug-17646.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17647": {
+      "title": "Appeditor = unable to generate qr",
+      "testFile": "tests/generated/bug-17647.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17648": {
+      "title": "Appeditor= preview didnt show the design",
+      "testFile": "tests/generated/bug-17648.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17649": {
+      "title": "Appeditor = unable to generate any beta",
+      "testFile": "tests/generated/bug-17649.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17687": {
+      "title": "[Admin] Analytics — Page not found (route missing for demo-student tenant)",
+      "testFile": "tests/generated/bug-17687.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17688": {
+      "title": "[Admin] Attributes — Page not found (route missing for demo-student tenant)",
+      "testFile": "tests/generated/bug-17688.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17689": {
+      "title": "[Admin] Cities — Page not found (route missing for demo-student tenant)",
+      "testFile": "tests/generated/bug-17689.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17690": {
+      "title": "[Admin] Facilities — Page not found (route missing for demo-student tenant)",
+      "testFile": "tests/generated/bug-17690.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17691": {
+      "title": "[Admin] FAQ — Page not found (route missing for demo-student tenant)",
+      "testFile": "tests/generated/bug-17691.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17692": {
+      "title": "[Admin] Tags — Page not found (route missing for demo-student tenant)",
+      "testFile": "tests/generated/bug-17692.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17693": {
+      "title": "[Admin] Universities — Page not found (route missing for demo-student tenant)",
+      "testFile": "tests/generated/bug-17693.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17714": {
+      "title": "[Admin] Label missing in UI",
+      "testFile": "tests/generated/bug-17714.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17751": {
+      "title": "[Admin] Booking status not available as column option in Enquiries table",
+      "testFile": "tests/generated/bug-17751.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-16"
+    },
+    "17763": {
+      "title": "[Dashboard] Missing 'Total New Users' stat card",
+      "testFile": "tests/generated/bug-17763.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-21"
+    },
+    "17765": {
+      "title": "[Properties] Missing property thumbnail images in table",
+      "testFile": "tests/generated/bug-17765.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-21"
+    },
+    "17766": {
+      "title": "[Properties] Missing expandable hierarchical rows (parent/child units)",
+      "testFile": "tests/generated/bug-17766.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-21"
+    },
+    "17767": {
+      "title": "[Properties] Missing 'Status' column (Renting / Sold Out)",
+      "testFile": "tests/generated/bug-17767.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-21"
+    },
+    "17768": {
+      "title": "[Contacts] Missing 'Import' button and 'Create Contact' button in toolbar",
+      "testFile": "tests/generated/bug-17768.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-21"
+    },
+    "17769": {
+      "title": "[Contacts] Missing contact avatar initials in table rows",
+      "testFile": "tests/generated/bug-17769.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17770": {
+      "title": "[Enquiries] Stat cards mismatch — design shows 'New Enquiries', staging has extra cards",
+      "testFile": "tests/generated/bug-17770.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-21"
+    },
+    "17771": {
+      "title": "[Enquiries] Table column mismatch — missing 'System Enquiry ID' as first column",
+      "testFile": "tests/generated/bug-17771.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-21"
+    },
+    "17773": {
+      "title": "[Sidebar] Missing 'Chat Centre' navigation item under CRM",
+      "testFile": "tests/generated/bug-17773.test.ts",
+      "lastState": "Closed",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-17"
+    },
+    "17793": {
+      "title": "[WCAG 1.4.3] Colour contrast failure across all pages — text not visible on dark theme",
+      "testFile": "tests/generated/bug-17793.test.ts",
+      "lastState": "New",
+      "verified": false
+    },
+    "17798": {
+      "title": "[WCAG 4.1.2] Dashboard icon-only buttons missing aria-label",
+      "testFile": "tests/generated/bug-17798.test.ts",
+      "lastState": "Resolved",
+      "verified": true,
+      "verifyResult": "fail",
+      "verifyDate": "2026-07-21"
     }
   },
-  "lastRun": "2026-06-03T01:00:10.417Z"
+  "lastRun": "2026-07-21T09:36:04.233Z"
 }

@@ -62,7 +62,8 @@ $DRY_RUN_NOTE
 Start exploring now. Use the Playwright MCP browser tools to navigate and test."
 
 # Run Claude Code in non-interactive mode with Playwright MCP
-echo "$PROMPT" | claude --print --mcp-config "$APP_DIR/.claude/settings.json" 2>&1 | tee "$LOG_FILE"
+# .claude/settings.json is picked up automatically from the project dir
+echo "$PROMPT" | claude --print --output-format text 2>&1 | tee "$LOG_FILE"
 
 echo ""
 echo "=== Done ==="
