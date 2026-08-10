@@ -895,28 +895,20 @@ test('verify listing page filters work correctly', async ({ page }) => {
 
 test('verify filter options clear correctly', async ({ page }) => {
     test.setTimeout(180000);
-    
+
     await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/contacts', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+    console.log('✅ Navigated to Contacts');
 
-    console.log('✅ Successfully logged in');
-
-    // Navigate to Contacts
-    const contactsMenuItem = page.getByRole('menuitem', { name: /contacts/i });
-    if (await contactsMenuItem.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await contactsMenuItem.click();
-        await page.waitForLoadState('load');
-        await page.waitForTimeout(2000);
-        
-        console.log('✅ Navigated to Contacts');
-
+    {
         // Get initial count
         const initialRows = await page.locator('tbody tr').count();
         console.log(`📊 Initial rows: ${initialRows}`);
 
-        // Find any filter button
-        const filterButton = page.locator('button:has-text("filter"), button[class*="filter"]').first();
+        // Filters button — Vuetify uses text "Filters" not "filter"
+        const filterButton = page.locator('button, .v-btn').filter({ hasText: /^Filters?$/i }).first();
         const hasFilter = await filterButton.isVisible({ timeout: 3000 }).catch(() => false);
         
         if (hasFilter) {
@@ -924,10 +916,10 @@ test('verify filter options clear correctly', async ({ page }) => {
             await page.waitForTimeout(1500);
             console.log('✅ Opened filter menu');
 
-            // Find and check first checkbox
-            const firstCheckbox = page.locator('input[type="checkbox"]').first();
-            if (await firstCheckbox.isVisible({ timeout: 2000 }).catch(() => false)) {
-                await firstCheckbox.check();
+            // Vuetify filter panels use v-list-items, not plain checkboxes — click the row
+            const filterOption = page.locator('.v-list-item').first();
+            if (await filterOption.isVisible({ timeout: 2000 }).catch(() => false)) {
+                await filterOption.click();
                 await page.waitForTimeout(2000);
                 
                 const filteredRows = await page.locator('tbody tr').count();
@@ -965,10 +957,8 @@ test('verify filter options clear correctly', async ({ page }) => {
         } else {
             console.log('⚠️ No filters available');
         }
-    } else {
-        console.log('⚠️ Contacts menu not accessible');
     }
-    
+
     console.log('✅ Filter clearing verified');
 });
 
@@ -1161,114 +1151,74 @@ test('verify filters in contact record detail view', async ({ page }) => {
 });
 
 test('verify multiple filters can be applied simultaneously', async ({ page }) => {
-    test.setTimeout(180000);
-    
+    test.setTimeout(600000); // 10 min — staging login can be slow
+
     await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/contacts', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(5000); // Allow Vue table and toolbar to fully render
+    console.log('✅ Navigated to Contacts');
 
-    console.log('✅ Successfully logged in');
-
-    // Navigate to Contacts
-    const contactsMenuItem = page.getByRole('menuitem', { name: /contacts/i });
-    if (await contactsMenuItem.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await contactsMenuItem.click();
-        await page.waitForLoadState('load');
-        await page.waitForTimeout(2000);
-        
-        console.log('✅ Navigated to Contacts');
-
-        // Get initial count
+    {
         const initialRows = await page.locator('tbody tr').count();
         const initialPagination = await page.locator('.v-data-table-footer__info').textContent().catch(() => '');
         console.log(`📊 Initial: ${initialPagination || `${initialRows} rows`}`);
 
-        // Try to apply multiple filters
-        const filtersToApply = [
-            { name: 'Status filter', option: 'Active' },
-            { name: 'Type filter', option: 'Customer' }
-        ];
+        // Contacts has a single "Filter" button (not per-field buttons)
+        const filterButton = page.locator('button, .v-btn').filter({ hasText: /Filters?/i }).first();
+        const hasFilter = await filterButton.isVisible({ timeout: 30000 }).catch(() => false);
 
         let appliedFilters = 0;
 
-        for (const filter of filtersToApply) {
-            const filterButton = page.getByRole('button', { name: filter.name });
-            const hasButton = await filterButton.count().then(count => count > 0).catch(() => false);
-            
-            if (!hasButton) {
-                console.log(`⚠️ ${filter.name} not found`);
-                continue;
-            }
-
+        if (hasFilter) {
             await filterButton.click();
             await page.waitForTimeout(1500);
-            console.log(`📂 Opened ${filter.name}`);
+            console.log('📂 Opened filter panel');
 
-            const checkbox = page.getByRole('checkbox', { name: filter.option });
-            const hasCheckbox = await checkbox.isVisible({ timeout: 2000 }).catch(() => false);
-            
-            if (hasCheckbox) {
-                await checkbox.check();
-                await page.waitForTimeout(2500);
-                await page.waitForLoadState('load');
-                
-                appliedFilters++;
-                const currentRows = await page.locator('tbody tr').count();
-                const currentPagination = await page.locator('.v-data-table-footer__info').textContent().catch(() => '');
-                console.log(`✅ Applied ${filter.name}: ${filter.option}`);
-                console.log(`   📊 Current: ${currentPagination || `${currentRows} rows`}`);
+            // Apply up to 2 filter options from whatever the panel shows
+            const filterOptions = page.locator('.v-list-item');
+            const optionCount = await filterOptions.count();
+            console.log(`Found ${optionCount} filter option(s) in panel`);
 
-                // Close filter menu
-                await page.keyboard.press('Escape');
-                await page.waitForTimeout(1000);
-            } else {
-                console.log(`⚠️ ${filter.option} option not found`);
-                await page.keyboard.press('Escape');
-                await page.waitForTimeout(500);
-            }
-        }
-
-        if (appliedFilters > 1) {
-            console.log(`\n✅ Successfully applied ${appliedFilters} filters simultaneously`);
-            
-            const finalRows = await page.locator('tbody tr').count();
-            const finalPagination = await page.locator('.v-data-table-footer__info').textContent().catch(() => '');
-            console.log(`📊 Final result: ${finalPagination || `${finalRows} rows`}`);
-            console.log('✅ Multiple filters work together correctly');
-        } else if (appliedFilters === 1) {
-            console.log('⚠️ Only one filter could be applied');
-        } else {
-            console.log('⚠️ No filters could be applied');
-        }
-
-        // Clear all filters
-        console.log(`\n🔄 Clearing all filters...`);
-        
-        const clearAllButton = page.locator('button:has-text("Clear All"), button:has-text("Reset Filters")').first();
-        if (await clearAllButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-            await clearAllButton.click();
-            await page.waitForTimeout(2000);
-            console.log('✅ Cleared all filters via Clear All button');
-        } else {
-            // Clear filters individually
-            for (const filter of filtersToApply) {
-                const filterButton = page.getByRole('button', { name: filter.name });
-                const closeIcon = filterButton.locator('.mdi-close');
-                
-                if (await closeIcon.isVisible({ timeout: 1000 }).catch(() => false)) {
-                    await closeIcon.click();
+            for (let i = 0; i < Math.min(optionCount, 2); i++) {
+                const opt = filterOptions.nth(i);
+                if (await opt.isVisible({ timeout: 1000 }).catch(() => false)) {
+                    const optText = await opt.textContent().catch(() => '');
+                    await opt.click();
                     await page.waitForTimeout(1000);
-                    console.log(`🔄 Cleared ${filter.name}`);
+                    appliedFilters++;
+                    console.log(`✅ Applied filter option: ${optText?.trim()}`);
                 }
             }
+
+            await page.keyboard.press('Escape');
+            await page.waitForTimeout(1500);
+
+            const filteredRows = await page.locator('tbody tr').count();
+            const filteredPagination = await page.locator('.v-data-table-footer__info').textContent().catch(() => '');
+            console.log(`📊 After filters: ${filteredPagination || `${filteredRows} rows`}`);
+
+            if (appliedFilters >= 2) {
+                console.log('✅ Multiple filters applied simultaneously');
+            } else if (appliedFilters === 1) {
+                console.log('⚠️ Only one filter option was available to apply');
+            } else {
+                console.log('⚠️ No filter options could be applied');
+            }
+
+            // Try to clear filters
+            const clearAllButton = page.locator('button, .v-btn').filter({ hasText: /clear all|reset/i }).first();
+            if (await clearAllButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+                await clearAllButton.click();
+                await page.waitForTimeout(2000);
+                console.log('✅ Cleared all filters');
+            }
+            const clearedRows = await page.locator('tbody tr').count();
+            console.log(`📊 After clearing: ${clearedRows} rows`);
+        } else {
+            console.log('⚠️ No Filter button available');
         }
-
-        const clearedRows = await page.locator('tbody tr').count();
-        console.log(`📊 After clearing: ${clearedRows} rows`);
-
-    } else {
-        console.log('⚠️ Contacts menu not accessible');
     }
-    
+
     console.log('✅ Multiple filter test completed');
 });

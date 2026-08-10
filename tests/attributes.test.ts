@@ -1,23 +1,24 @@
 import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
-test('navigate to Attributes and filter by installment type', async ({ page }) => {
-    test.setTimeout(300000);
-    
+async function goToAttributes(page: any) {
     await loginToApp(page);
-
     await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
-
+    // /demo-student/attributes is a client-side route only — must navigate via sidebar
     await page.getByRole('button', { name: /settings/i }).click();
     await page.waitForTimeout(1000);
-
     await page.getByText('Data Management').click();
     await page.waitForTimeout(500);
-    
     await page.getByText('Attributes').click();
     await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
+}
+
+test('navigate to Attributes and filter by installment type', async ({ page }) => {
+    test.setTimeout(300000);
+    
+    await goToAttributes(page);
 
     await expect(page.getByText('Attributes', { exact: false }).first()).toBeVisible({ timeout: 10000 });
 
@@ -57,25 +58,12 @@ test('navigate to Attributes and filter by installment type', async ({ page }) =
 test('create new attribute', async ({ page }) => {
     test.setTimeout(300000);
     
-    await loginToApp(page);
-
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
-
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
+    await goToAttributes(page);
 
     console.log('✅ Successfully navigated to Attributes under Data Management');
 
     // Click Create button
-    await page.getByText('Create', { exact: true }).click();
+    await page.locator('a, button').filter({ hasText: /^Create$/ }).first().click();
     await page.waitForTimeout(1000);
 
     console.log('Clicked Create button');
@@ -88,11 +76,25 @@ test('create new attribute', async ({ page }) => {
     await page.getByPlaceholder('Enter Chinese name').fill('包测试');
     await page.waitForTimeout(500);
 
-    // Select Type = installment - click on the dropdown arrow icon with force
-    await page.locator('.v-select .v-field__append-inner .mdi-menu-down').first().click({ force: true });
+    // The create form opens as a dialog/overlay. Wait for it then scope to it.
+    const createOverlay = page.locator('.v-dialog:visible, .v-navigation-drawer:not(.v-navigation-drawer--close)').last();
+    // Open the Type dropdown — find the v-select inside the visible overlay/dialog
+    // Avoid getByLabel('Type') which matches the main-page "Type filter" button
+    const typeSelect = createOverlay.locator('.v-select').first();
+    if (await typeSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await typeSelect.click({ force: true });
+    } else {
+        // Fallback: find any v-select that's not intercepted
+        await page.locator('.v-select .v-field').first().click({ force: true });
+    }
     await page.waitForTimeout(1000);
-    // Click on installment option
-    await page.getByRole('option', { name: 'installment' }).click();
+    // Pick installment from the dropdown menu overlay
+    const installmentOpt = page.locator('.v-overlay__content .v-list-item, .v-menu .v-list-item').filter({ hasText: /installment/i }).first();
+    if (await installmentOpt.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await installmentOpt.click();
+    } else {
+        await page.locator('.v-list-item').filter({ hasText: /installment/i }).first().click({ force: true });
+    }
     await page.waitForTimeout(1000);
 
     console.log('Selected Type = installment');
@@ -173,18 +175,7 @@ test('edit first attribute record with random names', async ({ page }) => {
 test('verify attributes table displays records', async ({ page }) => {
     test.setTimeout(300000);
     
-    await loginToApp(page);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
-
-    // Navigate to Attributes
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
+    await goToAttributes(page);
 
     console.log('✅ Successfully navigated to Attributes');
 
@@ -309,23 +300,12 @@ test('filter attributes by type - amenities', async ({ page }) => {
 test('create attribute with all types verification', async ({ page }) => {
     test.setTimeout(300000);
     
-    await loginToApp(page);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
-
-    // Navigate to Attributes
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
+    await goToAttributes(page);
 
     console.log('✅ Successfully navigated to Attributes');
 
     // Click Create button
-    await page.getByText('Create', { exact: true }).click();
+    await page.locator('a, button').filter({ hasText: /^Create$/ }).first().click();
     await page.waitForTimeout(1000);
     console.log('Clicked Create button');
 
@@ -352,23 +332,12 @@ test('create attribute with all types verification', async ({ page }) => {
 test('validate required fields when creating attribute', async ({ page }) => {
     test.setTimeout(300000);
     
-    await loginToApp(page);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
-
-    // Navigate to Attributes
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
+    await goToAttributes(page);
 
     console.log('✅ Successfully navigated to Attributes');
 
     // Click Create button
-    await page.getByText('Create', { exact: true }).click();
+    await page.locator('a, button').filter({ hasText: /^Create$/ }).first().click();
     await page.waitForTimeout(1000);
     console.log('Clicked Create button');
 
@@ -412,18 +381,7 @@ test('validate required fields when creating attribute', async ({ page }) => {
 test('edit attribute and verify changes persist', async ({ page }) => {
     test.setTimeout(300000);
     
-    await loginToApp(page);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
-
-    // Navigate to Attributes
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
+    await goToAttributes(page);
 
     console.log('✅ Successfully navigated to Attributes');
 
@@ -467,18 +425,7 @@ test('edit attribute and verify changes persist', async ({ page }) => {
 test('delete attribute record', async ({ page }) => {
     test.setTimeout(300000);
     
-    await loginToApp(page);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
-
-    // Navigate to Attributes
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
+    await goToAttributes(page);
 
     console.log('✅ Successfully navigated to Attributes');
 
@@ -534,23 +481,12 @@ test('delete attribute record', async ({ page }) => {
 test('create attribute with Chinese characters only', async ({ page }) => {
     test.setTimeout(300000);
     
-    await loginToApp(page);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
-
-    // Navigate to Attributes
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(2000);
+    await goToAttributes(page);
 
     console.log('✅ Successfully navigated to Attributes');
 
     // Click Create button
-    await page.getByText('Create', { exact: true }).click();
+    await page.locator('a, button').filter({ hasText: /^Create$/ }).first().click();
     await page.waitForTimeout(1000);
     console.log('Clicked Create button');
 
@@ -567,10 +503,21 @@ test('create attribute with Chinese characters only', async ({ page }) => {
     await page.waitForTimeout(500);
     console.log(`✅ Filled Chinese name: ${chineseName}`);
 
-    // Select Type
-    await page.locator('.v-select .v-field__append-inner .mdi-menu-down').first().click({ force: true });
+    // Scope to the create dialog/overlay to avoid matching main-page "Type filter" button
+    const createOverlay2 = page.locator('.v-dialog:visible, .v-navigation-drawer:not(.v-navigation-drawer--close)').last();
+    const typeSelect2 = createOverlay2.locator('.v-select').first();
+    if (await typeSelect2.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await typeSelect2.click({ force: true });
+    } else {
+        await page.locator('.v-select .v-field').first().click({ force: true });
+    }
     await page.waitForTimeout(1000);
-    await page.getByRole('option', { name: 'installment' }).click();
+    const installmentOpt2 = page.locator('.v-overlay__content .v-list-item, .v-menu .v-list-item').filter({ hasText: /installment/i }).first();
+    if (await installmentOpt2.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await installmentOpt2.click();
+    } else {
+        await page.locator('.v-list-item').filter({ hasText: /installment/i }).first().click({ force: true });
+    }
     await page.waitForTimeout(1000);
     console.log('✅ Selected Type = installment');
 

@@ -12,18 +12,20 @@ test('create article with random title and select banner image', async ({ page }
 
     console.log('✅ Successfully logged in');
 
-    // Navigate to Articles menu item
-    await page.getByRole('menuitem', { name: 'Articles' }).click();
-    await page.waitForLoadState('load');
+    // Articles Create is an <a> link — navigate directly to avoid click interception
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/articles/create', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
     await page.waitForTimeout(2000);
 
-    console.log('✅ Successfully navigated to Articles');
+    // The create page shows a type-selection dialog first — choose Text Article
+    const textArticleBtn = page.locator('button').filter({ hasText: /text article/i });
+    if (await textArticleBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await textArticleBtn.click();
+        await page.waitForTimeout(2000);
+        console.log('✅ Selected Text Article type');
+    }
 
-    // Click Create button
-    await page.getByText('Create', { exact: true }).click();
-    await page.waitForTimeout(2000);
-
-    console.log('Clicked Create button');
+    console.log('✅ Navigated to article create form');
 
     // Generate random title with timestamp
     const timestamp = Date.now();
@@ -40,44 +42,88 @@ test('create article with random title and select banner image', async ({ page }
     console.log('Filled in title');
 
     // Click on Browse Images for article listing banner (use first one if multiple exist)
-    await page.getByRole('button', { name: 'Browse Images' }).first().click();
+    await page.getByRole('button', { name: /Browse (Images|Files)/i }).first().click();
     await page.waitForTimeout(2000);
 
     console.log('Clicked Browse Images');
 
-    // Select an image (select the first image in the gallery with force click to handle overlays)
-    const imageCard = page.locator('.v-card.image-card-focusable, .v-card:has(img)').first();
-    await imageCard.waitFor({ state: 'visible', timeout: 10000 });
-    await imageCard.click({ force: true });
-    await page.waitForTimeout(1000);
+    // Wait for gallery overlay to appear after clicking Browse Files
+    await page.waitForTimeout(3000);
 
-    console.log('Selected an image');
+    // Scope image selection to the gallery overlay (not the main page)
+    // The gallery opens in a v-overlay panel after Browse Files is clicked
+    const galleryOverlay = page.locator('.v-overlay__content, .v-dialog').last();
+    let imageSelected = false;
 
-    // Try to find and click the confirm/select button
-    // This button text may vary, so we'll look for common patterns
-    const possibleButtons = [
-        page.getByRole('button', { name: /Select & Exit/i }),
-        page.getByRole('button', { name: /Select Files/i }),
-        page.getByRole('button', { name: /Confirm/i }),
-        page.getByRole('button', { name: /Save/i }),
-        page.locator('button:has-text("Select")').last()
-    ];
+    // First try: click image-card-focusable inside the overlay
+    const galleryItem = galleryOverlay.locator('.image-card-focusable, .v-card.image-card-focusable').first();
+    if (await galleryItem.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await galleryItem.click({ force: true });
+        await page.waitForTimeout(1000);
+        imageSelected = true;
+        console.log('Selected gallery image (image-card-focusable)');
+    }
 
-    let buttonClicked = false;
-    for (const button of possibleButtons) {
-        if (await button.isVisible({ timeout: 2000 }).catch(() => false)) {
-            await button.click();
-            buttonClicked = true;
-            console.log('Clicked selection confirm button');
-            break;
+    // Second try: click any image element inside the overlay
+    if (!imageSelected) {
+        const galleryImg = galleryOverlay.locator('img').first();
+        if (await galleryImg.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await galleryImg.click({ force: true });
+            await page.waitForTimeout(1000);
+            imageSelected = true;
+            console.log('Selected gallery image (img element)');
         }
     }
 
-    if (!buttonClicked) {
-        console.log('⚠️ Could not find selection confirm button, may need to click outside or press ESC');
-        // Try pressing Escape to close the modal
-        await page.keyboard.press('Escape');
-        await page.waitForTimeout(1000);
+    // Third try: click any v-card inside the overlay
+    if (!imageSelected) {
+        const galleryCard = galleryOverlay.locator('.v-card').first();
+        if (await galleryCard.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await galleryCard.click({ force: true });
+            await page.waitForTimeout(1000);
+            imageSelected = true;
+            console.log('Selected gallery image (v-card)');
+        }
+    }
+
+    if (!imageSelected) {
+        console.log('⚠️ Could not find an image in gallery overlay');
+    } else {
+        console.log('Selected an image');
+    }
+
+    // Try to find and click the confirm/select button — must be ENABLED (count > 0)
+    const selectBtn = page.locator('button[aria-label*="Select"]:not([aria-label="Select 0"])').first();
+    const selectBtnEnabled = await selectBtn.isEnabled({ timeout: 5000 }).catch(() => false);
+
+    if (selectBtnEnabled) {
+        await selectBtn.click();
+        console.log('Clicked selection confirm button');
+    } else {
+        // Fallback: try other button patterns that are enabled
+        const possibleButtons = [
+            page.getByRole('button', { name: /Select & Exit/i }),
+            page.getByRole('button', { name: /Select Files/i }),
+            page.getByRole('button', { name: /Confirm/i }),
+        ];
+
+        let buttonClicked = false;
+        for (const button of possibleButtons) {
+            const visible = await button.isVisible({ timeout: 2000 }).catch(() => false);
+            const enabled = visible && await button.isEnabled({ timeout: 1000 }).catch(() => false);
+            if (enabled) {
+                await button.click();
+                buttonClicked = true;
+                console.log('Clicked selection confirm button');
+                break;
+            }
+        }
+
+        if (!buttonClicked) {
+            console.log('⚠️ Select button is disabled (0 images selected) — pressing Escape');
+            await page.keyboard.press('Escape');
+            await page.waitForTimeout(1000);
+        }
     }
 
     await page.waitForTimeout(2000);
@@ -148,20 +194,24 @@ test('search articles by title', async ({ page }) => {
 
 test('create article with full content and category', async ({ page }) => {
     test.setTimeout(300000);
-    
+
     await loginToApp(page);
     console.log('✅ Successfully logged in');
 
-    // Navigate to Articles
-    await page.getByRole('menuitem', { name: 'Articles' }).click();
-    await page.waitForLoadState('load');
+    // Articles Create is an <a> link — navigate directly to avoid click interception
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/articles/create', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
     await page.waitForTimeout(2000);
-    console.log('✅ Successfully navigated to Articles');
 
-    // Click Create button
-    await page.getByText('Create', { exact: true }).click();
-    await page.waitForTimeout(2000);
-    console.log('Clicked Create button');
+    // The create page shows a type-selection dialog first — choose Text Article
+    const textArticleBtn = page.locator('button').filter({ hasText: /text article/i });
+    if (await textArticleBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await textArticleBtn.click();
+        await page.waitForTimeout(2000);
+        console.log('✅ Selected Text Article type');
+    }
+
+    console.log('✅ Navigated to article create form');
 
     // Generate random data
     const timestamp = Date.now();
@@ -203,33 +253,43 @@ test('create article with full content and category', async ({ page }) => {
     }
 
     // Select banner image
-    const browseButton = page.getByRole('button', { name: 'Browse Images' }).first();
+    const browseButton = page.getByRole('button', { name: /Browse (Images|Files)/i }).first();
     if (await browseButton.isVisible({ timeout: 3000 }).catch(() => false)) {
         await browseButton.click({ force: true });
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(3000);
         console.log('Clicked Browse Images');
 
-        // Select an image
-        const imageCard = page.locator('.v-card.image-card-focusable, .v-card:has(img)').first();
-        if (await imageCard.isVisible({ timeout: 5000 }).catch(() => false)) {
-            await imageCard.click({ force: true });
-            await page.waitForTimeout(1000);
-            
-            // Try to confirm selection
-            const possibleButtons = [
-                page.getByRole('button', { name: /Select & Exit/i }),
-                page.getByRole('button', { name: /Select Files/i }),
-                page.getByRole('button', { name: /Confirm/i }),
-                page.locator('button:has-text("Select")').last()
-            ];
+        // Scope image selection to the gallery overlay (not main page)
+        const galleryOverlay2 = page.locator('.v-overlay__content, .v-dialog').last();
+        let imageSelected2 = false;
 
-            for (const button of possibleButtons) {
-                if (await button.isVisible({ timeout: 2000 }).catch(() => false)) {
-                    await button.click();
-                    console.log('✅ Selected banner image');
-                    break;
-                }
+        const galleryItem2 = galleryOverlay2.locator('.image-card-focusable, .v-card.image-card-focusable').first();
+        if (await galleryItem2.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await galleryItem2.click({ force: true });
+            await page.waitForTimeout(1000);
+            imageSelected2 = true;
+        } else {
+            const galleryImg2 = galleryOverlay2.locator('img').first();
+            if (await galleryImg2.isVisible({ timeout: 3000 }).catch(() => false)) {
+                await galleryImg2.click({ force: true });
+                await page.waitForTimeout(1000);
+                imageSelected2 = true;
             }
+        }
+
+        const selectBtn2 = page.locator('button[aria-label*="Select"]:not([aria-label="Select 0"])').first();
+        const selectEnabled2 = await selectBtn2.isEnabled({ timeout: 5000 }).catch(() => false);
+        if (selectEnabled2) {
+            await selectBtn2.click();
+            console.log('✅ Selected banner image');
+        } else if (!imageSelected2) {
+            console.log('⚠️ Gallery image not found — skipping image selection');
+            await page.keyboard.press('Escape');
+            await page.waitForTimeout(1000);
+        } else {
+            console.log('⚠️ Select button disabled after image click — closing gallery');
+            await page.keyboard.press('Escape');
+            await page.waitForTimeout(1000);
         }
     }
 

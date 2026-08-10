@@ -220,10 +220,11 @@ test('verify universities table and search functionality', async ({ page }) => {
 
 test('edit existing university', async ({ page }) => {
     test.setTimeout(300000);
-    
-    await loginToApp(page);
 
-    // Navigate to Universities
+    await loginToApp(page);
+    await page.waitForLoadState('load');
+    await page.waitForTimeout(2000);
+    // /demo-student/universities is a client-side only route — navigate via sidebar
     await page.getByRole('button', { name: /settings/i }).click();
     await page.waitForTimeout(1000);
     await page.getByText('Data Management').click();
@@ -242,16 +243,18 @@ test('edit existing university', async ({ page }) => {
 
     console.log('✅ Opened university edit form');
 
-    // Update the latitude field
-    const latitudeInput = page.getByRole('spinbutton', { name: /latitude/i });
+    // Update the latitude field — use getByLabel which handles Vuetify accessibility
+    const latitudeInput = page.getByLabel(/latitude/i).first();
     const hasLatitudeInput = await latitudeInput.isVisible({ timeout: 3000 }).catch(() => false);
-    
+
     if (hasLatitudeInput) {
-        const updatedLatitude = String(Math.floor(Math.random() * 90000) + 10000);
-        await latitudeInput.click();
-        await latitudeInput.fill(updatedLatitude);
+        const updatedLatitude = String(Math.floor(Math.random() * 90) + 1);
+        // Triple-click to select existing value, then type new value
+        await latitudeInput.click({ clickCount: 3 });
+        await latitudeInput.press('Control+a');
+        await page.keyboard.type(updatedLatitude);
         await page.waitForTimeout(500);
-        
+
         console.log(`✅ Updated latitude to: ${updatedLatitude}`);
 
         // Save changes
