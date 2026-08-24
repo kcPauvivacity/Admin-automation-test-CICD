@@ -732,3 +732,99 @@ test('verify enquiry status change functionality', async ({ page }) => {
         console.log('⚠️ Enquiries menu not accessible');
     }
 });
+
+// Regression: PR #14762 / #14796 — booking_status column changes in enquiries listing
+test('enquiries listing shows booking status column', async ({ page }) => {
+    test.setTimeout(120000);
+
+    await loginToApp(page, 90000);
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/enquiries', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+
+    const table = page.locator('.v-data-table, table, [role="table"]').first();
+    await expect(table).toBeVisible({ timeout: 15000 });
+    console.log('✅ Enquiries table loaded');
+
+    // Check for Booking Status column header
+    const bookingStatusHeader = page.getByRole('columnheader', { name: /booking.?status/i });
+    const hasBookingStatus = await bookingStatusHeader.isVisible({ timeout: 5000 }).catch(() => false);
+
+    if (hasBookingStatus) {
+        await expect(bookingStatusHeader).toBeVisible();
+        console.log('✅ Booking Status column header is visible');
+
+        // Verify column has values in data rows (not all empty)
+        const bookingStatusCells = page.locator('tbody td').filter({ hasText: /pending|confirmed|booked|cancelled|n\/a|none/i });
+        const cellCount = await bookingStatusCells.count();
+        console.log(`ℹ️ Found ${cellCount} rows with booking status values`);
+    } else {
+        // May be hidden — check Edit Columns to see if it exists there
+        const editColumnsBtn = page.getByRole('button', { name: /edit.?columns/i });
+        const hasEditColumns = await editColumnsBtn.isVisible({ timeout: 3000 }).catch(() => false);
+        if (hasEditColumns) {
+            await editColumnsBtn.click();
+            await page.waitForTimeout(1500);
+            const bookingStatusOption = page.locator('.v-list-item, [role="option"]').filter({ hasText: /booking.?status/i });
+            const hasOption = await bookingStatusOption.isVisible({ timeout: 3000 }).catch(() => false);
+            if (hasOption) {
+                console.log('✅ Booking Status column exists in column picker (currently hidden)');
+            } else {
+                console.log('⚠️ Booking Status not found in column picker either');
+            }
+            await page.keyboard.press('Escape');
+        } else {
+            console.log('⚠️ Booking Status column not visible — may not be enabled for this account');
+        }
+    }
+});
+
+test('enquiries booking status values are valid', async ({ page }) => {
+    test.setTimeout(120000);
+
+    await loginToApp(page, 90000);
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/enquiries', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+
+    const table = page.locator('.v-data-table, table, [role="table"]').first();
+    await expect(table).toBeVisible({ timeout: 15000 });
+
+    const bookingStatusHeader = page.getByRole('columnheader', { name: /booking.?status/i });
+    const hasBookingStatus = await bookingStatusHeader.isVisible({ timeout: 5000 }).catch(() => false);
+    if (!hasBookingStatus) {
+        console.log('⚠️ Booking Status column not found — skipping value validation');
+        return;
+    }
+
+    // Get column index
+    const headers = page.locator('thead th, thead [role="columnheader"]');
+    const headerCount = await headers.count();
+    let bookingColIdx = -1;
+    for (let i = 0; i < headerCount; i++) {
+        const text = await headers.nth(i).textContent();
+        if (/booking.?status/i.test(text || '')) {
+            bookingColIdx = i;
+            break;
+        }
+    }
+
+    if (bookingColIdx < 0) {
+        console.log('⚠️ Could not determine booking status column index');
+        return;
+    }
+
+    // Verify values in that column are not raw DB values (e.g. "booking_status_pending" → should display "Pending")
+    const rows = page.locator('tbody tr');
+    const rowCount = await rows.count();
+    const sampleSize = Math.min(rowCount, 5);
+
+    for (let i = 0; i < sampleSize; i++) {
+        const cell = rows.nth(i).locator('td').nth(bookingColIdx);
+        const text = (await cell.textContent() || '').trim();
+        // Should not contain raw snake_case DB values
+        expect(text, `Row ${i + 1} booking status "${text}" looks like a raw DB value`).not.toMatch(/^[a-z]+_[a-z_]+$/);
+        console.log(`Row ${i + 1} booking status: "${text}"`);
+    }
+    console.log('✅ Booking status values appear formatted correctly');
+});

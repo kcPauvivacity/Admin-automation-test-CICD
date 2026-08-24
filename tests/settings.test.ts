@@ -69,3 +69,103 @@ test('Settings restricted pages show error for this account', async ({ page }) =
 
     console.log('✅ Restricted pages verified');
 });
+
+// Regression: PR #14758 — accounts sub-accounts unlink + infinite loading fix
+test('settings accounts tab loads without infinite loading', async ({ page }) => {
+    test.setTimeout(120000);
+
+    await loginToApp(page, 90000, FUSIONETA_EMAIL, FUSIONETA_PASSWORD);
+
+    // Navigate to settings accounts section
+    await page.goto(`${BASE_URL}/demo-student/settings`, { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+
+    // Look for Accounts / Sub-accounts nav item in settings
+    const accountsTab = page.locator('.v-list-item, .v-tab, a, button').filter({ hasText: /accounts?/i });
+    const hasAccountsTab = await accountsTab.first().isVisible({ timeout: 5000 }).catch(() => false);
+
+    if (hasAccountsTab) {
+        await accountsTab.first().click();
+        await page.waitForTimeout(3000);
+        console.log('✅ Clicked Accounts tab');
+    } else {
+        // Try direct URL
+        await page.goto(`${BASE_URL}/demo-student/settings/accounts`, { waitUntil: 'load', timeout: 20000 });
+        await page.waitForTimeout(3000);
+        console.log('ℹ️ Navigated directly to /settings/accounts');
+    }
+
+    // Verify page loads — spinner should not persist (infinite loading bug fix)
+    const spinner = page.locator('.v-progress-circular, .v-skeleton-loader, [class*="loading"], [class*="spinner"]');
+    await page.waitForTimeout(5000); // Give it 5s to stop loading
+    const stillLoading = await spinner.isVisible({ timeout: 1000 }).catch(() => false);
+    expect(stillLoading, 'Page should finish loading — infinite loading spinner bug detected').toBe(false);
+    console.log('✅ Page loaded without infinite spinner');
+
+    // Verify some content is visible (not stuck on loading state)
+    const content = page.locator('.v-card, .v-list, table, [role="table"], h1, h2, h3').first();
+    const hasContent = await content.isVisible({ timeout: 5000 }).catch(() => false);
+    if (hasContent) {
+        console.log('✅ Account settings content is visible');
+    } else {
+        const noDataMsg = page.locator('text=/no.*account|no.*result|empty/i').first();
+        const hasNoData = await noDataMsg.isVisible({ timeout: 3000 }).catch(() => false);
+        console.log(hasNoData ? '✅ Empty state message shown (no sub-accounts)' : 'ℹ️ Content structure unclear');
+    }
+});
+
+test('settings sub-accounts list loads and shows link/unlink option', async ({ page }) => {
+    test.setTimeout(120000);
+
+    await loginToApp(page, 90000, FUSIONETA_EMAIL, FUSIONETA_PASSWORD);
+
+    await page.goto(`${BASE_URL}/demo-student/settings`, { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+
+    // Find sub-accounts nav
+    const subAccountsNav = page.locator('.v-list-item, .v-tab, a, button').filter({ hasText: /sub.?account/i });
+    const hasSubAccountsNav = await subAccountsNav.first().isVisible({ timeout: 5000 }).catch(() => false);
+
+    if (!hasSubAccountsNav) {
+        // Try accounts section which may contain sub-accounts
+        const accountsNav = page.locator('.v-list-item, .v-tab, a, button').filter({ hasText: /accounts?/i });
+        if (await accountsNav.first().isVisible({ timeout: 3000 }).catch(() => false)) {
+            await accountsNav.first().click();
+            await page.waitForTimeout(2000);
+        } else {
+            await page.goto(`${BASE_URL}/demo-student/settings/accounts`, { waitUntil: 'load', timeout: 20000 });
+            await page.waitForTimeout(3000);
+        }
+    } else {
+        await subAccountsNav.first().click();
+        await page.waitForTimeout(2000);
+    }
+
+    // Wait for content and check for no infinite load
+    await page.waitForTimeout(4000);
+    const spinner = page.locator('.v-progress-circular').filter({ hasText: '' });
+    const stillLoading = await spinner.isVisible({ timeout: 1000 }).catch(() => false);
+    expect(stillLoading, 'Sub-accounts page should not be stuck in infinite loading').toBe(false);
+
+    // Check for link/unlink button or action
+    const linkBtn = page.locator('button, .v-btn').filter({ hasText: /link|unlink|connect|disconnect/i });
+    const hasLinkBtn = await linkBtn.first().isVisible({ timeout: 5000 }).catch(() => false);
+
+    if (hasLinkBtn) {
+        await expect(linkBtn.first()).toBeVisible();
+        console.log('✅ Link/Unlink button is visible in sub-accounts section');
+    } else {
+        const emptyState = page.locator('[class*="empty"], text=/no.*sub.?account/i').first();
+        const hasEmpty = await emptyState.isVisible({ timeout: 3000 }).catch(() => false);
+        console.log(hasEmpty
+            ? '✅ Empty state shown — no sub-accounts currently linked'
+            : 'ℹ️ Sub-accounts UI structure may differ for this account');
+    }
+
+    // Verify no error snackbar
+    const errorSnackbar = page.locator('.v-snackbar--active').filter({ hasText: /error/i });
+    await expect(errorSnackbar).not.toBeVisible({ timeout: 3000 });
+    console.log('✅ No errors in sub-accounts section');
+});

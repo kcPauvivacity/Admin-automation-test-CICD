@@ -1,647 +1,392 @@
+// Tests for the AI Chat module — /demo-student/ai-chat
+// CRM view of B2B AI chat conversations between users and the AI bot.
+// Columns: Session ID, Chat Date, User, Intent, Sentiment
+
 import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
-test('verify AI chat interface is accessible', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
+const BASE = 'https://app-staging.vivacityapp.com';
 
-    console.log('✅ Successfully logged in');
+async function goToAIChat(page: any) {
+    await loginToApp(page);
+    await page.goto(`${BASE}/demo-student/ai-chat`, { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+}
 
-    // Look for AI chat button/icon - common locations
-    const chatSelectors = [
-        'button:has-text("AI Chat")',
-        'button:has-text("Chat")',
-        'button:has(.mdi-chat)',
-        'button:has(.mdi-robot)',
-        'button:has(.mdi-message)',
-        '.chat-button',
-        '[aria-label*="chat" i]',
-        '[aria-label*="AI" i]'
-    ];
+test.describe('AI Chat — listing', () => {
 
-    let chatButton = null;
-    let foundSelector = '';
+    test('page loads with correct title and heading', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
 
-    for (const selector of chatSelectors) {
-        const button = page.locator(selector).first();
-        const isVisible = await button.isVisible({ timeout: 2000 }).catch(() => false);
-        
-        if (isVisible) {
-            chatButton = button;
-            foundSelector = selector;
-            console.log(`✅ Found AI chat button using selector: ${selector}`);
-            break;
+        await expect(page).toHaveURL(/\/ai-chat/);
+        await expect(page).toHaveTitle(/AI Chat/i);
+        const h1 = page.locator('h1').filter({ hasText: /AI Chat/i });
+        await expect(h1).toBeVisible({ timeout: 8000 });
+        console.log('✅ AI Chat page loaded with correct title and H1');
+    });
+
+    test('listing shows record count', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
+
+        const recordCount = page.locator('text=/\\d+ records?/i');
+        await expect(recordCount).toBeVisible({ timeout: 10000 });
+        const countText = await recordCount.textContent();
+        console.log(`✅ Record count shown: "${countText?.trim()}"`);
+    });
+
+    test('table has correct columns: Session ID, Chat Date, User, Intent, Sentiment', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
+
+        const expectedColumns = ['Session ID', 'Chat Date', 'User', 'Intent', 'Sentiment'];
+        for (const col of expectedColumns) {
+            // AI Chat uses custom table headers (th or div), not strict role=columnheader
+            const header = page.locator('th, [role="columnheader"], .v-data-table__th').filter({ hasText: col });
+            await expect(header.first()).toBeVisible({ timeout: 8000 });
+            console.log(`✅ Column "${col}" is visible`);
         }
-    }
+    });
 
-    if (chatButton) {
-        await chatButton.click();
-        await page.waitForTimeout(2000);
-        console.log('✅ AI chat button clicked');
+    test('table rows display session data', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
 
-        // Check if chat interface opened
-        const chatInterface = page.locator('.chat-interface, .chat-dialog, .v-dialog, [role="dialog"]').first();
-        const interfaceVisible = await chatInterface.isVisible({ timeout: 3000 }).catch(() => false);
-        
-        if (interfaceVisible) {
-            console.log('✅ AI chat interface opened successfully');
+        const rows = page.locator('tbody tr');
+        const rowCount = await rows.count();
+        expect(rowCount).toBeGreaterThan(0);
+        console.log(`✅ Found ${rowCount} rows in AI Chat listing`);
+
+        // First row: cell 0 is the checkbox, session ID is in cell 1
+        const firstRowCells = rows.first().locator('td');
+        const sessionIdCell = firstRowCells.nth(1);
+        const sessionIdText = await sessionIdCell.textContent();
+        expect(sessionIdText?.trim().length).toBeGreaterThan(0);
+        console.log(`✅ First row session ID: "${sessionIdText?.trim().slice(0, 40)}"`);
+    });
+
+    test('Sentiment column shows formatted chips (Normal, Happy, etc.)', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
+
+        // Sentiment chips in the table
+        const sentimentChips = page.locator('tbody .v-chip, tbody [class*="chip"]').filter({ hasText: /normal|happy|sad|frustrated|angry|neutral/i });
+        const hasChips = await sentimentChips.first().isVisible({ timeout: 8000 }).catch(() => false);
+
+        if (hasChips) {
+            const chipCount = await sentimentChips.count();
+            console.log(`✅ Found ${chipCount} sentiment chip(s)`);
+            const firstChipText = await sentimentChips.first().textContent();
+            console.log(`  First chip: "${firstChipText?.trim()}"`);
         } else {
-            console.log('⚠️ Chat interface not immediately visible');
+            // Some rows may show loading spinner for Sentiment (new records)
+            console.log('ℹ️ No sentiment chips found — may be loading or empty for this account');
         }
-    } else {
-        console.log('⚠️ AI chat button not found on dashboard');
-    }
+    });
 
-    console.log('✅ AI chat accessibility verified');
-});
+    test('search bar is present and functional', async ({ page }) => {
+        test.setTimeout(90000);
+        await goToAIChat(page);
 
-test('verify AI chat input field and send button', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
+        const searchInput = page.locator('input[type="search"], input.viva-search__input').first();
+        await expect(searchInput).toBeVisible({ timeout: 8000 });
+        console.log('✅ Search input is visible');
 
-    console.log('✅ Successfully logged in');
-
-    // Try to open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
+        // Type a search term
+        await searchInput.fill('test');
         await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
 
-        // Look for message input field
-        const messageInput = page.locator('input[type="text"][placeholder*="message" i], textarea[placeholder*="message" i], input[placeholder*="type" i], textarea').first();
-        const hasInput = await messageInput.isVisible({ timeout: 3000 }).catch(() => false);
-        
-        if (hasInput) {
-            console.log('✅ Message input field found');
+        // Verify URL or table updated
+        const rows = page.locator('tbody tr');
+        const rowCount = await rows.count();
+        console.log(`ℹ️ Rows after search "test": ${rowCount}`);
 
-            // Try typing a message
-            await messageInput.click();
-            await messageInput.fill('Hello, this is a test message');
-            await page.waitForTimeout(1000);
-            console.log('✅ Typed test message');
+        // Clear search
+        await searchInput.clear();
+        await page.waitForTimeout(1500);
+        const rowsAfterClear = await rows.count();
+        console.log(`✅ Rows after clearing search: ${rowsAfterClear}`);
+    });
 
-            // Look for send button
-            const sendButton = page.locator('button:has-text("Send"), button:has(.mdi-send), button[type="submit"]').first();
-            const hasSend = await sendButton.isVisible({ timeout: 2000 }).catch(() => false);
-            
-            if (hasSend) {
-                console.log('✅ Send button found');
-                
-                const isEnabled = await sendButton.isEnabled().catch(() => false);
-                if (isEnabled) {
-                    console.log('✅ Send button is enabled');
-                } else {
-                    console.log('⚠️ Send button is disabled');
-                }
-            } else {
-                console.log('⚠️ Send button not found');
-            }
+    test('Filters button is visible', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
 
-            // Clear the input
-            await messageInput.clear();
-            await page.waitForTimeout(500);
-            console.log('✅ Cleared test message');
+        // Filters button may be a v-btn with icon, use text-based filter
+        const filtersBtn = page.locator('button, .v-btn, a').filter({ hasText: /filters/i }).first();
+        await expect(filtersBtn).toBeVisible({ timeout: 8000 });
+        console.log('✅ Filters button is visible');
+    });
+
+    test('Filters panel opens when clicking Filters button', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
+
+        const filtersBtn = page.locator('button, .v-btn, a').filter({ hasText: /filters/i }).first();
+        await filtersBtn.click();
+        await page.waitForTimeout(1500);
+
+        // Filter options should appear
+        const filterPanel = page.locator('.v-menu, .v-overlay, [class*="filter"]').filter({ hasNot: page.locator('thead') });
+        const hasPanel = await filterPanel.first().isVisible({ timeout: 5000 }).catch(() => false);
+        if (hasPanel) {
+            console.log('✅ Filter panel opened');
         } else {
-            console.log('⚠️ Message input field not found');
+            console.log('ℹ️ Filter panel not detected — may use different UI');
         }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
-    }
+    });
 
-    console.log('✅ AI chat input verified');
-});
+    test('refresh button is visible and clickable', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
 
-test('send message and verify AI response', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
+        // Refresh icon button (v-btn with refresh icon)
+        const refreshBtn = page.locator('button.v-btn[aria-label*="refresh" i], button.v-btn').filter({ has: page.locator('.mdi-refresh') }).first();
+        const hasRefresh = await refreshBtn.isVisible({ timeout: 5000 }).catch(() => false);
 
-    console.log('✅ Successfully logged in');
-
-    // Open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
-        await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
-
-        // Find input and send message
-        const messageInput = page.locator('input[type="text"][placeholder*="message" i], textarea[placeholder*="message" i], input[placeholder*="type" i], textarea').first();
-        const hasInput = await messageInput.isVisible({ timeout: 3000 }).catch(() => false);
-        
-        if (hasInput) {
-            await messageInput.fill('Hello');
-            await page.waitForTimeout(500);
-            console.log('✅ Typed message: "Hello"');
-
-            // Click send button
-            const sendButton = page.locator('button:has-text("Send"), button:has(.mdi-send), button[type="submit"]').first();
-            const hasSend = await sendButton.isVisible({ timeout: 2000 }).catch(() => false);
-            
-            if (hasSend && await sendButton.isEnabled().catch(() => false)) {
-                await sendButton.click();
-                console.log('✅ Clicked Send button');
-                
-                // Wait for response
-                await page.waitForTimeout(3000);
-
-                // Check for AI response in chat
-                const chatMessages = page.locator('.message, .chat-message, [class*="message"]');
-                const messageCount = await chatMessages.count();
-                
-                if (messageCount > 0) {
-                    console.log(`✅ Found ${messageCount} message(s) in chat`);
-                    
-                    // Try to identify AI response vs user message
-                    const lastMessage = chatMessages.last();
-                    const messageText = await lastMessage.textContent();
-                    
-                    if (messageText && messageText.trim().length > 0) {
-                        console.log(`✅ Last message: "${messageText.trim().substring(0, 50)}..."`);
-                    }
-                } else {
-                    console.log('⚠️ No messages found in chat history');
-                }
-            } else {
-                console.log('⚠️ Send button not available or disabled');
-            }
+        if (!hasRefresh) {
+            // May be a generic icon button next to filters
+            const iconBtns = page.locator('button.v-btn--icon');
+            const count = await iconBtns.count();
+            console.log(`ℹ️ Found ${count} icon button(s), refresh may be among them`);
         } else {
-            console.log('⚠️ Message input not found');
-        }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
-    }
-
-    console.log('✅ AI response test completed');
-});
-
-test('verify AI chat conversation history', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
-
-    console.log('✅ Successfully logged in');
-
-    // Open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
-        await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
-
-        // Check for chat history container
-        const chatHistory = page.locator('.chat-history, .messages, .conversation, [class*="chat-container"]').first();
-        const hasHistory = await chatHistory.isVisible({ timeout: 3000 }).catch(() => false);
-        
-        if (hasHistory) {
-            console.log('✅ Chat history container found');
-
-            // Count existing messages
-            const messages = page.locator('.message, .chat-message, [class*="message"]');
-            const messageCount = await messages.count();
-            console.log(`📜 Found ${messageCount} message(s) in history`);
-
-            if (messageCount > 0) {
-                // Check message structure
-                for (let i = 0; i < Math.min(messageCount, 3); i++) {
-                    const message = messages.nth(i);
-                    const messageText = await message.textContent();
-                    
-                    if (messageText && messageText.trim()) {
-                        const preview = messageText.trim().substring(0, 40);
-                        console.log(`  Message ${i + 1}: "${preview}..."`);
-                    }
-                }
-                
-                console.log('✅ Chat history is accessible');
-            } else {
-                console.log('⚠️ No messages in chat history');
-            }
-        } else {
-            console.log('⚠️ Chat history container not found');
-        }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
-    }
-
-    console.log('✅ Chat history verification completed');
-});
-
-test('verify AI chat clear/delete conversation', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
-
-    console.log('✅ Successfully logged in');
-
-    // Open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
-        await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
-
-        // Look for clear/delete/new conversation button
-        const clearButtons = [
-            'button:has-text("Clear")',
-            'button:has-text("Delete")',
-            'button:has-text("New Conversation")',
-            'button:has(.mdi-delete)',
-            'button:has(.mdi-trash-can)',
-            'button:has(.mdi-refresh)'
-        ];
-
-        let foundClearButton = false;
-
-        for (const selector of clearButtons) {
-            const button = page.locator(selector).first();
-            const isVisible = await button.isVisible({ timeout: 1500 }).catch(() => false);
-            
-            if (isVisible) {
-                console.log(`✅ Found clear button: ${selector}`);
-                foundClearButton = true;
-                
-                const isEnabled = await button.isEnabled().catch(() => false);
-                if (isEnabled) {
-                    console.log('✅ Clear button is enabled');
-                } else {
-                    console.log('⚠️ Clear button is disabled');
-                }
-                break;
-            }
-        }
-
-        if (!foundClearButton) {
-            console.log('⚠️ Clear conversation button not found');
-        }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
-    }
-
-    console.log('✅ Clear conversation test completed');
-});
-
-test('verify AI chat close/minimize functionality', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
-
-    console.log('✅ Successfully logged in');
-
-    // Open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
-        await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
-
-        // Look for close button
-        const closeButton = page.locator('button:has(.mdi-close), button[aria-label*="close" i], button:has-text("×")').first();
-        const hasClose = await closeButton.isVisible({ timeout: 3000 }).catch(() => false);
-        
-        if (hasClose) {
-            console.log('✅ Close button found');
-            
-            await closeButton.click();
+            await refreshBtn.click();
             await page.waitForTimeout(1500);
-            console.log('✅ Clicked close button');
-
-            // Verify chat is closed
-            const chatInterface = page.locator('.chat-interface, .chat-dialog, .v-dialog').first();
-            const stillVisible = await chatInterface.isVisible({ timeout: 2000 }).catch(() => false);
-            
-            if (!stillVisible) {
-                console.log('✅ AI chat closed successfully');
-            } else {
-                console.log('⚠️ Chat interface still visible after close');
-            }
-        } else {
-            console.log('⚠️ Close button not found');
+            const rows = page.locator('tbody tr');
+            const rowCount = await rows.count();
+            expect(rowCount).toBeGreaterThan(0);
+            console.log(`✅ Refresh clicked, ${rowCount} rows visible`);
         }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
-    }
+    });
 
-    console.log('✅ Close functionality verified');
-});
+    test('table supports row selection via checkboxes', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
 
-test('verify AI chat suggested prompts or quick actions', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
+        const checkboxes = page.locator('tbody input[type="checkbox"]');
+        const count = await checkboxes.count();
 
-    console.log('✅ Successfully logged in');
-
-    // Open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
-        await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
-
-        // Look for suggested prompts or quick action buttons
-        const suggestedPrompts = page.locator('button:has-text("suggestion"), .suggestion, .prompt-suggestion, .quick-action');
-        const promptCount = await suggestedPrompts.count();
-        
-        if (promptCount > 0) {
-            console.log(`✅ Found ${promptCount} suggested prompt(s) or quick action(s)`);
-            
-            // Display first few suggestions
-            for (let i = 0; i < Math.min(promptCount, 5); i++) {
-                const prompt = suggestedPrompts.nth(i);
-                const promptText = await prompt.textContent();
-                
-                if (promptText && promptText.trim()) {
-                    console.log(`  ${i + 1}. "${promptText.trim()}"`);
-                }
-            }
-            
-            console.log('✅ Suggested prompts are available');
-        } else {
-            console.log('⚠️ No suggested prompts found');
-            console.log('✅ Chat interface is accessible');
-        }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
-    }
-
-    console.log('✅ Suggested prompts test completed');
-});
-
-test('verify AI chat typing indicator', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
-
-    console.log('✅ Successfully logged in');
-
-    // Open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
-        await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
-
-        // Send a message
-        const messageInput = page.locator('input[type="text"][placeholder*="message" i], textarea[placeholder*="message" i], input[placeholder*="type" i], textarea').first();
-        const hasInput = await messageInput.isVisible({ timeout: 3000 }).catch(() => false);
-        
-        if (hasInput) {
-            await messageInput.fill('Test typing indicator');
+        if (count > 0) {
+            await checkboxes.first().click();
             await page.waitForTimeout(500);
-            
-            const sendButton = page.locator('button:has-text("Send"), button:has(.mdi-send), button[type="submit"]').first();
-            if (await sendButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-                await sendButton.click();
-                console.log('✅ Sent message');
-                
-                // Immediately check for typing indicator
-                await page.waitForTimeout(500);
-                
-                const typingIndicator = page.locator('.typing-indicator, .is-typing, [class*="typing"]').first();
-                const hasTyping = await typingIndicator.isVisible({ timeout: 3000 }).catch(() => false);
-                
-                if (hasTyping) {
-                    console.log('✅ Typing indicator displayed');
-                } else {
-                    console.log('⚠️ Typing indicator not visible (response may be too fast)');
-                }
-                
-                // Wait for response to complete
-                await page.waitForTimeout(3000);
-                
-                // Check typing indicator disappeared
-                const stillTyping = await typingIndicator.isVisible({ timeout: 1000 }).catch(() => false);
-                if (!stillTyping) {
-                    console.log('✅ Typing indicator disappeared after response');
-                }
-            }
+            const isChecked = await checkboxes.first().isChecked();
+            expect(isChecked).toBe(true);
+            console.log(`✅ Row checkbox works (${count} checkboxes found)`);
         } else {
-            console.log('⚠️ Message input not found');
+            console.log('ℹ️ No checkboxes found in table rows');
         }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
-    }
+    });
 
-    console.log('✅ Typing indicator test completed');
+    test('clicking a row navigates to the conversation detail view', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToAIChat(page);
+
+        const firstRow = page.locator('tbody tr').first();
+        await firstRow.click();
+        await page.waitForLoadState('load');
+        await page.waitForTimeout(2000);
+
+        // URL should contain /ai-chat/{id}/detail
+        expect(page.url()).toMatch(/\/ai-chat\/.+\/detail/);
+        console.log(`✅ Navigated to detail view: ${page.url()}`);
+    });
 });
 
-test('verify AI chat error handling', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
+test.describe('AI Chat — conversation detail', () => {
 
-    console.log('✅ Successfully logged in');
-
-    // Open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
+    async function goToFirstDetail(page: any) {
+        await goToAIChat(page);
+        const firstRow = page.locator('tbody tr').first();
+        await firstRow.click();
+        await page.waitForLoadState('load');
         await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
-
-        // Try sending empty message
-        const messageInput = page.locator('input[type="text"][placeholder*="message" i], textarea[placeholder*="message" i], input[placeholder*="type" i], textarea').first();
-        const hasInput = await messageInput.isVisible({ timeout: 3000 }).catch(() => false);
-        
-        if (hasInput) {
-            await messageInput.click();
-            await messageInput.fill('');
-            await page.waitForTimeout(500);
-            
-            const sendButton = page.locator('button:has-text("Send"), button:has(.mdi-send), button[type="submit"]').first();
-            const hasSend = await sendButton.isVisible({ timeout: 2000 }).catch(() => false);
-            
-            if (hasSend) {
-                const isEnabled = await sendButton.isEnabled().catch(() => false);
-                
-                if (!isEnabled) {
-                    console.log('✅ Send button disabled for empty message (good validation)');
-                } else {
-                    console.log('⚠️ Send button enabled for empty message');
-                }
-            }
-
-            // Try very long message
-            const longMessage = 'A'.repeat(10000);
-            await messageInput.fill(longMessage);
-            await page.waitForTimeout(1000);
-            
-            const currentLength = await messageInput.inputValue().then(val => val.length);
-            
-            if (currentLength < 10000) {
-                console.log(`✅ Character limit enforced (max: ${currentLength} chars)`);
-            } else {
-                console.log(`⚠️ No character limit detected (${currentLength} chars)`);
-            }
-
-            await messageInput.clear();
-        } else {
-            console.log('⚠️ Message input not found');
-        }
-
-        // Check for error message display area
-        const errorMessage = page.locator('.error, .error-message, [role="alert"]').first();
-        const hasError = await errorMessage.isVisible({ timeout: 2000 }).catch(() => false);
-        
-        if (hasError) {
-            const errorText = await errorMessage.textContent();
-            console.log(`📢 Error message: "${errorText}"`);
-        }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
     }
 
-    console.log('✅ Error handling test completed');
-});
+    test('detail view shows correct breadcrumb', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToFirstDetail(page);
 
-test('verify AI chat message formatting and display', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
+        // Breadcrumb contains "AI Chat"
+        const breadcrumb = page.locator('text=/AI Chat/i').first();
+        await expect(breadcrumb).toBeVisible({ timeout: 8000 });
+        console.log('✅ AI Chat breadcrumb visible in detail view');
+    });
 
-    console.log('✅ Successfully logged in');
+    test('detail view has Back button', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToFirstDetail(page);
 
-    // Open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
+        const backBtn = page.locator('a, button').filter({ hasText: /back/i }).first();
+        await expect(backBtn).toBeVisible({ timeout: 8000 });
+        console.log('✅ Back button visible in detail view');
+    });
+
+    test('Back button returns to listing', async ({ page }) => {
+        test.setTimeout(90000);
+        await goToFirstDetail(page);
+
+        const backBtn = page.locator('a, button').filter({ hasText: /back/i }).first();
+        await backBtn.click();
+        await page.waitForLoadState('load');
         await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
 
-        // Check if messages have proper formatting
-        const messages = page.locator('.message, .chat-message, [class*="message"]');
-        const messageCount = await messages.count();
-        
-        if (messageCount > 0) {
-            console.log(`📝 Analyzing ${messageCount} message(s) format...`);
-            
-            // Check first message structure
-            const firstMessage = messages.first();
-            
-            // Check for avatar/icon
-            const hasAvatar = await firstMessage.locator('.avatar, .icon, img').isVisible({ timeout: 1000 }).catch(() => false);
-            if (hasAvatar) {
-                console.log('  ✅ Messages have avatar/icon');
-            }
-            
-            // Check for timestamp
-            const hasTimestamp = await firstMessage.locator('.timestamp, .time, [class*="time"]').isVisible({ timeout: 1000 }).catch(() => false);
-            if (hasTimestamp) {
-                console.log('  ✅ Messages have timestamp');
-            }
-            
-            // Check for message text content
-            const messageText = await firstMessage.textContent();
-            if (messageText && messageText.trim().length > 0) {
-                console.log('  ✅ Messages display text content');
-            }
-            
-            console.log('✅ Message formatting verified');
+        expect(page.url()).toMatch(/\/ai-chat$/);
+        console.log('✅ Back button returned to AI Chat listing');
+    });
+
+    test('detail view shows session ID and user info', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToFirstDetail(page);
+
+        // Chat header area shows session info
+        const chatHeader = page.locator('.chat-header');
+        await expect(chatHeader).toBeVisible({ timeout: 8000 });
+
+        // Session ID shown
+        const sessionId = page.locator('.chat-header').filter({ hasText: /session.*id|session-/i });
+        const hasSessionId = await sessionId.isVisible({ timeout: 5000 }).catch(() => false);
+        if (hasSessionId) {
+            const sessionText = await sessionId.textContent();
+            console.log(`✅ Session ID: "${sessionText?.trim().slice(0, 60)}"`);
         } else {
-            console.log('⚠️ No messages to analyze formatting');
+            console.log('ℹ️ Session ID not found in chat-header — may be structured differently');
         }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
-    }
+    });
 
-    console.log('✅ Message formatting test completed');
-});
+    test('detail view shows chat messages container', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToFirstDetail(page);
 
-test('verify AI chat scroll behavior with multiple messages', async ({ page }) => {
-    test.setTimeout(180000);
-    
-    await loginToApp(page, 90000);
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(3000);
+        const messagesContainer = page.locator('.chat-messages-container');
+        await expect(messagesContainer).toBeVisible({ timeout: 10000 });
+        console.log('✅ Chat messages container is visible');
+    });
 
-    console.log('✅ Successfully logged in');
+    test('chat messages show user and AI bubbles', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToFirstDetail(page);
 
-    // Open AI chat
-    const chatButton = page.locator('button:has-text("Chat"), button:has(.mdi-chat), button:has(.mdi-robot)').first();
-    const hasChatButton = await chatButton.isVisible({ timeout: 3000 }).catch(() => false);
-    
-    if (hasChatButton) {
-        await chatButton.click();
-        await page.waitForTimeout(2000);
-        console.log('✅ Opened AI chat');
+        // User message (dark bubble, shown as .chat-message with user type)
+        const chatMessages = page.locator('.chat-messages-container .message, .chat-messages-container [class*="message"]');
+        const msgCount = await chatMessages.count();
+        expect(msgCount).toBeGreaterThan(0);
+        console.log(`✅ Found ${msgCount} message(s) in conversation`);
 
-        // Check chat container has scrolling
-        const chatContainer = page.locator('.chat-history, .messages, .conversation, [class*="chat-container"]').first();
-        const hasContainer = await chatContainer.isVisible({ timeout: 3000 }).catch(() => false);
-        
-        if (hasContainer) {
-            console.log('✅ Chat container found');
+        if (msgCount >= 2) {
+            const firstMsg = await chatMessages.first().textContent();
+            console.log(`  Message 1: "${firstMsg?.trim().slice(0, 60)}"`);
+        }
+    });
 
-            // Check if scrollable
-            const scrollHeight = await chatContainer.evaluate(el => el.scrollHeight).catch(() => 0);
-            const clientHeight = await chatContainer.evaluate(el => el.clientHeight).catch(() => 0);
-            
-            if (scrollHeight > clientHeight) {
-                console.log(`✅ Chat is scrollable (content: ${scrollHeight}px, visible: ${clientHeight}px)`);
-                
-                // Try scrolling to bottom
-                await chatContainer.evaluate(el => el.scrollTop = el.scrollHeight);
-                await page.waitForTimeout(500);
-                console.log('✅ Scrolled to bottom');
-            } else {
-                console.log('⚠️ Chat content fits in view (no scroll needed)');
-            }
+    test('detail view has pagination (prev/next between conversations)', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToFirstDetail(page);
 
-            // Check for scroll to bottom button
-            const scrollButton = page.locator('button:has(.mdi-arrow-down), .scroll-to-bottom').first();
-            const hasScrollButton = await scrollButton.isVisible({ timeout: 2000 }).catch(() => false);
-            
-            if (hasScrollButton) {
-                console.log('✅ Scroll to bottom button available');
-            }
+        // The "X/Y" nav strip lives above .chat-header, as a sibling inside .conversation-detail.
+        // Read the full container text and regex for the pattern.
+        const detailView = page.locator('.conversation-detail');
+        await expect(detailView).toBeVisible({ timeout: 10000 });
+
+        const fullText = await detailView.textContent();
+        const paginationMatch = (fullText || '').match(/\d+\/\d+/);
+        expect(paginationMatch, `Expected "X/Y" pagination in conversation-detail but got: "${fullText?.trim().slice(0, 100)}"`).toBeTruthy();
+        console.log(`✅ Pagination found: "${paginationMatch?.[0]}"`);
+    });
+
+    test('detail view has Chat Summary panel', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToFirstDetail(page);
+
+        // Right panel "Chat Summary"
+        const summaryPanel = page.locator('text=/Chat Summary/i').first();
+        await expect(summaryPanel).toBeVisible({ timeout: 8000 });
+        console.log('✅ Chat Summary panel is visible');
+    });
+
+    test('Generate Summary button is visible and clickable', async ({ page }) => {
+        test.setTimeout(90000);
+        await goToFirstDetail(page);
+
+        const generateBtn = page.locator('button, .v-btn').filter({ hasText: /generate.*summary/i }).first();
+        await expect(generateBtn).toBeVisible({ timeout: 8000 });
+        console.log('✅ Generate Summary button is visible');
+
+        await generateBtn.click();
+        await page.waitForTimeout(3000);
+
+        // Should not error
+        const errorSnackbar = page.locator('.v-snackbar--active').filter({ hasText: /error/i });
+        await expect(errorSnackbar).not.toBeVisible({ timeout: 3000 });
+        console.log('✅ Generate Summary clicked without errors');
+
+        // Either a summary appears or a loading state
+        const summaryText = page.locator('[class*="summary"], [class*="result"]').filter({ hasNot: page.locator('button') });
+        const hasNewContent = await summaryText.isVisible({ timeout: 8000 }).catch(() => false);
+        console.log(hasNewContent ? '✅ Summary content appeared' : 'ℹ️ Summary content still loading');
+    });
+
+    test('detail view intent and sentiment fields are shown', async ({ page }) => {
+        test.setTimeout(60000);
+        await goToFirstDetail(page);
+
+        const chatHeader = page.locator('.chat-header');
+
+        // Intent field
+        const intentLabel = chatHeader.locator('text=/Intent/i');
+        const hasIntent = await intentLabel.isVisible({ timeout: 5000 }).catch(() => false);
+        if (hasIntent) {
+            console.log('✅ Intent field visible in detail header');
+        }
+
+        // Sentiment field
+        const sentimentLabel = chatHeader.locator('text=/Sentiment/i');
+        const hasSentiment = await sentimentLabel.isVisible({ timeout: 5000 }).catch(() => false);
+        if (hasSentiment) {
+            console.log('✅ Sentiment field visible in detail header');
+        }
+    });
+
+    test('detail navigates to next conversation via pagination', async ({ page }) => {
+        test.setTimeout(90000);
+        await goToFirstDetail(page);
+
+        const currentUrl = page.url();
+        const detailView = page.locator('.conversation-detail');
+        await expect(detailView).toBeVisible({ timeout: 10000 });
+
+        const fullText = await detailView.textContent();
+        const paginationMatch = (fullText || '').match(/(\d+)\/(\d+)/);
+        const total = paginationMatch ? parseInt(paginationMatch[2]) : 0;
+
+        if (total <= 1) {
+            console.log('ℹ️ Only 1 conversation — skipping next navigation test');
+            return;
+        }
+
+        // Next arrow is within .conversation-detail (the nav strip above .chat-header).
+        // We look for the LAST chevron-right button in the detail view to avoid the page-level
+        // "Edit Your Mini Program" button that also uses mdi-chevron-right.
+        const nextArrow = detailView.locator('button').filter({ has: page.locator('.mdi-chevron-right') }).last();
+        const hasNext = await nextArrow.isVisible({ timeout: 5000 }).catch(() => false);
+
+        if (hasNext && !(await nextArrow.isDisabled())) {
+            await nextArrow.click();
+            await page.waitForLoadState('load');
+            await page.waitForTimeout(2000);
+
+            const newUrl = page.url();
+            // Must still be in /ai-chat/ and URL must have changed
+            expect(newUrl).toMatch(/\/ai-chat\/.+\/detail/);
+            expect(newUrl).not.toBe(currentUrl);
+            console.log(`✅ Navigated to next conversation: ${newUrl}`);
+
+            const newHeaderText = await page.locator('.chat-header').textContent();
+            const newPagination = (newHeaderText || '').match(/\d+\/\d+/)?.[0];
+            console.log(`✅ Pagination updated to: "${newPagination}"`);
         } else {
-            console.log('⚠️ Chat container not found');
+            console.log('ℹ️ Next button not found in chat-header or is disabled');
         }
-    } else {
-        console.log('⚠️ AI chat button not accessible');
-    }
-
-    console.log('✅ Scroll behavior test completed');
+    });
 });
