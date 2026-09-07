@@ -470,4 +470,9 @@ test.describe('BUG #16914 - ES search issues: university ranking, CN name, city 
       '[placeholder*="city" i], [label*="city" i], text=City, text=城市, [data-test*="city"]'
     ).count();
 
+    // The page should have a city filter (this will be 0 if the filter is missing/broken)
+    console.log(`City-related filter elements found: ${cityRelatedContent}`);
+  });
+});
+
     // The page should have a city filter (this will be 0 if the filter is

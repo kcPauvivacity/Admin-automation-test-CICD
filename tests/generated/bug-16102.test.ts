@@ -12,11 +12,16 @@ test('BUG #16102 - AppEditor: able to generate QR code', async ({ page }) => {
   await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
 
   // Navigate to the App Editor section
-  await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor', { waitUntil: 'load', timeout: 30000 });
-  await page.waitForSelector('.v-application', { timeout: 15000 });
-  await page.waitForTimeout(2000);
+  let navigatedOk = true;
+  try {
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+  } catch {
+    navigatedOk = false;
+  }
 
-  } else {
+  if (!navigatedOk) {
     // Try direct navigation to app editor
     await page.goto('https://app-staging.vivacityapp.com/app-editor');
     await page.waitForSelector('.v-application', { timeout: 15000 });

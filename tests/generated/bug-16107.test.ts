@@ -12,12 +12,16 @@ test('BUG #16107: Selecting a field in AppEditor should not trigger save functio
   await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
 
   // Navigate to the app editor
-  await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor', { waitUntil: 'load', timeout: 30000 });
-  await page.waitForSelector('.v-application', { timeout: 15000 });
-  await page.waitForTimeout(2000);
+  let navigatedViaLink = true;
+  try {
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+  } catch {
+    navigatedViaLink = false;
+  }
 
-    navigatedViaLink = true;
-  } else {
+  if (!navigatedViaLink) {
     // Try direct navigation
     await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor', { timeout: 30000 });
   }

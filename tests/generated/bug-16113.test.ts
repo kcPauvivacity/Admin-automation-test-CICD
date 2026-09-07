@@ -12,11 +12,16 @@ test('BUG #16113: AppEditor Mention generate success and result is viewable', as
   await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
 
   // Navigate to the app editor / mention section
-  await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor', { waitUntil: 'load', timeout: 30000 });
-  await page.waitForSelector('.v-application', { timeout: 15000 });
-  await page.waitForTimeout(2000);
+  let navigatedOk = true;
+  try {
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+  } catch {
+    navigatedOk = false;
+  }
 
-  } else {
+  if (!navigatedOk) {
     // Try direct navigation to likely AppEditor route
     await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor');
   }

@@ -12,11 +12,16 @@ test('BUG #16109 - AppEditor Create field is working', async ({ page }) => {
   await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
 
   // Navigate to App Editor
-  await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor', { waitUntil: 'load', timeout: 30000 });
-  await page.waitForSelector('.v-application', { timeout: 15000 });
-  await page.waitForTimeout(2000);
+  let navigatedOk = true;
+  try {
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/app-editor', { waitUntil: 'load', timeout: 30000 });
+    await page.waitForSelector('.v-application', { timeout: 15000 });
+    await page.waitForTimeout(2000);
+  } catch {
+    navigatedOk = false;
+  }
 
-  } else {
+  if (!navigatedOk) {
     // Try direct navigation
     await page.goto('https://app-staging.vivacityapp.com/app-editor');
   }

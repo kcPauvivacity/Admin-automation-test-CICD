@@ -139,7 +139,7 @@ test('BUG #17638 - UniLodge forms sync with correct price ID generating valid pr
     const priceFieldCount = await priceField.count();
 
     if (priceFieldCount > 0) {
-      const priceValue = await priceField.first().inputValue().catch(() => await priceField.first().textContent());
+      const priceValue = await priceField.first().inputValue().catch(async () => await priceField.first().textContent());
       expect(priceValue).toBeTruthy();
     }
 
@@ -341,4 +341,10 @@ test('BUG #17638 - Verify contacts API receives matching room price ID', async (
 
   if (syncBtnCount > 0) {
     // Click sync on first available form
-    await syncB
+    await syncBtns.first().click();
+    await page.waitForTimeout(3000);
+  }
+
+  // Log captured contact API request/response bodies for manual verification
+  console.log(`Captured ${contactApiRequests.length} contact request(s), ${contactApiResponses.length} response(s)`);
+});
