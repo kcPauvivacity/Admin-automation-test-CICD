@@ -5,7 +5,7 @@ test.describe('System Settings - Organizations CRUD', () => {
   test('[NAV] navigates to organisations and asserts URL and heading', async ({ page }) => {
     test.setTimeout(180000);
     await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
-    await page.goto('/system-settings/organisations');
+    await page.goto('/system-settings/organizations');
     await expect(page).toHaveURL(/\/system-settings\/organisations/);
     const heading = page.getByRole('heading').filter({ hasText: /organisation/i }).first();
     await expect(heading).toBeVisible({ timeout: 30000 });
@@ -14,7 +14,7 @@ test.describe('System Settings - Organizations CRUD', () => {
   test('[READ] list loads with expected columns', async ({ page }) => {
     test.setTimeout(180000);
     await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
-    await page.goto('/system-settings/organisations');
+    await page.goto('/system-settings/organizations');
     await page.waitForLoadState('networkidle', { timeout: 30000 });
 
     const nameColumn = page.getByRole('columnheader', { name: /name/i });
@@ -31,7 +31,7 @@ test.describe('System Settings - Organizations CRUD', () => {
   test('[READ] search organizations', async ({ page }) => {
     test.setTimeout(180000);
     await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
-    await page.goto('/system-settings/organisations');
+    await page.goto('/system-settings/organizations');
     await page.waitForLoadState('networkidle', { timeout: 30000 });
 
     const searchInput = page.getByRole('searchbox').or(page.getByPlaceholder(/search/i)).first();
@@ -59,7 +59,7 @@ test.describe('System Settings - Organizations CRUD', () => {
   test('[READ] pagination info visible', async ({ page }) => {
     test.setTimeout(180000);
     await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
-    await page.goto('/system-settings/organisations');
+    await page.goto('/system-settings/organizations');
     await page.waitForLoadState('networkidle', { timeout: 30000 });
 
     const paginationNav = page.getByRole('navigation', { name: /pagination/i });
@@ -83,7 +83,7 @@ test.describe('System Settings - Organizations CRUD', () => {
   test('[CREATE] creates a new organization', async ({ page }) => {
     test.setTimeout(180000);
     await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
-    await page.goto('/system-settings/organisations');
+    await page.goto('/system-settings/organizations');
     await page.waitForLoadState('networkidle', { timeout: 30000 });
 
     const createButton = page
@@ -145,7 +145,7 @@ test.describe('System Settings - Organizations CRUD', () => {
   test('[EDIT] edits the first organization', async ({ page }) => {
     test.setTimeout(180000);
     await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
-    await page.goto('/system-settings/organisations');
+    await page.goto('/system-settings/organizations');
     await page.waitForLoadState('networkidle', { timeout: 30000 });
 
     const firstRowEditButton = page
@@ -188,7 +188,7 @@ test.describe('System Settings - Organizations CRUD', () => {
   test('[DELETE] deletes the first organization', async ({ page }) => {
     test.setTimeout(180000);
     await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
-    await page.goto('/system-settings/organisations');
+    await page.goto('/system-settings/organizations');
     await page.waitForLoadState('networkidle', { timeout: 30000 });
 
     const firstRowCheckbox = page.getByRole('row').nth(1).getByRole('checkbox').first();

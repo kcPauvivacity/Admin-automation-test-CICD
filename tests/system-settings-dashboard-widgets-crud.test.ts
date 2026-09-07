@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 const BASE_URL = 'https://app-staging.vivacityapp.com';
-const MODULE_URL = `${BASE_URL}/system-settings/dashboard-widgets`;
+const MODULE_URL = `${BASE_URL}/system-settings/widgets`;
 
 test.describe('System Settings - Dashboard Widgets', () => {
   test.beforeEach(async ({ page }) => {

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 const BASE_URL = 'https://app-staging.vivacityapp.com';
-const MODULE_URL = `${BASE_URL}/system-settings/b2b-ai-agents`;
+const MODULE_URL = `${BASE_URL}/system-settings/b2b-ai`;
 const FUSIONETA_EMAIL = 'pau.kie.chee@fusioneta.com';
 const FUSIONETA_PASSWORD = 'PAOpaopao@9696';
 const TEST_AGENT_NAME = `Test B2B AI Agent ${Date.now()}`;
