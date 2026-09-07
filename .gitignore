@@ -41,3 +41,46 @@ yarn-error.log*
 # Temporary files
 *.tmp
 *.temp
+
+# Debug screenshots
+debug-*.png
+survey-form-debug.png
+surveys-listing-after-create.png
+
+# Scan scripts (exploratory, not part of test suite)
+scripts/scan-*.mts
+scripts/scan-*.ts
+scripts/scan-*.js
+scripts/debug-*.mts
+scripts/explore-screenshots/
+
+# Misc generated/exploratory files
+scan-ui-modules.js
+azure-test-cases.tsv
+azure-testcase-ids.json
+scripts/auto-bug-state.json
+scripts/last-auto-bug-summary.json
+scripts/generate-azure-testcases.mjs
+scripts/import-azure-testcases.mjs
+scripts/update-testcase-state.mjs
+scripts/sprint-report.sh
+scripts/create-bug.py
+
+# Playwright MCP
+.playwright-mcp/
+
+# App bundles
+Claude\ Code\ URL\ Handler.app/
+
+# Miniprogram tests
+miniprogram-tests/
+
+# Auto-generated bug tests
+tests/generated/
+
+# Runtime state files
+scripts/last-run-summary.json
+scripts/processed-bugs.json
+scripts/auto-bug-state.json
+scripts/last-auto-bug-summary.json
+scripts/check-inputs.mts
