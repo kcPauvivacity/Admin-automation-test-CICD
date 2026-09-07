@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
+import { waitForTableStable } from './helpers/table.helper';
 
 // Facilities is under System Settings (fusioneta account)
 const EMAIL = 'pau.kie.chee@fusioneta.com';
@@ -18,7 +19,7 @@ async function navigateToFacilities(page: any) {
     await page.waitForTimeout(3000);
     await expect(page).toHaveURL(/system-settings\/facilities/, { timeout: 10000 });
     await page.waitForSelector('tbody tr', { timeout: 30000 });
-    await page.waitForTimeout(1000);
+    await waitForTableStable(page);
     console.log('✅ Navigated to Facilities list');
 }
 

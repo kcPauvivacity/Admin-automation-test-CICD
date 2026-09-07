@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
+import { waitForTableStable } from './helpers/table.helper';
 
 // AI Agents is a fusioneta-exclusive module under System Settings > Configurations
 const EMAIL = 'pau.kie.chee@fusioneta.com';
@@ -13,9 +14,10 @@ async function navigateToAIAgents(page: any) {
     await page.goto(LIST_URL, { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(3000);
     await expect(page).toHaveURL(/system-settings\/ai-agents/, { timeout: 10000 });
-    // Wait for table to appear
+    // Wait for table to appear, then for row count to stop changing (avoids reading a
+    // still-populating table under parallel load — see table.helper.ts)
     await page.waitForSelector('tbody tr', { timeout: 15000 });
-    await page.waitForTimeout(1000);
+    await waitForTableStable(page);
     console.log('✅ Navigated to AI Agents list');
 }
 
