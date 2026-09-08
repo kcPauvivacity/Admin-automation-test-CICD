@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
+import { waitForTableStable } from './helpers/table.helper';
 
 const BASE_URL = 'https://app-staging.vivacityapp.com';
 const STURENTS_URL = `${BASE_URL}/system-settings/sturents`;
@@ -208,6 +209,9 @@ test.describe('System Settings - StuRents', () => {
 
     await page.goto(STURENTS_URL);
     await page.waitForLoadState('networkidle');
+    // The first tbody row can briefly be a "v-data-table-rows-loading" placeholder row
+    // (confirmed live) rather than real data — wait for the row count to settle first.
+    await waitForTableStable(page);
 
     const tableRow = page.locator(
       'tbody tr, [role="row"]:not(:first-child), .table-row, .ag-row'
@@ -230,8 +234,16 @@ test.describe('System Settings - StuRents', () => {
       const confirmDialog = page.locator('[role="dialog"], .confirm-modal, .confirmation-dialog, .ant-modal');
       const hasConfirmDialog = await confirmDialog.first().isVisible().catch(() => false);
       if (hasConfirmDialog) {
+        // Confirmed live: this confirmation requires typing "Yes" into a text input to
+        // enable the button, which is labelled "Remove" — not Delete/Confirm/Yes/OK.
+        const yesInput = confirmDialog.first().getByRole('textbox').first();
+        const hasYesInput = await yesInput.isVisible({ timeout: 3000 }).catch(() => false);
+        if (hasYesInput) {
+          await yesInput.fill('Yes');
+        }
+
         const confirmButton = confirmDialog.first().locator(
-          'button:has-text("Delete"), button:has-text("Confirm"), button:has-text("Yes"), button:has-text("OK")'
+          'button:has-text("Remove"), button:has-text("Delete"), button:has-text("Confirm"), button:has-text("Yes"), button:has-text("OK")'
         ).first();
         await expect(confirmButton).toBeVisible({ timeout: 10000 });
         await confirmButton.click();

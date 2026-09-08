@@ -53,12 +53,20 @@ test.describe('System Settings - User Roles CRUD', () => {
     }
 
     await searchInput.fill('zzz_nonexistent_role_xyz');
-    await page.waitForTimeout(800);
 
-    const rows = page.locator('table tbody tr, [data-testid="user-role-row"], .user-role-row');
-    const count = await rows.count();
-    const noResults = page.locator('text=/no results/i, text=/no records/i, text=/nothing found/i, [data-testid="empty-state"]');
-    const noResultsVisible = await noResults.first().isVisible().catch(() => false);
+    // Real empty-state text (confirmed live) is "No data available", inside a <tr> —
+    // the "No data available" row itself makes `count` never reach 0, and a locator-based
+    // isVisible() check proved unreliable here even with polling, so check the rendered
+    // body text directly instead (confirmed reliable elsewhere in this session).
+    let noResultsVisible = false;
+    let count = -1;
+    for (let i = 0; i < 10 && !noResultsVisible; i++) {
+      await page.waitForTimeout(500);
+      const bodyText = await page.locator('body').innerText().catch(() => '');
+      noResultsVisible = /no results|no records|nothing found|no data/i.test(bodyText);
+      count = await page.locator('table tbody tr, [data-testid="user-role-row"], .user-role-row').count();
+      if (count === 0) break;
+    }
 
     expect(count === 0 || noResultsVisible).toBe(true);
   });

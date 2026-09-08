@@ -170,13 +170,9 @@ test('verify required field validation', async ({ page }) => {
 
     await loginToApp(page);
 
-    // Navigate to Tags
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Tags').click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Tags (was: click Settings > Data Management > Tags —
+    // direct click nav was flaky/slow, same pattern fixed elsewhere in this suite)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/tags', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     // Click Create button
