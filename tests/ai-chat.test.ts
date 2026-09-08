@@ -183,8 +183,11 @@ test.describe('AI Chat — listing', () => {
         test.setTimeout(60000);
         await goToAIChat(page);
 
+        // Clicking the bare <tr> does not navigate — the click handler lives on the
+        // Session ID cell specifically, not the row as a whole (confirmed live: clicking
+        // firstRow.click() leaves the URL unchanged, clicking td.nth(1) navigates).
         const firstRow = page.locator('tbody tr').first();
-        await firstRow.click();
+        await firstRow.locator('td').nth(1).click();
         await page.waitForLoadState('load');
         await page.waitForTimeout(2000);
 
@@ -198,8 +201,10 @@ test.describe('AI Chat — conversation detail', () => {
 
     async function goToFirstDetail(page: any) {
         await goToAIChat(page);
+        // Session ID cell (not the bare row) is what triggers navigation — see comment
+        // on the "clicking a row navigates..." test above.
         const firstRow = page.locator('tbody tr').first();
-        await firstRow.click();
+        await firstRow.locator('td').nth(1).click();
         await page.waitForLoadState('load');
         await page.waitForTimeout(2000);
     }
