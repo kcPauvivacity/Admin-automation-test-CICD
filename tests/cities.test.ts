@@ -6,19 +6,9 @@ test('filter Cities by draft stage', async ({ page }) => {
     
     // Login with valid user
     await loginToApp(page);
-
-    // Navigate to Settings
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-
-    console.log('Clicked Settings');
-
-    // Navigate to Data Management > Cities
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities under Data Management');
@@ -83,17 +73,9 @@ test('create new city with random shortname', async ({ page }) => {
     
     // Login with valid user
     await loginToApp(page);
-
-    // Navigate to Settings
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-
-    // Navigate to Data Management > Cities
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');
@@ -127,14 +109,9 @@ test('verify cities table displays records', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-
-    // Navigate to Cities
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');
@@ -158,14 +135,9 @@ test('search cities by name', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-
-    // Navigate to Cities
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');
@@ -191,14 +163,9 @@ test('filter cities by published stage', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-
-    // Navigate to Cities
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');
@@ -241,14 +208,9 @@ test('create city with full details', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-
-    // Navigate to Cities
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');
@@ -300,14 +262,9 @@ test('edit existing city record', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-
-    // Navigate to Cities
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');
@@ -349,14 +306,9 @@ test('validate required fields when creating city', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-
-    // Navigate to Cities
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');
@@ -399,14 +351,9 @@ test('verify available stage options', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-
-    // Navigate to Cities
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');
@@ -429,14 +376,9 @@ test('create city with Chinese name only', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-
-    // Navigate to Cities
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');
@@ -479,14 +421,9 @@ test('verify city pagination or record count', async ({ page }) => {
     test.setTimeout(120000);
     
     await loginToApp(page);
-
-    // Navigate to Cities
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Cities').click();
-    await page.waitForLoadState('networkidle');
+    // Navigate directly to Cities (was: click Settings > Data Management > Cities;
+    // direct click nav was flaky/slow — resolved URL includes /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/cities', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Cities');

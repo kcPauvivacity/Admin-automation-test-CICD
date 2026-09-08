@@ -5,13 +5,9 @@ async function goToAttributes(page: any) {
     await loginToApp(page);
     await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
-    // /demo-student/attributes is a client-side route only — must navigate via sidebar
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
+    // Direct nav to the resolved URL (was: click Settings > Data Management > Attributes —
+    // that click nav was flaky/slow; this URL includes the /settings/ prefix)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/attributes', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 }
 
@@ -121,15 +117,8 @@ test('edit first attribute record with random names', async ({ page }) => {
     await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
-    // Navigate to Settings > Data Management > Attributes
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(500);
-    
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Attributes (was: click Settings > Data Management > Attributes)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/attributes', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes under Data Management');
@@ -201,13 +190,8 @@ test('search attributes by English name', async ({ page }) => {
     await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
-    // Navigate to Attributes
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Attributes (was: click Settings > Data Management > Attributes)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/attributes', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes');
@@ -236,13 +220,8 @@ test('filter attributes by type - amenities', async ({ page }) => {
     await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
 
-    // Navigate to Attributes
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Data Management').click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Attributes').click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Attributes (was: click Settings > Data Management > Attributes)
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/attributes', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Attributes');
