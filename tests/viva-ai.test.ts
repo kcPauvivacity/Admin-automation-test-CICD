@@ -224,13 +224,14 @@ test.describe('Viva AI Tests', () => {
         await vivaAIButton.click({ timeout: 15000 });
         await page.waitForTimeout(3000);
         
-        // Look for suggestions (they might be buttons or clickable elements)
-        const suggestion = page.locator('[class*="suggestion"]').or(
-            page.locator('button').filter({ hasText: /.+/ })
-        ).or(
-            page.locator('[role="button"]')
-        ).first();
-        
+        // Look for suggestions. Confirmed live: [class*="suggestion"] reliably matches
+        // real suggestion chips (10 found, e.g. "Explain the dashboard"). The previous
+        // .or() fallback chain (any button with text, any [role="button"]) doesn't
+        // prioritize the specific match — .first() picks whatever comes first in DOM
+        // order across ALL combined matches, which is almost always an unrelated page
+        // button that renders before the chat panel's suggestions.
+        const suggestion = page.locator('[class*="suggestion"]').first();
+
         // Wait for suggestions to be visible
         await suggestion.waitFor({ state: 'visible', timeout: 8000 });
         
