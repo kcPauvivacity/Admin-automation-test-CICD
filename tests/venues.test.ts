@@ -69,7 +69,7 @@ test.describe('Venues', () => {
     await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
 
     const createBtn = page.locator(
-      'button:has-text("Create"), button:has-text("Add Venue"), button:has-text("Add"), button:has-text("New Venue"), button:has-text("New")'
+      'a:has-text("Create Venue"), button:has-text("Create Venue"), a.v-btn:has-text("Create"), button:has-text("Create")'
     ).first();
     await expect(createBtn).toBeVisible({ timeout: 30000 });
     await createBtn.click();
@@ -104,7 +104,7 @@ test.describe('Venues', () => {
     const venueName = `Test Venue ${randomSuffix}`;
 
     const createBtn = page.locator(
-      'button:has-text("Create"), button:has-text("Add Venue"), button:has-text("Add"), button:has-text("New Venue"), button:has-text("New")'
+      'a:has-text("Create Venue"), button:has-text("Create Venue"), a.v-btn:has-text("Create"), button:has-text("Create")'
     ).first();
     await expect(createBtn).toBeVisible({ timeout: 30000 });
     await createBtn.click();
