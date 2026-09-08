@@ -7,21 +7,21 @@ async function getThemeClass(page: any): Promise<string> {
     return await page.evaluate(() => {
         const app = document.querySelector('.v-application');
         if (!app) return '';
-        if (app.classList.contains('v-theme--DARK_BLUE_THEME')) return 'dark';
-        if (app.classList.contains('v-theme--BLUE_THEME')) return 'light';
+        if (app.classList.contains('v-theme--VIVA_DARK_THEME')) return 'dark';
+        if (app.classList.contains('v-theme--VIVA_THEME')) return 'light';
         return app.className.slice(0, 80);
     });
 }
 
 async function waitForTheme(page: any, expected: 'dark' | 'light', timeout = 5000) {
-    const themeClass = expected === 'dark' ? 'v-theme--DARK_BLUE_THEME' : 'v-theme--BLUE_THEME';
+    const themeClass = expected === 'dark' ? 'v-theme--VIVA_DARK_THEME' : 'v-theme--VIVA_THEME';
     await page.waitForSelector(`.v-application.${themeClass}`, { timeout });
 }
 
 async function setTheme(page: any, theme: 'dark' | 'light') {
     await page.locator('button[aria-label*="User profile menu"]').click();
     await page.waitForTimeout(800);
-    const openBtn = page.locator('button[aria-label="Open theme selector"]');
+    const openBtn = page.locator('button[aria-label*="Click to change theme"]');
     if (await openBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await openBtn.click();
         await page.waitForTimeout(500);
@@ -53,7 +53,7 @@ async function checkModules(page: any, modules: {name: string, url: string}[]) {
                 continue;
             }
 
-            const isDark = await page.waitForSelector('.v-application.v-theme--DARK_BLUE_THEME', { timeout: 8000 })
+            const isDark = await page.waitForSelector('.v-application.v-theme--VIVA_DARK_THEME', { timeout: 8000 })
                 .then(() => true).catch(() => false);
 
             if (isDark) {
@@ -79,7 +79,7 @@ test('verify theme panel opens with Light and Dark options', async ({ page }) =>
     await loginToApp(page);
     await page.locator('button[aria-label*="User profile menu"]').click();
     await page.waitForTimeout(800);
-    const openBtn = page.locator('button[aria-label="Open theme selector"]');
+    const openBtn = page.locator('button[aria-label*="Click to change theme"]');
     if (await openBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await openBtn.click(); await page.waitForTimeout(500);
     }
@@ -88,24 +88,24 @@ test('verify theme panel opens with Light and Dark options', async ({ page }) =>
     console.log('Theme panel: Light and Dark options visible');
 });
 
-test('switch to Dark Theme — verify DARK_BLUE_THEME class applied', async ({ page }) => {
+test('switch to Dark Theme — verify VIVA_DARK_THEME class applied', async ({ page }) => {
     test.setTimeout(120000);
     await loginToApp(page);
     await waitForTheme(page, 'light', 10000);
     await setTheme(page, 'dark');
     await waitForTheme(page, 'dark', 5000);
-    console.log('Dark Theme: v-theme--DARK_BLUE_THEME confirmed');
+    console.log('Dark Theme: v-theme--VIVA_DARK_THEME confirmed');
     await setTheme(page, 'light');
 });
 
-test('switch to Light Theme from Dark — verify BLUE_THEME class restored', async ({ page }) => {
+test('switch to Light Theme from Dark — verify VIVA_THEME class restored', async ({ page }) => {
     test.setTimeout(120000);
     await loginToApp(page);
     await setTheme(page, 'dark');
     await waitForTheme(page, 'dark', 5000);
     await setTheme(page, 'light');
     await waitForTheme(page, 'light', 5000);
-    console.log('Light Theme restored: v-theme--BLUE_THEME confirmed');
+    console.log('Light Theme restored: v-theme--VIVA_THEME confirmed');
 });
 
 test('verify Auto theme toggle is present', async ({ page }) => {
@@ -113,7 +113,7 @@ test('verify Auto theme toggle is present', async ({ page }) => {
     await loginToApp(page);
     await page.locator('button[aria-label*="User profile menu"]').click();
     await page.waitForTimeout(800);
-    const openBtn = page.locator('button[aria-label="Open theme selector"]');
+    const openBtn = page.locator('button[aria-label*="Click to change theme"]');
     if (await openBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await openBtn.click(); await page.waitForTimeout(500);
     }

@@ -12,22 +12,12 @@ test('filter Analytics by tracking id and search', async ({ page }) => {
 
     console.log('✅ Successfully logged in');
 
-    // Navigate to Settings
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-
-    console.log('Clicked Settings');
-
-    // Navigate to Analytics & Reporting > Analytics
-    await page.getByText('Analytics & Reporting').click();
-    await page.waitForTimeout(500);
-    
-    // Click on Analytics option using role selector to be more specific
-    await page.getByRole('option', { name: 'Analytics' }).click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
+    // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
+    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
-    console.log('✅ Successfully navigated to Analytics under Analytics & Reporting');
+    console.log('✅ Successfully navigated to Analytics');
 
     // Click on Tracking ID filter button
     await page.getByRole('button', { name: 'Tracking ID filter' }).click();
@@ -60,22 +50,12 @@ test('create new analytics with random data', async ({ page }) => {
 
     console.log('✅ Successfully logged in');
 
-    // Navigate to Settings
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-
-    console.log('Clicked Settings');
-
-    // Navigate to Analytics & Reporting > Analytics
-    await page.getByText('Analytics & Reporting').click();
-    await page.waitForTimeout(500);
-    
-    // Click on Analytics option using role selector to be more specific
-    await page.getByRole('option', { name: 'Analytics' }).click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
+    // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
+    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
-    console.log('✅ Successfully navigated to Analytics under Analytics & Reporting');
+    console.log('✅ Successfully navigated to Analytics');
 
     // Click Create button
     await page.getByText('Create', { exact: true }).click();
@@ -194,13 +174,9 @@ test('verify analytics table displays records', async ({ page }) => {
 
     console.log('✅ Successfully logged in');
 
-    // Navigate to Settings > Analytics & Reporting > Analytics
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Analytics & Reporting').click();
-    await page.waitForTimeout(500);
-    await page.getByRole('option', { name: 'Analytics' }).click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
+    // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
+    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -236,13 +212,9 @@ test('edit existing analytics record', async ({ page }) => {
 
     console.log('✅ Successfully logged in');
 
-    // Navigate to Settings > Analytics & Reporting > Analytics
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Analytics & Reporting').click();
-    await page.waitForTimeout(500);
-    await page.getByRole('option', { name: 'Analytics' }).click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
+    // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
+    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -297,13 +269,9 @@ test('create analytics with different type - UA', async ({ page }) => {
 
     console.log('✅ Successfully logged in');
 
-    // Navigate to Settings > Analytics & Reporting > Analytics
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Analytics & Reporting').click();
-    await page.waitForTimeout(500);
-    await page.getByRole('option', { name: 'Analytics' }).click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
+    // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
+    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -391,13 +359,9 @@ test('search analytics by name', async ({ page }) => {
 
     console.log('✅ Successfully logged in');
 
-    // Navigate to Settings > Analytics & Reporting > Analytics
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Analytics & Reporting').click();
-    await page.waitForTimeout(500);
-    await page.getByRole('option', { name: 'Analytics' }).click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
+    // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
+    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -431,13 +395,9 @@ test('verify analytics type filter works', async ({ page }) => {
 
     console.log('✅ Successfully logged in');
 
-    // Navigate to Settings > Analytics & Reporting > Analytics
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Analytics & Reporting').click();
-    await page.waitForTimeout(500);
-    await page.getByRole('option', { name: 'Analytics' }).click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
+    // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
+    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -482,13 +442,9 @@ test('create analytics and validate record details', async ({ page }) => {
     await loginToApp(page);
     await page.waitForLoadState('load');
     await page.waitForTimeout(2000);
-    // /demo-student/analytics-queries is a client-side only route — navigate via sidebar
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Analytics & Reporting').click();
-    await page.waitForTimeout(500);
-    await page.getByRole('option', { name: 'Analytics' }).click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
+    // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
+    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -696,13 +652,9 @@ test('validate required field error messages', async ({ page }) => {
 
     console.log('✅ Successfully logged in');
 
-    // Navigate to Settings > Analytics & Reporting > Analytics
-    await page.getByRole('button', { name: /settings/i }).click();
-    await page.waitForTimeout(1000);
-    await page.getByText('Analytics & Reporting').click();
-    await page.waitForTimeout(500);
-    await page.getByRole('option', { name: 'Analytics' }).click();
-    await page.waitForLoadState('load');
+    // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
+    // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
+    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');

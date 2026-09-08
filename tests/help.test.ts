@@ -18,7 +18,7 @@ test('click help icon and open module in new page', async ({ page, context }) =>
     const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     
     // Click on Knowledge base in the dropdown
-    await page.getByText('Knowledge base').click();
+    await page.getByText('Knowledge base', { exact: true }).click();
     
     // Wait for the new page to open
     const newPage = await pagePromise;
@@ -193,7 +193,7 @@ test('verify help menu contains all expected options', async ({ page }) => {
 
     let allItemsFound = true;
     for (const item of expectedItems) {
-        const menuItem = page.getByText(item);
+        const menuItem = page.getByText(item, { exact: true });
         const isVisible = await menuItem.isVisible({ timeout: 3000 }).catch(() => false);
         
         if (isVisible) {
@@ -265,7 +265,7 @@ test('verify help menu can be opened and closed multiple times', async ({ page }
         await page.waitForTimeout(500);
         
         // Verify menu is open by checking for a menu item
-        const menuItem = page.getByText('Knowledge base');
+        const menuItem = page.getByText('Knowledge base', { exact: true });
         await expect(menuItem).toBeVisible({ timeout: 3000 });
         console.log(`✅ Iteration ${i}: Help menu opened`);
 
@@ -300,7 +300,7 @@ test('verify external links open in new tabs', async ({ page, context }) => {
 
     // Click on Knowledge base
     const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
-    await page.getByText('Knowledge base').click();
+    await page.getByText('Knowledge base', { exact: true }).click();
     
     const newPage = await pagePromise;
     await page.waitForTimeout(1000);
@@ -337,7 +337,7 @@ test('verify help menu closes when clicking outside', async ({ page }) => {
     await page.waitForTimeout(500);
     
     // Verify menu is open
-    const menuItem = page.getByText('Knowledge base');
+    const menuItem = page.getByText('Knowledge base', { exact: true });
     await expect(menuItem).toBeVisible({ timeout: 3000 });
     console.log('✅ Help menu opened');
 
@@ -370,7 +370,7 @@ test('verify help menu items are clickable', async ({ page, context }) => {
     const pagePromise = page.waitForEvent('popup', { timeout: 15000 });
     
     try {
-        await page.getByText(menuItem.name).click();
+        await page.getByText(menuItem.name, { exact: true }).click();
         const newPage = await pagePromise;
         await page.waitForTimeout(1000);
         
