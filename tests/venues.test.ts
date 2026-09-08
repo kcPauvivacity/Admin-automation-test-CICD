@@ -8,7 +8,7 @@ test.describe('Venues', () => {
     test.setTimeout(300000);
     await loginToApp(page);
     await page.goto(BASE_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
 
     const table = page.locator('table, [role="grid"], [role="table"]').first();
     await expect(table).toBeVisible({ timeout: 30000 });
@@ -22,7 +22,7 @@ test.describe('Venues', () => {
     test.setTimeout(300000);
     await loginToApp(page);
     await page.goto(BASE_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
 
     const searchInput = page.locator('input[type="search"], input[placeholder*="Search"], input[placeholder*="search"]').first();
     const searchVisible = await searchInput.isVisible().catch(() => false);
@@ -48,7 +48,7 @@ test.describe('Venues', () => {
     test.setTimeout(300000);
     await loginToApp(page);
     await page.goto(BASE_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
 
     const pagination = page.locator('[aria-label*="pagination"], [class*="pagination"], nav[role="navigation"]').first();
     const paginationVisible = await pagination.isVisible().catch(() => false);
@@ -66,7 +66,7 @@ test.describe('Venues', () => {
     test.setTimeout(300000);
     await loginToApp(page);
     await page.goto(BASE_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
 
     const createBtn = page.locator(
       'button:has-text("Create"), button:has-text("Add Venue"), button:has-text("Add"), button:has-text("New Venue"), button:has-text("New")'
@@ -98,7 +98,7 @@ test.describe('Venues', () => {
     test.setTimeout(300000);
     await loginToApp(page);
     await page.goto(BASE_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
 
     const randomSuffix = Date.now();
     const venueName = `Test Venue ${randomSuffix}`;
@@ -139,7 +139,7 @@ test.describe('Venues', () => {
 
     const dialogStillVisible = await dialog.isVisible().catch(() => false);
     if (!dialogStillVisible) {
-      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
       const table = page.locator('table, [role="grid"], [role="table"]').first();
       await expect(table).toBeVisible({ timeout: 15000 });
     }
@@ -149,7 +149,7 @@ test.describe('Venues', () => {
     test.setTimeout(300000);
     await loginToApp(page);
     await page.goto(BASE_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
 
     const rows = page.locator('table tbody tr, [role="grid"] [role="row"]:not([aria-label*="header"])');
     await expect(rows.first()).toBeVisible({ timeout: 30000 });
@@ -195,7 +195,7 @@ test.describe('Venues', () => {
     test.setTimeout(300000);
     await loginToApp(page);
     await page.goto(BASE_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
 
     const rows = page.locator('table tbody tr, [role="grid"] [role="row"]:not([aria-label*="header"])');
     await expect(rows.first()).toBeVisible({ timeout: 30000 });
@@ -251,7 +251,7 @@ test.describe('Venues', () => {
   test('[NAV] accessible via sidebar navigation', async ({ page }) => {
     test.setTimeout(300000);
     await loginToApp(page);
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
 
     const venuesMenuItem = page.getByRole('menuitem', { name: 'Venues' });
     const menuItemVisible = await venuesMenuItem.isVisible().catch(() => false);
@@ -269,7 +269,7 @@ test.describe('Venues', () => {
       }
     }
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(3000); // networkidle never resolves on this page (confirmed live — persistent background activity)
     await expect(page).toHaveURL(/venues/, { timeout: 30000 });
 
     const table = page.locator('table, [role="grid"], [role="table"]').first();
