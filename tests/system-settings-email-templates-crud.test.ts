@@ -23,10 +23,11 @@ test.describe('System Settings - Email Templates CRUD', () => {
     await page.goto(EMAIL_TEMPLATES_URL);
     await page.waitForLoadState('networkidle');
 
+    // Real columns (confirmed live): ID, Name, Created At, Last Updated By — there is
+    // no Subject/Type/Language column on this module's list view.
     await expect(page.getByText(/name/i).first()).toBeVisible({ timeout: 30000 });
-    await expect(page.getByText(/subject/i).first()).toBeVisible({ timeout: 30000 });
-    await expect(page.getByText(/type/i).first()).toBeVisible({ timeout: 30000 });
-    await expect(page.getByText(/language/i).first()).toBeVisible({ timeout: 30000 });
+    await expect(page.getByText(/created at/i).first()).toBeVisible({ timeout: 30000 });
+    await expect(page.getByText(/last updated by/i).first()).toBeVisible({ timeout: 30000 });
   });
 
   test('[READ] search by template name', async ({ page }) => {
