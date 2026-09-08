@@ -366,8 +366,9 @@ test('Contacts - [EDIT] click first contact row and edit Email', async ({ page }
             console.log('⚠️ Email input is not enabled');
         }
     } else {
-        // Try label-based lookup
-        const emailByLabel = page.getByLabel(/email/i, { exact: false }).first();
+        // Try label-based lookup — exclude checkboxes/radios (e.g. an "Email Verified"
+        // toggle can also match a loose /email/i label and .fill() throws on those)
+        const emailByLabel = page.getByLabel(/email/i, { exact: false }).and(page.locator('input:not([type="checkbox"]):not([type="radio"])')).first();
         if (await emailByLabel.isVisible({ timeout: 3000 }).catch(() => false)) {
             if (await emailByLabel.isEnabled().catch(() => false)) {
                 await emailByLabel.click({ clickCount: 3 });

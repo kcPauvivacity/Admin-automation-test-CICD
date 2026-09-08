@@ -226,7 +226,7 @@ test.describe('System Settings - Tooltips CRUD', () => {
         if (inputCount > 0) {
           const lastInput = inputs.last();
           await lastInput.click();
-          await lastInput.selectAll().catch(() => lastInput.press('Control+A'));
+          await lastInput.press('Control+A');
           await lastInput.fill('Updated tooltip value');
 
           const saveBtn = dialog.locator('button').filter({ hasText: /save|submit|update|ok|confirm/i }).first();
@@ -245,7 +245,7 @@ test.describe('System Settings - Tooltips CRUD', () => {
 
         if (inlineInputVisible) {
           await inlineInput.click();
-          await inlineInput.selectAll().catch(() => inlineInput.press('Control+A'));
+          await inlineInput.press('Control+A');
           await page.evaluate((val) => document.execCommand('insertText', false, val), 'Updated tooltip value');
 
           const saveBtn = page.locator('button').filter({ hasText: /save|confirm/i }).first();

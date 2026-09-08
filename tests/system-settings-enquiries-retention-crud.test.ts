@@ -3,7 +3,7 @@ import { loginToApp } from './helpers/auth.helper';
 
 const FUSIONETA_EMAIL = 'pau.kie.chee@fusioneta.com';
 const FUSIONETA_PASSWORD = 'PAOpaopao@9696';
-const RETENTION_URL = 'https://app-staging.vivacityapp.com/system-settings/enquiries-retention';
+const RETENTION_URL = 'https://app-staging.vivacityapp.com/system-settings/enquiry-retention';
 
 test.describe('System Settings - Enquiries Retention CRUD', () => {
 
