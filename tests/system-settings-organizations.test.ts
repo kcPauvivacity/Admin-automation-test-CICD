@@ -56,7 +56,9 @@ for (const mod of modules) {
         await page.goto(`${BASE}${mod.path}`, { waitUntil: 'load', timeout: 30000 });
         await page.waitForTimeout(3000);
 
-        const search = page.locator('input[type="text"]:visible').first();
+        // Search input is type="search" (aria-label "Search items"), not type="text" —
+        // confirmed live via Organizations page.
+        const search = page.locator('input[type="search"]:visible').first();
         await expect(search).toBeVisible({ timeout: 10000 });
         await search.fill('test');
         await page.waitForTimeout(1500);
