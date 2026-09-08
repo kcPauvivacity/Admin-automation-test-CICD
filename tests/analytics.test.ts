@@ -14,7 +14,7 @@ test('filter Analytics by tracking id and search', async ({ page }) => {
 
     // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
     // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
-    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -52,7 +52,7 @@ test('create new analytics with random data', async ({ page }) => {
 
     // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
     // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
-    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -176,7 +176,7 @@ test('verify analytics table displays records', async ({ page }) => {
 
     // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
     // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
-    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -214,7 +214,7 @@ test('edit existing analytics record', async ({ page }) => {
 
     // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
     // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
-    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -271,7 +271,7 @@ test('create analytics with different type - UA', async ({ page }) => {
 
     // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
     // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
-    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -361,7 +361,7 @@ test('search analytics by name', async ({ page }) => {
 
     // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
     // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
-    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -397,7 +397,7 @@ test('verify analytics type filter works', async ({ page }) => {
 
     // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
     // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
-    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -444,7 +444,7 @@ test('create analytics and validate record details', async ({ page }) => {
     await page.waitForTimeout(2000);
     // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
     // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
-    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');
@@ -654,7 +654,7 @@ test('validate required field error messages', async ({ page }) => {
 
     // Navigate directly to Analytics (was: click Settings > Analytics & Reporting > Analytics;
     // direct click nav was flaky/slow — this is the resolved URL, includes /settings/ prefix)
-    await page.goto('/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('https://app-staging.vivacityapp.com/demo-student/settings/analytics', { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(2000);
 
     console.log('✅ Successfully navigated to Analytics');

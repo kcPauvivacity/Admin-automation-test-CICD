@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginToApp } from './helpers/auth.helper';
 
 const BASE_URL = 'https://app-staging.vivacityapp.com';
-const MODULE_URL = `${BASE_URL}/system-settings/adobe-sign-templates`;
+const MODULE_URL = `${BASE_URL}/system-settings/adobe-templates`;
 const FUSIONETA_EMAIL = 'pau.kie.chee@fusioneta.com';
 const FUSIONETA_PASSWORD = 'PAOpaopao@9696';
 const TEMPLATE_NAME_CREATE = `Test Adobe Template ${Date.now()}`;
@@ -18,29 +18,28 @@ test.describe('System Settings - Adobe Templates', () => {
 
     await page.goto(MODULE_URL, { waitUntil: 'networkidle' });
 
-    const table = page.locator('table, [role="grid"], [role="table"]').first();
+    const table = page.locator('table, [role="grid"], [role="table"], .v-data-table').first();
     await expect(table).toBeVisible({ timeout: 30000 });
   });
 
-  test('[READ] columns visible - name, type, status, created date', async ({ page }) => {
+  test('[READ] columns visible - name, created date', async ({ page }) => {
     test.setTimeout(180000);
 
     await page.goto(MODULE_URL, { waitUntil: 'networkidle' });
 
-    const table = page.locator('table, [role="grid"], [role="table"]').first();
+    const table = page.locator('table, [role="grid"], [role="table"], .v-data-table').first();
     await expect(table).toBeVisible({ timeout: 30000 });
 
+    // Real columns (confirmed live): ID, Name, Created At, Created by, Last Updated At,
+    // Last Updated by — there is no Type or Status column on this module.
     const tableText = await table.textContent();
     const lowerText = (tableText ?? '').toLowerCase();
 
     const hasName = lowerText.includes('name');
-    const hasType = lowerText.includes('type');
-    const hasStatus = lowerText.includes('status');
     const hasDate = lowerText.includes('date') || lowerText.includes('created');
 
     expect(hasName).toBe(true);
-    expect(hasType).toBe(true);
-    expect(hasStatus || hasDate).toBe(true);
+    expect(hasDate).toBe(true);
   });
 
   test('[READ] search by template name', async ({ page }) => {
@@ -61,7 +60,7 @@ test.describe('System Settings - Adobe Templates', () => {
     await searchInput.fill('Template');
     await page.waitForTimeout(1000);
 
-    const table = page.locator('table, [role="grid"], [role="table"]').first();
+    const table = page.locator('table, [role="grid"], [role="table"], .v-data-table').first();
     await expect(table).toBeVisible({ timeout: 15000 });
   });
 
@@ -119,7 +118,7 @@ test.describe('System Settings - Adobe Templates', () => {
 
       const dialogStillOpen = await dialog.isVisible().catch(() => false);
       if (!dialogStillOpen) {
-        const table = page.locator('table, [role="grid"], [role="table"]').first();
+        const table = page.locator('table, [role="grid"], [role="table"], .v-data-table').first();
         await expect(table).toBeVisible({ timeout: 15000 });
       }
     }
@@ -130,7 +129,7 @@ test.describe('System Settings - Adobe Templates', () => {
 
     await page.goto(MODULE_URL, { waitUntil: 'networkidle' });
 
-    const table = page.locator('table, [role="grid"], [role="table"]').first();
+    const table = page.locator('table, [role="grid"], [role="table"], .v-data-table').first();
     await expect(table).toBeVisible({ timeout: 30000 });
 
     const firstRow = table.locator('tbody tr, [role="row"]').first();
@@ -180,7 +179,7 @@ test.describe('System Settings - Adobe Templates', () => {
       await page.waitForTimeout(2000);
     }
 
-    const tableAgain = page.locator('table, [role="grid"], [role="table"]').first();
+    const tableAgain = page.locator('table, [role="grid"], [role="table"], .v-data-table').first();
     await expect(tableAgain).toBeVisible({ timeout: 15000 });
   });
 
@@ -189,7 +188,7 @@ test.describe('System Settings - Adobe Templates', () => {
 
     await page.goto(MODULE_URL, { waitUntil: 'networkidle' });
 
-    const table = page.locator('table, [role="grid"], [role="table"]').first();
+    const table = page.locator('table, [role="grid"], [role="table"], .v-data-table').first();
     await expect(table).toBeVisible({ timeout: 30000 });
 
     const firstCheckbox = table.locator('input[type="checkbox"]').first();
@@ -231,7 +230,7 @@ test.describe('System Settings - Adobe Templates', () => {
       }
     }
 
-    const tableAgain = page.locator('table, [role="grid"], [role="table"]').first();
+    const tableAgain = page.locator('table, [role="grid"], [role="table"], .v-data-table').first();
     await expect(tableAgain).toBeVisible({ timeout: 15000 });
   });
 
@@ -247,20 +246,20 @@ test.describe('System Settings - Adobe Templates', () => {
     await page.waitForURL('**/system-settings/**', { timeout: 15000 });
 
     const adobeLink = page.locator(
-      'a[href*="adobe-sign-templates"], a:has-text("Adobe"), nav a:has-text("Adobe Templates")'
+      'a[href*="adobe-templates"], a:has-text("Adobe"), nav a:has-text("Adobe Templates")'
     ).first();
 
     const adobeLinkVisible = await adobeLink.isVisible().catch(() => false);
     if (adobeLinkVisible) {
       await adobeLink.click();
-      await page.waitForURL('**/adobe-sign-templates**', { timeout: 15000 });
+      await page.waitForURL('**/adobe-templates**', { timeout: 15000 });
     } else {
       await page.goto(MODULE_URL, { waitUntil: 'networkidle' });
     }
 
-    await expect(page).toHaveURL(/adobe-sign-templates/, { timeout: 15000 });
+    await expect(page).toHaveURL(/adobe-templates/, { timeout: 15000 });
 
-    const table = page.locator('table, [role="grid"], [role="table"]').first();
+    const table = page.locator('table, [role="grid"], [role="table"], .v-data-table').first();
     await expect(table).toBeVisible({ timeout: 30000 });
   });
 });
