@@ -26,7 +26,7 @@ test('System Settings > Users has search and Edit Columns', async ({ page }) => 
     await page.goto(`${BASE}/system-settings/users`, { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(3000);
 
-    const search = page.locator('input[type="text"]:visible').first();
+    const search = page.locator('input[type="search"]:visible').first();
     await expect(search).toBeVisible({ timeout: 10000 });
     console.log('✅ Search input visible');
 

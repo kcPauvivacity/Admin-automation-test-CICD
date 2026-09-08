@@ -42,7 +42,7 @@ test('System Settings > Configurations has search', async ({ page }) => {
     await page.goto(`${BASE}/system-settings/configurations`, { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(3000);
 
-    const search = page.locator('input[type="text"]:visible').first();
+    const search = page.locator('input[type="search"]:visible').first();
     await expect(search).toBeVisible({ timeout: 10000 });
     await search.fill('test');
     await page.waitForTimeout(1500);

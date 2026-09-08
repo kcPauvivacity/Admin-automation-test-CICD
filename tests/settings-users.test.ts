@@ -54,7 +54,7 @@ test('Settings Users page has search functionality', async ({ page }) => {
     await page.waitForLoadState('load');
     await page.waitForTimeout(3000);
 
-    const searchInput = page.locator('input[type="text"]').first();
+    const searchInput = page.locator('input[type="search"]').first(); // real search input is type="search", not "text"
     await expect(searchInput).toBeVisible({ timeout: 10000 });
 
     // Get initial row count

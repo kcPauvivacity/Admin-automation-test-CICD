@@ -42,7 +42,7 @@ test('System Settings > Audit Logs has search and filters', async ({ page }) => 
     await page.goto(`${BASE}/system-settings/audit-logs`, { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(3000);
 
-    const search = page.locator('input[type="text"]:visible').first();
+    const search = page.locator('input[type="search"]:visible').first();
     await expect(search).toBeVisible({ timeout: 10000 });
     console.log('✅ Audit Logs search visible');
 
