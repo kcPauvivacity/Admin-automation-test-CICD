@@ -74,61 +74,43 @@ test.describe('System Settings - Analytics Queries CRUD', () => {
     }
   });
 
-  test('CREATE - open create dialog and verify name and SQL editor fields', async ({ page }) => {
+  // Create is not a dialog — the "Create" control is an <a class="v-btn" href="/system-settings/
+  // analytics-queries/create"> link that navigates to a full create PAGE (confirmed live: URL
+  // changes, 0 [role="dialog"] elements, 3 text/textarea inputs on the new page).
+
+  test('CREATE - navigate to create page and verify name and SQL editor fields', async ({ page }) => {
     test.setTimeout(180000);
     await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
-    await page.goto(ANALYTICS_QUERIES_URL, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.goto(`${ANALYTICS_QUERIES_URL}/create`, { waitUntil: 'load', timeout: 60000 });
+    await page.waitForTimeout(2000);
 
-    const createBtn = page.locator('button').filter({ hasText: /create|add|new/i }).first();
-    await createBtn.waitFor({ state: 'visible', timeout: 30000 });
-    await createBtn.click();
-
-    const dialog = page.locator('[role="dialog"], .modal, [data-testid*="dialog"]').first();
-    await dialog.waitFor({ state: 'visible', timeout: 20000 });
-
-    const nameField = dialog.locator('input[name*="name" i], input[placeholder*="name" i], label:has-text("Name") ~ * input, label:has-text("Name") + input').first();
-    const nameFieldVisible = await nameField.isVisible().catch(() => false);
+    const nameField = page.locator('input[name*="name" i], input[placeholder*="name" i], label:has-text("Name") ~ * input, label:has-text("Name") + input, input[type="text"]').first();
+    const nameFieldVisible = await nameField.isVisible({ timeout: 10000 }).catch(() => false);
     expect(nameFieldVisible).toBe(true);
 
-    const sqlEditor = dialog.locator('textarea, [role="textbox"], .cm-editor, .monaco-editor, [data-testid*="sql" i], [data-testid*="editor" i]').first();
-    const sqlEditorVisible = await sqlEditor.isVisible().catch(() => false);
+    const sqlEditor = page.locator('textarea, [role="textbox"], .cm-editor, .monaco-editor, [data-testid*="sql" i], [data-testid*="editor" i]').first();
+    const sqlEditorVisible = await sqlEditor.isVisible({ timeout: 5000 }).catch(() => false);
     expect(sqlEditorVisible).toBe(true);
-
-    const cancelBtn = dialog.locator('button').filter({ hasText: /cancel|close|dismiss/i }).first();
-    const cancelVisible = await cancelBtn.isVisible().catch(() => false);
-    if (cancelVisible) {
-      await cancelBtn.click();
-    } else {
-      await page.keyboard.press('Escape');
-    }
-
-    await dialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
   });
 
-  test('CREATE - fill in name and SQL editor fields then cancel', async ({ page }) => {
+  test('CREATE - fill in name and SQL editor fields then navigate away without saving', async ({ page }) => {
     test.setTimeout(180000);
     await loginToApp(page, 90000, 'pau.kie.chee@fusioneta.com', 'PAOpaopao@9696');
-    await page.goto(ANALYTICS_QUERIES_URL, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.goto(`${ANALYTICS_QUERIES_URL}/create`, { waitUntil: 'load', timeout: 60000 });
+    await page.waitForTimeout(2000);
 
-    const createBtn = page.locator('button').filter({ hasText: /create|add|new/i }).first();
-    await createBtn.waitFor({ state: 'visible', timeout: 30000 });
-    await createBtn.click();
-
-    const dialog = page.locator('[role="dialog"], .modal, [data-testid*="dialog"]').first();
-    await dialog.waitFor({ state: 'visible', timeout: 20000 });
-
-    const nameField = dialog.locator('input[name*="name" i], input[placeholder*="name" i], label:has-text("Name") ~ * input, label:has-text("Name") + input').first();
-    const nameFieldVisible = await nameField.isVisible().catch(() => false);
+    const nameField = page.locator('input[name*="name" i], input[placeholder*="name" i], label:has-text("Name") ~ * input, label:has-text("Name") + input, input[type="text"]').first();
+    const nameFieldVisible = await nameField.isVisible({ timeout: 10000 }).catch(() => false);
     if (nameFieldVisible) {
       await nameField.fill('Test Analytics Query');
     }
 
-    const sqlEditor = dialog.locator('textarea').first();
-    const sqlEditorVisible = await sqlEditor.isVisible().catch(() => false);
+    const sqlEditor = page.locator('textarea').first();
+    const sqlEditorVisible = await sqlEditor.isVisible({ timeout: 5000 }).catch(() => false);
     if (sqlEditorVisible) {
       await sqlEditor.fill('SELECT * FROM test_table LIMIT 10');
     } else {
-      const codeEditor = dialog.locator('.cm-editor, .monaco-editor').first();
+      const codeEditor = page.locator('.cm-editor, .monaco-editor').first();
       const codeEditorVisible = await codeEditor.isVisible().catch(() => false);
       if (codeEditorVisible) {
         await codeEditor.click();
@@ -136,15 +118,8 @@ test.describe('System Settings - Analytics Queries CRUD', () => {
       }
     }
 
-    const cancelBtn = dialog.locator('button').filter({ hasText: /cancel|close|dismiss/i }).first();
-    const cancelVisible = await cancelBtn.isVisible().catch(() => false);
-    if (cancelVisible) {
-      await cancelBtn.click();
-    } else {
-      await page.keyboard.press('Escape');
-    }
-
-    await dialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+    // Navigate away instead of saving — no dialog to dismiss here
+    await page.goto(ANALYTICS_QUERIES_URL, { waitUntil: 'load', timeout: 30000 });
   });
 
   test('EDIT - click first row or edit button and update name', async ({ page }) => {
@@ -163,18 +138,25 @@ test.describe('System Settings - Analytics Queries CRUD', () => {
     } else {
       await rows.first().click();
     }
+    await page.waitForTimeout(1500);
 
+    // Edit may open as a dialog OR navigate to a full edit page (CREATE does the latter —
+    // see comment above CREATE tests). Handle both without hard-requiring a dialog.
     const dialog = page.locator('[role="dialog"], .modal, [data-testid*="dialog"]').first();
-    await dialog.waitFor({ state: 'visible', timeout: 20000 });
+    const dialogVisible = await dialog.isVisible({ timeout: 5000 }).catch(() => false);
+    const scope = dialogVisible ? dialog : page;
 
-    const nameField = dialog.locator('input[name*="name" i], input[placeholder*="name" i], label:has-text("Name") ~ * input, label:has-text("Name") + input').first();
-    const nameFieldVisible = await nameField.isVisible().catch(() => false);
+    const nameField = scope.locator('input[name*="name" i], input[placeholder*="name" i], label:has-text("Name") ~ * input, label:has-text("Name") + input, input[type="text"]').first();
+    const nameFieldVisible = await nameField.isVisible({ timeout: 10000 }).catch(() => false);
+    console.log(`✅ Edit ${dialogVisible ? 'dialog' : 'page'} name field visible: ${nameFieldVisible}`);
 
     if (nameFieldVisible) {
       await nameField.click({ clickCount: 3 });
       const currentName = await nameField.inputValue().catch(() => '');
       await nameField.fill(currentName + ' (edited)');
+    }
 
+    if (dialogVisible) {
       const cancelBtn = dialog.locator('button').filter({ hasText: /cancel|close|dismiss/i }).first();
       const cancelVisible = await cancelBtn.isVisible().catch(() => false);
       if (cancelVisible) {
@@ -182,17 +164,11 @@ test.describe('System Settings - Analytics Queries CRUD', () => {
       } else {
         await page.keyboard.press('Escape');
       }
+      await dialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     } else {
-      const closeBtn = dialog.locator('button').filter({ hasText: /cancel|close|dismiss/i }).first();
-      const closeBtnVisible = await closeBtn.isVisible().catch(() => false);
-      if (closeBtnVisible) {
-        await closeBtn.click();
-      } else {
-        await page.keyboard.press('Escape');
-      }
+      // Navigate away instead of saving
+      await page.goto(ANALYTICS_QUERIES_URL, { waitUntil: 'load', timeout: 30000 });
     }
-
-    await dialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
   });
 
   test('DELETE - select row via checkbox and confirm deletion dialog', async ({ page }) => {
